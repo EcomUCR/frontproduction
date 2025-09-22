@@ -2,8 +2,6 @@ import { IconSearch } from "@tabler/icons-react";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import NavBar from "../../../components/layout/NavBar";
 import AdminProfileCard from "./components/AdminProfileCard";
-import SellerModal from "../../seller/ui/SellerModal";
-import UserModal from "../../users/components/UserModal";
 
 export default function AdminPage() {
     return (

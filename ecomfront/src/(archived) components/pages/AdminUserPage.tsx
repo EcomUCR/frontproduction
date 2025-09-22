@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import ButtonComponent from "../ui/ButtonComponent";
 import NavBar from "../ui/NavBar";
 import {
@@ -34,7 +33,6 @@ export default function AdminUserPage() {
     const [newPassword, setNewPassword] = useState("");
     const [updating, setUpdating] = useState(false);
     const [updateMsg, setUpdateMsg] = useState("");
-    const [updateStatus, setUpdateStatus] = useState(true);
     const [showNewUser, setShowNewUser] = useState(false);
 
     useEffect(() => {

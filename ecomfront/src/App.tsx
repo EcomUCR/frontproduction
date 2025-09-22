@@ -37,14 +37,11 @@ import BeSellerPage from "./modules/seller/ui/BeSellerPage";
 import CrudProductPage from "./modules/seller/ui/CrudProductPage";
 import ProductPage from "./modules/seller/ui/ProductPage";
 import RegisterSellerPage from "./modules/seller/ui/RegisterSellerPage";
-import SellerModal from "./modules/seller/ui/SellerModal";
 import SellerPage from "./modules/seller/ui/SellerPage";
 
 //users
 import ProfilePage from "./modules/users/ui/ProfilePage";
 import ShoppingCartPage from "./modules/users/ui/ShoppingCartPage";
-import TransactionHistory from "./modules/users/ui/TransactionHistory";
-import UserProfile from "./modules/users/ui/UserProfile";
 
 function App() {
   return (

@@ -2,14 +2,14 @@ import { IconSettings } from "@tabler/icons-react";
 import { Switch } from "../../../../components/ui/switch";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 
-interface ProfileCardProps{
+/*interface ProfileCardProps{
     uuid:string;
     username:string;
     email:string;
     type:string;
     lastConnection:string;
     state:boolean;
-}
+}*/
 {/*Hay que implementar las props con props:ProfileCardProps para que se lleven por default*/}
 export default function AdminProfileCard(){
     return(

@@ -1,10 +1,10 @@
 import { IconChevronLeft, IconEdit, IconUser } from "@tabler/icons-react";
-import { Switch } from "../../../components/ui/switch";
+import { Switch } from "../../../../components/ui/switch";
 
 import audifonos from "../../img/audifonos.png";
 import foto from "../../img/perfil.png";
-import ProductCard from "../../../components/data-display/ProductCard";
-import ButtonComponent from "../../../components/ui/ButtonComponent";
+import ProductCard from "../../../../components/data-display/ProductCard";
+import ButtonComponent from "../../../../components/ui/ButtonComponent";
 
 export default function UserModal(){
     return(

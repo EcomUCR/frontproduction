@@ -1,4 +1,3 @@
-import { Button } from "./button";
 import product1 from "../../img/sombras.png";
 import product2 from "../../img/sombrasClaro.png";
 import product3 from "../../img/figuras.png";

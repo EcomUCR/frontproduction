@@ -36,7 +36,6 @@ const UserPurchasePanel: React.FC<UserPurchasePanelProps> = ({ productImageSrc =
             <ProductCard
               imageSrc={productImageSrc}
               name="Set cuchillos Telstar"
-              details="5pcs color azul"
               brand="Telstar"
               price="€15.750"
             />
