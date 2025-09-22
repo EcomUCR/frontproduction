@@ -1,6 +1,6 @@
 import Footer from "../../../components/layout/Footer";;
 import NavBar from "../../../components/layout/NavBar";
-import logo from '../../img/resources/Banner2.png';
+import logo from '../../../img/resources/Banner2.png';
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 
 export default function BeSellerPage() {

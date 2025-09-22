@@ -1,5 +1,5 @@
 import { IconBrandFacebook, IconBrandInstagram, IconBrandX } from "@tabler/icons-react";
-import logo from "../../img/resources/Group 50.png";
+import logo from "../../../../img/resources/Group 50.png";
 
 export default function SellerContactComponent() {
     return (

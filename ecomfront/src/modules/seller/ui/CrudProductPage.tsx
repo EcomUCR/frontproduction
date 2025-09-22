@@ -4,7 +4,7 @@ import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import ProductCard from "../../../components/data-display/ProductCard";
 
-import audifonos from "../../img/resources/audifonos.jpg";
+import audifonos from "../../../img/resources/audifonos.jpg";
 
 export default function CrudProductPage() {
     return (

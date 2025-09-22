@@ -1,9 +1,9 @@
 import { useState } from "react";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 
-import foto from "../../img/perfil.png";
-import logo from "../../img/unstable-games-logo.png";
-import banner from "../../img/banner.png";
+import foto from "../../../img/perfil.png";
+import logo from "../../../img/unstable-games-logo.png";
+import banner from "../../../img/banner.png";
 import {
     IconBrandFacebook,
     IconBrandInstagram,

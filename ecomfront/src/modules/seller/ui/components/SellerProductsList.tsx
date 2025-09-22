@@ -2,7 +2,7 @@ import { IconSearch } from "@tabler/icons-react";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import ProductCard from "../../../../components/data-display/ProductCard";
 
-import audifonos from "../../img/resources/audifonos.jpg";
+import audifonos from "../../../../img/resources/audifonos.jpg";
 import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";;
 
 export default function SellerProductsList() {

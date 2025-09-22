@@ -1,5 +1,5 @@
 import { IconSearch } from "@tabler/icons-react";
-import logo from "../../img/tucaShopLogo.png";
+import logo from "../../../../img/tucaShopLogo.png";
 
 interface NavBarSellerProps {
     setView: (view: 'home' | 'offers' | 'contact' | 'reviews') => void;

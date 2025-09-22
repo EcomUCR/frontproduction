@@ -2,9 +2,9 @@ import { IconChevronRight } from "@tabler/icons-react";
 import ProductCard from "../../../../components/data-display/ProductCard";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 
-import audifonos from '../../img/resources/audifonos.jpg';
-import img1 from '../../img/resources/foto1.png';
-import img2 from '../../img/resources/foto2.png';
+import audifonos from '../../../../img/resources/audifonos.jpg';
+import img1 from '../../../../img/resources/foto1.png';
+import img2 from '../../../../img/resources/foto2.png';
 import FeaturedProductsSlider from "../../../../components/data-display/FeaturedProductsSlider";
 
 const featuredProducts = [
@@ -67,11 +67,11 @@ export default function HomeSeller(){
                 </div>
                 {/*Aquí debe de ir un arreglo de productos cards que se van a mostrar */}
                 <div className="flex justify-between my-5">
-                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} />
-                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} />
-                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} />
-                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} />
-                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} />
+                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false}/>
+                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false}/>
+                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false}/>
+                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false}/>
+                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false}/>
                 </div>
             </section>
             {/* Termina section de ofertas */}

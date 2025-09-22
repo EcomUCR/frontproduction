@@ -1,4 +1,4 @@
-import logo from "../../img/tucaShopLogo.png";
+import logo from "../../../img/tucaShopLogo.png";
 export default function ResetPasswordPage() {
     return (
         <div>
