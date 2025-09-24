@@ -79,7 +79,7 @@ export default function ProductPage() {
             <div className="mx-auto max-w-[80rem]">
                 <section className="flex px-10 pt-5 font-quicksand ">
                     {/*Este botón es para volver a la pagina donde se estaba */}
-                    <ButtonComponent icon={<IconArrowBackUp />} text="Volver" style="flex text-sm px-2 items-center gap-2 rounded-full pt-5" />
+                    <ButtonComponent icon={<IconArrowBackUp />} text="Volver" style="flex text-sm px-2 items-center gap-2 rounded-full" /*onClick={() => window.history.back()}*/ />{/*Creo que esto se puede utilizar para volver a la ultima ventana, pero no estoy seguro*/}
                 </section>
                 <section className="flex px-10 pt-10 font-quicksand">
                     <div className="w-3/12">
