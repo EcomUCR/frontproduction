@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import logo from '../../img/tucaShopLogo.png';
+
 export default function LoginForm() {
     return (
         <div className="flex flex-col items-center w-full justify-center">

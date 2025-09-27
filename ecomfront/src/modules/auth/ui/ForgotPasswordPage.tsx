@@ -1,12 +1,14 @@
+import NavBar from "../../../components/layout/NavBar";
 import logo from "../../../img/tucaShopLogo.png";
 export default function ForgotPasswordPage() {
     return (
         <div>
+                <NavBar/>
             <section className='flex justify-center items-center'>
-                <div className='flex flex-col justify-center items-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[100vh] w-[35%] gap-4'>
+                <div className='flex flex-col justify-center items-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[90vh] w-[35%] gap-4'>
                     <p className="text-white font-semibold py-2 px-4 rounded-full">Recuperación de contraseña</p>
                 </div>
-                <div className='flex flex-col items-center justify-center h-[100vh] w-[65%]'>
+                <div className='flex flex-col items-center justify-center w-[65%]'>
                     <div className="flex flex-col items-center w-full justify-center">
                         <img className='h-20' src={logo} alt="" />
                         <p className='font-fugaz text-2xl'>TucaShop</p>
