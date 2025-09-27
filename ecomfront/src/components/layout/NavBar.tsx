@@ -9,10 +9,13 @@ export default function NavBar() {
             {/*Esta es la parte superior del navbar*/}
             <div className="flex justify-between items-center">
                 <div className="w-1/3">
-                    <a href="*" className="text-white font-fugaz text-3xl flex items-center gap-3 p-2">
-                        <img src={logo} alt="" className="h-8 w-auto" />
-                        TucaShop
-                    </a>
+                    <Link
+                        to="/">
+                        <a href="*" className="text-white font-fugaz text-3xl flex items-center gap-3 p-2">
+                            <img src={logo} alt="" className="h-8 w-auto" />
+                            TucaShop
+                        </a>
+                    </Link>
                 </div>
                 <div className="flex items-center bg-white rounded-full px-0.5 w-1/3">
                     <input type="text" className="w-full h-10 p-4 rounded-full focus:outline-none" placeholder="Buscar" />
