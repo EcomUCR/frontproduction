@@ -7,7 +7,7 @@ export default function AdminPage() {
     return (
         <div>
             <NavBar />
-            <section className="font-quicksand mx-10 my-10">
+            <section className="font-quicksand my-10 mx-auto max-w-[80rem]">
                 <h1 className="text-2xl font-semibold pl-10">Lista de usuarios</h1>
                 <div className="flex justify-between px-20 pt-10">
                     <div className="flex bg-main-dark/10 items-center rounded-full px-1">

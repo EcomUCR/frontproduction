@@ -10,9 +10,9 @@ export default function CrudProductPage() {
     return (
         <div>
             <NavBar />
-            <section className="flex flex-col mx-10 font-quicksand gap-5 my-10">
-                <div className="flex items-center gap-5">
-                    <ButtonComponent icon={<IconArrowBackUp />} text="Volver" style="flex text-sm px-2 items-center gap-2 rounded-full" /*onClick={() => window.history.back()}*/ />{/*Creo que esto se puede utilizar para volver a la ultima ventana, pero no estoy seguro*/}
+            <section className="flex flex-col font-quicksand gap-5 my-10 mx-auto max-w-[80rem]">
+                <div className="flex items-center gap-3">
+                    <ButtonComponent icon={<IconArrowBackUp />} text="Volver" style="flex text-sm ml-5 px-2 items-center gap-2 rounded-full" /*onClick={() => window.history.back()}*/ />{/*Creo que esto se puede utilizar para volver a la ultima ventana, pero no estoy seguro*/}
                     <h1 className="text-3xl font-bold border-b-3 border-main">Nuevo Producto</h1>
                     <p className="text-2xl">-</p>
                     <p className="text-xl"> Unstable Games</p>

@@ -15,7 +15,9 @@ export default function SellerPage() {
     return (
         <div className="flex flex-col w-full">
             <NavBar />
-            <header className="flex flex-col justify-center w-full px-5 py-5 gap-3">
+            <div className='mx-auto max-w-[80rem]'>
+
+            <header className="flex flex-col justify-center w-full px-5 py-5 gap-3 ">
                 <img src={banner} alt="" className="w-full h-auto object-cover rounded-2xl" />
                 <NavBarSeller setView={setView} currentView={view} />
             </header>
@@ -25,6 +27,7 @@ export default function SellerPage() {
             {view === 'contact' && <SellerContactComponent />}
             {view === 'reviews' && <SellerReviewsComponent />}
 
+            </div>
             <Footer />
         </div>
     );

@@ -8,6 +8,8 @@ export default function ShoppingCartPage() {
     return (
         <div>
             <NavBar />
+            <div className="mx-auto max-w-[80rem]">
+
             <section className="mx-10 flex">
                 <div className=" my-5 w-2/3 border-r-2 pr-5 border-main">
                 
@@ -27,6 +29,7 @@ export default function ShoppingCartPage() {
                 </div>
 
             </section>
+            </div>
             <Footer />
         </div>
     );

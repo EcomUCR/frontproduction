@@ -10,12 +10,11 @@ export default function LoginRegisterPage() {
     return (
         <div>
             <NavBar />
-            <section className='flex justify-center items-center font-quicksand '>
+            <section className='flex justify-center items-center font-quicksand mx-auto max-w-[80rem]'>
                 <div className='flex pl-60 items-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[90vh] w-[35%] gap-4 2xl:px-20'>
                     {/*Botón de inicio de sesión */}
-                    <ul className='flex flex-col absolute top-70 ml-3 gap-20 2xl:px-60'>
-                        
-                            <div className={`bg-white absolute 2xl:left-50 -left-5 z-0 h-30 w-55  2xl:w-95 rounded-l-full transform transition-all duration-300 ${view === 'login' ? ' -top-6' : ' translate-y-30'} `}>
+                    <ul className='flex flex-col absolute top-70 ml-3 gap-20 2xl:px-40'>
+                            <div className={`bg-white absolute 2xl:left-35 -left-5 z-0 h-30 w-55 rounded-l-full transform transition-all duration-300 ${view === 'login' ? ' -top-6' : ' translate-y-30'} `}>
                                 <div className="-rotate-90 absolute w-10 h-10 -top-6 -right-3 bg-transparent flex items-center justify-center rounded-2xl">
                                     <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
                                 </div>

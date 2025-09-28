@@ -13,7 +13,7 @@ export default function UserPage() {
     return (
         <div>
             <NavBar />
-            <section className="flex px-10 py-10">
+            <section className="flex px-10 py-10 mx-auto max-w-[80rem]">
                 <div className="w-[25%]">
                     <SideBar type="seller" onSelect={setSelected} selected={selected} />
                 </div>

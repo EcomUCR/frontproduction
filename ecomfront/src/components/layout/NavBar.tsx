@@ -5,9 +5,9 @@ import logo from "../../img/tucaShopLogo.png";
 import ButtonComponent from "../ui/ButtonComponent";
 export default function NavBar() {
     return (
-        <nav className="bg-main px-10 pt-2 2xl:px-80">
+        <nav className="bg-main px-10 pt-2 2xl:px-80 ">
             {/*Esta es la parte superior del navbar*/}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center ">
                 <div className="w-1/3">
                     <Link
                         to="/">

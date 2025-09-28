@@ -64,11 +64,12 @@ export default function HomePage() {
         <div>
             <NavBar />
             {/* Header con slider */}
+            <div className="mx-auto max-w-[80rem]">
             <header>
                 <HeaderSlider />
             </header>
             {/* Section productos destacados */}
-            <section className=" mx-10">
+            <section className="mx-10">
                 <h2 className="text-2xl font-semibold font-quicksand">Productos destacados</h2>
                 <div>
                     <FeaturedProductsSlider products={featuredProducts} />
@@ -125,6 +126,7 @@ export default function HomePage() {
                     <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false}/>
                 </div>
             </section>
+            </div>
             {/* Footer */}
             <Footer />
         </div>
