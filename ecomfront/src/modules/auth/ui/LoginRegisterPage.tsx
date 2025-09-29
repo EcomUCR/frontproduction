@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
-import LoginForm from "../../../components/forms/LoginForm";
-import RegisterForm from "../../../components/forms/RegisterForm";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
 
 export default function LoginRegisterPage() {
     const [view, setView] = useState<'login' | 'register'>('login');
@@ -39,7 +39,7 @@ export default function LoginRegisterPage() {
                 </div>
                 <div className='flex flex-col items-center justify-center h-[90vh] w-[65%]'>
                     {/* Este div lo que hace es cargar el formulario de inicio de sesión o de registro */}
-                    {view === 'login' ? <LoginForm /> : <RegisterForm />}
+                   {view === 'login' ? <LoginForm /> : <RegisterForm onRegisterSuccess={() => setView('login')} />}
                 </div>
             </section>
             <Footer />

@@ -16,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost/ecomdb/Backend/public',
+        target: 'https://ecomapi-kruj.onrender.com',
         changeOrigin: true,
         secure: false,
       }
