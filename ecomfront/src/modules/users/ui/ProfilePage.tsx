@@ -5,7 +5,7 @@ import SellerProductsList from "../../seller/ui/components/SellerProductsList";
 import SideBar from "../../../components/navigation/SideBar";
 import TransactionHistory from "./TransactionHistory";
 import UserProfile from "./UserProfile";
-import useUser from "../../../hooks/UseUser";
+import useUser from "../../../hooks/useUser";
 
 export default function ProfilePage() {
     const [selected, setSelected] = useState("profile");
