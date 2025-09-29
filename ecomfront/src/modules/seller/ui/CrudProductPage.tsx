@@ -17,14 +17,14 @@ export default function CrudProductPage() {
     discount: 0,
     stock: 0,
     status: true,
-    categories: [], // ahora es array de IDs
+    categories: [], // guardamos IDs
     image: null,
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
 
-  // 📌 Cargar categorías
+  // 📌 Traer categorías con axios al montar
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -37,6 +37,7 @@ export default function CrudProductPage() {
     fetchCategories();
   }, []);
 
+  // 📌 Enviar al backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -50,6 +51,7 @@ export default function CrudProductPage() {
     }
   };
 
+  // 📌 Cambiar categorías seleccionadas
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedIds = Array.from(e.target.selectedOptions, (option) =>
       Number(option.value)
@@ -57,6 +59,7 @@ export default function CrudProductPage() {
     setForm({ ...form, categories: selectedIds });
   };
 
+  // 📌 Cambiar imagen + preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -132,8 +135,8 @@ export default function CrudProductPage() {
               </div>
             </div>
 
+            {/* Categoría + stock + estado */}
             <div className="w-full flex gap-5">
-              {/* Categoría */}
               <label className="flex flex-col w-6/12 gap-2">
                 <p className="font-semibold">
                   Categoría <span className="text-red-500">*</span>
@@ -155,7 +158,6 @@ export default function CrudProductPage() {
                 </small>
               </label>
 
-              {/* Stock y Estado */}
               <div className="flex w-6/12 gap-5">
                 <label className="flex flex-col w-full gap-2">
                   <p className="font-semibold">
@@ -190,8 +192,8 @@ export default function CrudProductPage() {
             </div>
           </div>
 
+          {/* Imagen y preview */}
           <div className="flex gap-2 w-full px-30">
-            {/* Columna izquierda */}
             <div className="flex flex-col w-1/2 gap-6">
               <label className="w-full">
                 <p className="font-semibold">Sobre este producto</p>
@@ -215,7 +217,6 @@ export default function CrudProductPage() {
               </label>
             </div>
 
-            {/* Columna derecha */}
             <div className="flex flex-col items-center justify-center w-1/2 gap-2">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
@@ -233,10 +234,6 @@ export default function CrudProductPage() {
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
                   style="text-white text-lg p-2 items-center rounded-full bg-contrast-main w-2/3"
-                />
-                <ButtonComponent
-                  text="Eliminar producto"
-                  style="text-white text-lg p-2 items-center rounded-full bg-contrast-secondary w-2/3"
                 />
                 <ButtonComponent
                   text="Cancelar"
