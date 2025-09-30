@@ -134,7 +134,12 @@ export default function CrudProductPage() {
             </div>
 
             <div className="w-full flex gap-5">
+              <div className="flex flex-col w-6/12 gap-2">
+              <p className="font-semibold">
+                    Stock <span className="text-red-500">*</span>
+                  </p>
               <CategorySelector categories={categories} selected={form.categories} setSelected={(ids) => setForm({ ...form, categories: ids })} />
+              </div>
               {/*<label className="flex flex-col w-6/12 gap-2">
                 <p className="font-semibold">
                   Categoría <span className="text-red-500">*</span>
