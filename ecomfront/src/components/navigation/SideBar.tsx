@@ -1,4 +1,4 @@
-import { IconBuildingStore, IconClipboardText, IconUser } from "@tabler/icons-react";
+import { IconBuildingStore, IconClipboardText, IconFileCheck, IconUser } from "@tabler/icons-react";
 
 interface SideBarProps {
     type: "user" | "seller";
@@ -23,12 +23,22 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
                     <IconClipboardText /><p>Historial de transacciones</p>
                 </li>
                 {type === "seller" && (
+                    <>
                     <li
                         className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
                             ${selected === "products" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
                         onClick={() => onSelect("products")}>
                         <IconBuildingStore /><p>Mis productos</p>
                     </li>
+                    <li>
+                        <li
+                            className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
+                                ${selected === "orderStatus" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
+                            onClick={() => onSelect("orderStatus")}>
+                            <IconFileCheck /><p>Estado de pedidos</p>
+                        </li>
+                    </li>
+                    </>
                 )}
             </ul>
         </div>

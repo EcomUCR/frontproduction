@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../../../img/tucaShopLogo.png";
+import logo from "../../../../img/TukiLogo.png";
 import { useAuth } from "../../../../hooks/context/AuthContext";
 
 export default function LoginForm() {

@@ -6,6 +6,7 @@ import SideBar from "../../../components/navigation/SideBar";
 import TransactionHistory from "./TransactionHistory";
 import UserProfile from "./UserProfile";
 import useUser from "../../../hooks/useUser";
+import SellerOrderStatus from "../../seller/ui/components/SellerOrderStatus";
 
 export default function ProfilePage() {
     const [selected, setSelected] = useState("profile");
@@ -31,6 +32,7 @@ function getSideBarType(role: "seller" | "client" | "admin") {
                         {selected === "profile" && <UserProfile type="seller" />}
                         {selected === "transactions" && <TransactionHistory />}
                         {selected === "products" && <SellerProductsList />}
+                        {selected === "orderStatus" && <SellerOrderStatus />}
                       </>
                     )}
                     {role === "client" && (

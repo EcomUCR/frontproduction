@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import ProductCard from "../../../../components/data-display/ProductCard";
 import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";
-import { useProducts, Product } from "../../infrastructure/useProducts";
+import { useProducts, type Product } from "../../infrastructure/useProducts";
 
 export default function SellerProductsList() {
   const { getProducts, loading, error } = useProducts();

@@ -7,7 +7,7 @@ import {
   IconShoppingBag,
   IconUser,
 } from "@tabler/icons-react";
-import logo from "../../img/tucaShopLogo.png";
+import logo from "../../img/TukiLogo.png";
 import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useProducts } from "../../modules/seller/infrastructure/useProducts";
@@ -63,7 +63,7 @@ export default function NavBar() {
         <div className="w-1/3">
           <Link to="/" className="text-white font-fugaz text-3xl flex items-center gap-3 p-2">
 
-            <img src={logo} alt="" className="h-8 w-auto" />
+            <img src={logo} alt="" className="h-10 w-auto" />
             TucaShop
 
           </Link>
@@ -112,12 +112,12 @@ export default function NavBar() {
             <div className="flex space-x-2 items-center">
               <li>
                 <a href="#" className="">
-                  <IconHeart className="h-5 w-5" />
+                  <IconHeart className="h-6 w-6" />
                 </a>
               </li>
               <li>
                 <Link to="/shoppingCart">
-                  <IconShoppingBag className="h-5 w-5" />
+                  <IconShoppingBag className="h-6 w-6" />
                 </Link>
               </li>
             </div>
