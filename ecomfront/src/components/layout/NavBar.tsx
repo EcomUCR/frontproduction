@@ -135,7 +135,7 @@ export default function NavBar() {
               defaultValue=""
               className="bg-transparent border-white focus:outline-none hover:cursor-pointer"
               onChange={(e) => {
-                if (e.target.value) navigate(`/products/${e.target.value}`);
+                if (e.target.value) navigate(`/search/${e.target.value}`);
               }}>
               <option value="" disabled hidden>
                 Categorías
