@@ -56,14 +56,6 @@ export default function CrudProductPage() {
     }
   };
 
-  // 📌 Cambiar categorías seleccionadas
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedIds = Array.from(e.target.selectedOptions, (option) =>
-      Number(option.value)
-    );
-    setForm({ ...form, categories: selectedIds });
-  };
-
   // 📌 Cambiar imagen + preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
