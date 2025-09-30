@@ -1,9 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
-// ⚠️ Usamos el proxy de Vite: todas las llamadas a '/api' van a tu backend.
+// ⚠️ Usamos el proxy de Vite en dev: en producción se debe usar VITE_API_URL
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
-
 
 // 📌 Tipos que vienen del backend Laravel
 export interface ProductImage {
@@ -53,13 +52,11 @@ export function useProducts() {
     });
   };
 
-  // (Opcional) listar imágenes por producto
   const getProductImages = async (productId: number): Promise<ProductImage[]> => {
     const res = await axios.get(`${BASE_URL}/products/${productId}/images`);
     return res.data?.images ?? [];
   };
 
-  // (Opcional) eliminar imagen
   const deleteProductImage = async (imageId: number) => {
     await axios.delete(`${BASE_URL}/product-images/${imageId}`);
   };
@@ -86,35 +83,33 @@ export function useProducts() {
     setError(null);
     setSuccess(null);
     try {
-      // Enviamos como FormData porque ya lo tienes así (el backend ignorará 'image' si no lo procesa)
       const formData = new FormData();
       formData.append("name", product.name);
       formData.append("description", product.description || "");
-      formData.append("price", product.price.toString());
-      formData.append("discount", product.discount?.toString() || "0");
-      formData.append("stock", product.stock.toString());
+      formData.append("price", String(Number(product.price) || 0));
+      formData.append("discount", String(Number(product.price) || 0));
+      formData.append("stock", String(Number(product.price) || 0));
       formData.append("status", product.status ? "1" : "0");
+
       if (product.categories) {
         product.categories.forEach((cat) =>
           formData.append("categories[]", cat.toString())
         );
       }
-      // NOTA: No dependemos de que /products reciba la imagen
-      //       Subiremos la imagen por la ruta /product-images después.
 
       const res = await axios.post(`${BASE_URL}/products`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const created = res.data; // asume que devuelve { id, ... }
+      const created = res.data;
       if (product.image && created?.id) {
-        await uploadProductImage(created.id, product.image);
+       // await uploadProductImage(created.id, product.image);
       }
 
       setSuccess("Producto creado correctamente");
       return created;
     } catch (e: any) {
-      setError("No se pudo crear el producto");
+      console.error("Error backend:", e.response.data);
       throw e;
     } finally {
       setLoading(false);
@@ -133,18 +128,19 @@ export function useProducts() {
       formData.append("discount", product.discount?.toString() || "0");
       formData.append("stock", product.stock.toString());
       formData.append("status", product.status ? "1" : "0");
+
       if (product.categories) {
         product.categories.forEach((cat) =>
           formData.append("categories[]", cat.toString())
         );
       }
-      // Igual que en create: subimos imagen por ruta de imágenes luego.
+
       const res = await axios.post(`${BASE_URL}/products/${id}?_method=PUT`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (product.image) {
-        await uploadProductImage(id, product.image);
+       // await uploadProductImage(id, product.image);
       }
 
       setSuccess("Producto actualizado correctamente");
@@ -178,7 +174,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/categories`);
-      return res.data.data ?? res.data;
+      return res.data;
     } catch (e: any) {
       setError("No se pudieron cargar las categorías");
       throw e;
@@ -195,7 +191,7 @@ export function useProducts() {
     deleteProduct,
     // categorías
     getCategories,
-    // imágenes (por si luego las usamos en otra vista)
+    // imágenes
     uploadProductImage,
     getProductImages,
     deleteProductImage,

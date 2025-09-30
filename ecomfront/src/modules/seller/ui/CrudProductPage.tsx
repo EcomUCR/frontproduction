@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { useProducts, type Product, type Category, } from "../infrastructure/useProducts";
+import {
+  useProducts,
+  type Product,
+  type Category,
+} from "../infrastructure/useProducts";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
@@ -44,17 +48,33 @@ export default function CrudProductPage() {
 
   // 📌 Enviar al backend
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (form.id) {
-        await updateProduct(form.id, form);
-      } else {
-        await createProduct(form);
-      }
-    } catch (err) {
-      console.error("Error al guardar producto", err);
+  e.preventDefault();
+  try {
+    if (form.id) {
+      // Editar producto existente
+      await updateProduct(form.id, form);
+    } else {
+      // Crear producto nuevo
+      await createProduct(form);
+
+      // Resetear formulario
+      setForm({
+        name: "",
+        description: "",
+        price: 0,
+        discount: 0,
+        stock: 0,
+        status: true,
+        categories: [],
+        image: null,
+      });
+      setPreview(null);
     }
-  };
+  } catch (err) {
+    console.error("Error al guardar producto", err);
+  }
+};
+
 
   // 📌 Cambiar imagen + preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +97,9 @@ export default function CrudProductPage() {
             style="flex text-sm ml-5 px-2 items-center gap-2 rounded-full"
             onClick={() => window.history.back()}
           />
-          <h1 className="text-3xl font-bold border-b-3 border-main">Nuevo Producto</h1>
+          <h1 className="text-3xl font-bold border-b-3 border-main">
+            Nuevo Producto
+          </h1>
           <p className="text-2xl">-</p>
           <p className="text-xl"> Unstable Games</p>
         </div>
@@ -112,7 +134,7 @@ export default function CrudProductPage() {
                     type="number"
                     value={form.price}
                     onChange={(e) =>
-                      setForm({ ...form, price: parseFloat(e.target.value) })
+                      setForm({ ...form, price: Number(e.target.value) })
                     }
                     placeholder="Precio"
                     className="bg-main-dark/20 rounded-2xl p-2"
@@ -124,7 +146,7 @@ export default function CrudProductPage() {
                     type="number"
                     value={form.discount}
                     onChange={(e) =>
-                      setForm({ ...form, discount: parseFloat(e.target.value) })
+                      setForm({ ...form, discount: Number(e.target.value) })
                     }
                     placeholder="Precio de oferta"
                     className="bg-main-dark/20 rounded-2xl p-2"
@@ -135,31 +157,15 @@ export default function CrudProductPage() {
 
             <div className="w-full flex gap-5">
               <div className="flex flex-col w-6/12 gap-2">
-              <p className="font-semibold">
-                    Stock <span className="text-red-500">*</span>
-                  </p>
-              <CategorySelector categories={categories} selected={form.categories} setSelected={(ids) => setForm({ ...form, categories: ids })} />
-              </div>
-              {/*<label className="flex flex-col w-6/12 gap-2">
                 <p className="font-semibold">
-                  Categoría <span className="text-red-500">*</span>
+                  Categorías <span className="text-red-500">*</span>
                 </p>
-                <select
-                  multiple
-                  value={form.categories.map((id) => id.toString())} // 👈 casteo a string
-                  onChange={handleCategoryChange}
-                  className="bg-main-dark/20 rounded-2xl p-2 w-2/3"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-                <small className="text-gray-500">
-                  Mantén presionado CTRL o CMD para seleccionar varias
-                </small>
-              </label>*/}
+                <CategorySelector
+                  categories={categories}
+                  selected={form.categories}
+                  setSelected={(ids) => setForm({ ...form, categories: ids })}
+                />
+              </div>
 
               <div className="flex w-6/12 gap-5">
                 <label className="flex flex-col w-full gap-2">
@@ -170,7 +176,7 @@ export default function CrudProductPage() {
                     type="number"
                     value={form.stock}
                     onChange={(e) =>
-                      setForm({ ...form, stock: parseInt(e.target.value) })
+                      setForm({ ...form, stock: Number(e.target.value) })
                     }
                     placeholder="Stock"
                     className="bg-main-dark/20 rounded-2xl p-2 w-full"
@@ -203,7 +209,9 @@ export default function CrudProductPage() {
                 <textarea
                   placeholder="Sobre este producto"
                   value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
                   cols={50}
                   rows={5}
                   className="bg-main-dark/20 rounded-xl px-3 py-2 w-auto"
@@ -223,15 +231,22 @@ export default function CrudProductPage() {
             <div className="flex flex-col items-center justify-center w-1/2 gap-2">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
-                <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={isFeatured}
+                  onChange={(e) => setIsFeatured(e.target.checked)}
+                />
               </label>
-              {/*Controlador para mostrar si es un ProductCard o FeaturedProductCard*/}
+
+              {/* Preview */}
               {isFeatured ? (
                 <FeaturedProductCard
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
-                  discountPrice={form.discount ? form.discount.toString() : undefined}
+                  discountPrice={
+                    form.discount ? form.discount.toString() : undefined
+                  }
                   img={preview || undefined}
                   rating={5}
                   edit={false}
@@ -241,7 +256,9 @@ export default function CrudProductPage() {
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
-                  discountPrice={form.discount ? form.discount.toString() : undefined}
+                  discountPrice={
+                    form.discount ? form.discount.toString() : undefined
+                  }
                   img={preview || undefined}
                   edit={false}
                 />
@@ -251,6 +268,7 @@ export default function CrudProductPage() {
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
                   style="text-white text-lg p-2 items-center rounded-full bg-contrast-main w-2/3"
+                  type="submit" // 👈 aquí se dispara handleSubmit
                 />
                 <ButtonComponent
                   text="Cancelar"
