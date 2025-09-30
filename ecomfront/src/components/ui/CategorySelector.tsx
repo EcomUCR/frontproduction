@@ -1,3 +1,5 @@
+//Componente hecho con IA para dropdown de categorías
+
 import { useState } from "react";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import type { Category } from "../../modules/seller/infrastructure/useProducts";
@@ -34,7 +36,6 @@ export default function CategorySelector({ categories, selected, setSelected }: 
                 Agregar categoría
             </button>
 
-            {/* Dropdown */}
             {open && (
                 <div className="absolute top-full mt-2 left-0 w-full bg-light-gray rounded-lg shadow-md z-50 p-2">
                     <button
@@ -62,7 +63,6 @@ export default function CategorySelector({ categories, selected, setSelected }: 
                 </div>
             )}
 
-            {/* Tags */}
             <div className="flex flex-wrap gap-2 mt-2">
                 {selected.map((id) => {
                     const cat = categories.find((c) => c.id === id);
