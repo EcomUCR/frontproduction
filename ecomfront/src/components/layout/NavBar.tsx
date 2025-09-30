@@ -38,14 +38,11 @@ export default function NavBar() {
       {/*Esta es la parte superior del navbar*/}
       <div className="flex justify-between items-center ">
         <div className="w-1/3">
-          <Link to="/">
-            <a
-              href="*"
-              className="text-white font-fugaz text-3xl flex items-center gap-3 p-2"
-            >
-              <img src={logo} alt="" className="h-8 w-auto" />
-              TucaShop
-            </a>
+          <Link to="/" className="text-white font-fugaz text-3xl flex items-center gap-3 p-2">
+
+            <img src={logo} alt="" className="h-8 w-auto" />
+            TucaShop
+
           </Link>
         </div>
         <div className="flex items-center bg-white rounded-full px-0.5 w-1/3">
@@ -111,17 +108,20 @@ export default function NavBar() {
           <li className="flex items-center  hover:-translate-y-1 transform transition-all duration-300">
             {/*ItemList para desplegar las categorías*/}
             <IconMenu2 className="h-5 w-5" />
-            <select className="bg-transparent border-white focus:outline-none hover:cursor-pointer">
-              <option disabled value="" selected hidden>
+            <select
+              defaultValue=""
+              className="bg-transparent border-white focus:outline-none hover:cursor-pointer"
+            >
+              <option value="" disabled hidden>
                 Categorías
               </option>
-              <option className="text-main-dark" value="#">
+              <option className="text-main-dark" value="cat1">
                 Categoría 1
               </option>
-              <option className="text-main-dark" value="#">
+              <option className="text-main-dark" value="cat2">
                 Categoría 2
               </option>
-              <option className="text-main-dark" value="#">
+              <option className="text-main-dark" value="cat3">
                 Categoría 3
               </option>
             </select>

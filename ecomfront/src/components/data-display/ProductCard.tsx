@@ -6,8 +6,8 @@ interface ProductCardProps {
     shop: string;
     title: string;
     price: string;
-    discountPrice: string;
-    img: string;
+    discountPrice?: string;
+    img?: string;
     edit: boolean
 }
 export default function ProductCard(props: ProductCardProps) {
@@ -46,10 +46,10 @@ export default function ProductCard(props: ProductCardProps) {
                                 {props.discountPrice && <p className="font-comme">₡ {props.discountPrice}</p>}
                             </div>
                         </div>
-                        <div className="absolute flex flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 bg-contrast-main text-white font-semibold p-2 rounded-xl hover:bg-gradient-to-br from-contrast-main to-contrast-secondary items-center transition-all duration-300 cursor-pointer">
+                        <Link to="/productPage" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="absolute flex flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 bg-contrast-main text-white font-semibold p-2 rounded-xl hover:bg-gradient-to-br from-contrast-main to-contrast-secondary items-center transition-all duration-300 cursor-pointer">
                             <IconShoppingBag />
                             <ButtonComponent style="w-full text-xs" text={"Añadir al carrito"} />
-                        </div>
+                        </Link>
                     </div>
                 }
                 {props.edit &&

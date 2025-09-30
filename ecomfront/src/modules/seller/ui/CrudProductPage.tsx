@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import { useProducts, Product, Category } from "../infrastructure/useProducts";
+import { useProducts, type Product, type Category, } from "../infrastructure/useProducts";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import ProductCard from "../../../components/data-display/ProductCard";
 import { IconArrowBackUp } from "@tabler/icons-react";
+import FeaturedProductCard from "../../../components/data-display/FeaturedProductCard";
+import CategorySelector from "../../../components/ui/CategorySelector";
 
 export default function CrudProductPage() {
   const { createProduct, updateProduct, getCategories, loading, error, success } =
     useProducts();
+
+  const [isFeatured, setIsFeatured] = useState(false);
 
   const [form, setForm] = useState<Product>({
     name: "",
@@ -29,6 +33,7 @@ export default function CrudProductPage() {
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
+        console.log("Categorías recibidas:", data);
         setCategories(data);
       } catch (err) {
         console.error("Error al cargar categorías", err);
@@ -95,6 +100,7 @@ export default function CrudProductPage() {
                   Nombre del producto <span className="text-red-500">*</span>
                 </p>
                 <textarea
+                  maxLength={54}
                   cols={35}
                   rows={2}
                   value={form.name}
@@ -135,9 +141,9 @@ export default function CrudProductPage() {
               </div>
             </div>
 
-            {/* Categoría + stock + estado */}
             <div className="w-full flex gap-5">
-              <label className="flex flex-col w-6/12 gap-2">
+              <CategorySelector categories={categories} selected={form.categories} setSelected={(ids) => setForm({ ...form, categories: ids })} />
+              {/*<label className="flex flex-col w-6/12 gap-2">
                 <p className="font-semibold">
                   Categoría <span className="text-red-500">*</span>
                 </p>
@@ -156,7 +162,7 @@ export default function CrudProductPage() {
                 <small className="text-gray-500">
                   Mantén presionado CTRL o CMD para seleccionar varias
                 </small>
-              </label>
+              </label>*/}
 
               <div className="flex w-6/12 gap-5">
                 <label className="flex flex-col w-full gap-2">
@@ -201,9 +207,9 @@ export default function CrudProductPage() {
                   placeholder="Sobre este producto"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  cols={40}
+                  cols={50}
                   rows={5}
-                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-auto"
                 />
               </label>
               <label>
@@ -212,7 +218,7 @@ export default function CrudProductPage() {
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="bg-main-dark/20 rounded-2xl p-2 w-full"
+                  className="bg-main-dark/20 rounded-2xl p-2 w-auto"
                 />
               </label>
             </div>
@@ -220,16 +226,30 @@ export default function CrudProductPage() {
             <div className="flex flex-col items-center justify-center w-1/2 gap-2">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
-                <input type="checkbox" />
+                <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
               </label>
-              <ProductCard
-                shop="Preview"
-                title={form.name || "Nombre del producto"}
-                price={form.price ? form.price.toString() : "0"}
-                discountPrice={form.discount ? form.discount.toString() : undefined}
-                img={preview || undefined}
-                edit={false}
-              />
+              {/*Controlador para mostrar si es un ProductCard o FeaturedProductCard*/}
+              {isFeatured ? (
+                <FeaturedProductCard
+                  shop="Preview"
+                  title={form.name || "Nombre del producto"}
+                  price={form.price ? form.price.toString() : "0"}
+                  discountPrice={form.discount ? form.discount.toString() : undefined}
+                  img={preview || undefined}
+                  rating={5}
+                  edit={false}
+                />
+              ) : (
+                <ProductCard
+                  shop="Preview"
+                  title={form.name || "Nombre del producto"}
+                  price={form.price ? form.price.toString() : "0"}
+                  discountPrice={form.discount ? form.discount.toString() : undefined}
+                  img={preview || undefined}
+                  edit={false}
+                />
+              )}
+
               <div className="flex flex-col items-center gap-5 py-10 w-full">
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}

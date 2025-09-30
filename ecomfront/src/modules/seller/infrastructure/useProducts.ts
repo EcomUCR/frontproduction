@@ -69,7 +69,7 @@ export function useProducts() {
       formData.append("status", product.status ? "1" : "0");
       if (product.categories) {
         product.categories.forEach((cat) =>
-          formData.append("categories[]", cat.id.toString())
+          formData.append("categories[]", cat.toString())
         );
       }
       if (product.image) {
@@ -104,7 +104,7 @@ export function useProducts() {
       formData.append("status", product.status ? "1" : "0");
       if (product.categories) {
         product.categories.forEach((cat) =>
-          formData.append("categories[]", cat.id.toString())
+          formData.append("categories[]", cat.toString())
         );
       }
       if (product.image) {
