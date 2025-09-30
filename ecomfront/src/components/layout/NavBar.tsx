@@ -10,10 +10,33 @@ import {
 import logo from "../../img/tucaShopLogo.png";
 import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
+import { useProducts } from "../../modules/seller/infrastructure/useProducts";
+import { useEffect, useState } from "react";
+
+type Category = {
+  id: number;
+  name: string;
+};
 
 export default function NavBar() {
   const { user, logout } = useAuth();
+  const { getCategories } = useProducts();
   const navigate = useNavigate();
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        console.log("Categorías recibidas:", data);
+        setCategories(data);
+      } catch (err) {
+        console.error("Error al cargar categorías", err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Nombre a mostrar del usuario
   let displayName;
@@ -111,19 +134,17 @@ export default function NavBar() {
             <select
               defaultValue=""
               className="bg-transparent border-white focus:outline-none hover:cursor-pointer"
-            >
+              onChange={(e) => {
+                if (e.target.value) navigate(`/products/${e.target.value}`);
+              }}>
               <option value="" disabled hidden>
                 Categorías
               </option>
-              <option className="text-main-dark" value="cat1">
-                Categoría 1
-              </option>
-              <option className="text-main-dark" value="cat2">
-                Categoría 2
-              </option>
-              <option className="text-main-dark" value="cat3">
-                Categoría 3
-              </option>
+              {categories?.map((category) => (
+                <option key={category.id} value={category.id} className="text-black flex justify-center">
+                  {category.name}
+                </option>
+              ))}
             </select>
           </li>
           <li className="hover:-translate-y-1 transform transition-all duration-300">
