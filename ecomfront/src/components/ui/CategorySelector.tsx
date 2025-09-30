@@ -70,7 +70,7 @@ export default function CategorySelector({ categories, selected, setSelected }: 
                     return (
                         <div
                             key={id}
-                            className="bg-contrast-main text-white px-2 py-1 rounded-full flex items-center gap-1 text-sm"
+                            className="bg-contrast-secondary text-white px-2 py-1 rounded-full flex items-center gap-1 text-sm"
                         >
                             {cat.name}
                             <button type="button" onClick={() => handleRemove(id)}>
