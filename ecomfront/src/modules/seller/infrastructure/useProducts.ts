@@ -2,7 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 
 // ⚠️ Usamos el proxy de Vite: todas las llamadas a '/api' van a tu backend.
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "/api";
+
 
 // 📌 Tipos que vienen del backend Laravel
 export interface ProductImage {
@@ -177,7 +178,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/categories`);
-      return res.data;
+      return res.data.data ?? res.data;
     } catch (e: any) {
       setError("No se pudieron cargar las categorías");
       throw e;
