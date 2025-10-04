@@ -1,38 +1,35 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export type UserRole = "seller" | "client" | "admin";
+export type UserRole = "SELLER" | "CUSTOMER" | "ADMIN";
 
-export interface BackendMeResponse {
-  user: any;
-  client: any;
-  vendor: any;
-  staff: any;
-}
-
-export function getUserRole(data: BackendMeResponse): UserRole {
-  if (data.vendor) return "seller";
-  if (data.client) return "client";
-  if (data.staff) return "admin";
-  return "client"; // DEFAULT fallback, ajústalo si tienes otra lógica
+export interface UserData {
+  id: number;
+  email: string;
+  role: UserRole;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  // ... agrega los campos que tenga tu User
 }
 
 export default function useUser() {
-  const [me, setMe] = useState<BackendMeResponse | null>(null);
-  const [role, setRole] = useState<UserRole>("client");
+  const [user, setUser] = useState<UserData | null>(null);
+  const [role, setRole] = useState<UserRole | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get("/me")
       .then(res => {
-        setMe(res.data);
-        setRole(getUserRole(res.data));
+        setUser(res.data);
+        setRole(res.data.role); // role ya viene del backend
       })
       .catch(() => {
-        setMe(null);
+        setUser(null);
+        setRole(null);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  return { me, role, loading };
+  return { user, role, loading };
 }

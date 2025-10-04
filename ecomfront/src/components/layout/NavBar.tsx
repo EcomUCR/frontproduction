@@ -41,10 +41,9 @@ export default function NavBar() {
   // Nombre a mostrar del usuario
   let displayName;
   if (user) {
-    if (user.client && user.client.first_name) {
-      displayName = `${user.client.first_name} ${user.client.last_name}`;
-    } else if (user.vendor && user.vendor.name) {
-      displayName = user.vendor.name;
+    if (user.first_name || user.last_name) {
+      displayName =
+        `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() || user.email;
     } else {
       displayName = user.email;
     }
@@ -61,11 +60,12 @@ export default function NavBar() {
       {/*Esta es la parte superior del navbar*/}
       <div className="flex justify-between items-center ">
         <div className="w-1/3">
-          <Link to="/" className="text-white font-fugaz text-3xl flex items-center gap-3 p-2">
-
+          <Link
+            to="/"
+            className="text-white font-fugaz text-3xl flex items-center gap-3 p-2"
+          >
             <img src={logo} alt="" className="h-10 w-auto" />
             TucaShop
-
           </Link>
         </div>
         <div className="flex items-center bg-white rounded-full px-0.5 w-1/3">
@@ -136,12 +136,17 @@ export default function NavBar() {
               className="bg-transparent border-white focus:outline-none hover:cursor-pointer"
               onChange={(e) => {
                 if (e.target.value) navigate(`/search/${e.target.value}`);
-              }}>
+              }}
+            >
               <option value="" disabled hidden>
                 Categorías
               </option>
               {categories?.map((category) => (
-                <option key={category.id} value={category.id} className="text-black flex justify-center">
+                <option
+                  key={category.id}
+                  value={category.id}
+                  className="text-black flex justify-center"
+                >
                   {category.name}
                 </option>
               ))}
