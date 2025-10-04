@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import logo from "../../../../img/tucaShopLogo.png";
 import useRegister from "../../infrastructure/useRegister";
 
@@ -33,6 +33,7 @@ if (form.password !== form.password_confirmation) {
 }
 
 const payload = {
+  username: form.username,
   email: form.email,
   password: form.password,
   first_name: form.first_name || undefined,

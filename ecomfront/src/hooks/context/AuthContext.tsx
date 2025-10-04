@@ -43,7 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Tu backend retorna: { user, token }
       const { data } = await axios.post("/login", { email, password });
-
+      console.log("Respuesta del login:", data);
+      console.log(email, password);
       const accessToken = data.token; // <-- clave correcta
       if (!accessToken) throw new Error("Token no recibido");
 
