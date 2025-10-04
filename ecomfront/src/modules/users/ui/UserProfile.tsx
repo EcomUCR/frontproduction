@@ -52,7 +52,7 @@ export default function UserProfile({ type }: UserProfileProps) {
     return (
         <div className="mx-10  border-l-2 border-main-dark/20 pl-4">
             <div className="flex flex-col pl-10">
-                <h1 className="text-xl font-quicksand">Información de la cuenta</h1>
+                <h1 className="text-2xl font-quicksand font-semibold">Información de la cuenta</h1>
             </div>
 
             {type === "user" && (
@@ -209,7 +209,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                         ))}
 
                                         {adding && (
-                                            <div className="flex gap-2 items-center bg-main-dark/10 py-3 px-2 rounded-xl">
+                                            <div className="flex gap-1 items-center bg-main-dark/10 py-3 px-2 rounded-xl">
                                                 <select
                                                     value={newType}
                                                     onChange={(e) => setNewType(e.target.value as SocialLink["type"])}
@@ -225,7 +225,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                                     placeholder="Usuario o link"
                                                     value={newText}
                                                     onChange={(e) => setNewText(e.target.value)}
-                                                    className="bg-transparent outline-none flex-1"
+                                                    className="bg-transparent outline-none w-full"
                                                 />
                                                 <button
                                                     type="button"

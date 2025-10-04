@@ -8,6 +8,7 @@ import ButtonComponent from "../../../components/ui/ButtonComponent";
 import FeaturedProductsSlider from "../../../components/data-display/FeaturedProductsSlider";
 import ProductCard from "../../../components/data-display/ProductCard";
 import { IconArrowBackUp, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandWhatsapp, IconBrandX, IconHeart, IconLink, IconShare } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 
 type BorderColors = {
     description: string;
@@ -79,7 +80,7 @@ export default function ProductPage() {
             <div className="mx-auto max-w-[80rem]">
                 <section className="flex px-10 pt-5 font-quicksand ">
                     {/*Este botón es para volver a la pagina donde se estaba */}
-                    <ButtonComponent icon={<IconArrowBackUp />} text="Volver" style="flex text-sm px-2 items-center gap-2 rounded-full" /*onClick={() => window.history.back()}*/ />{/*Creo que esto se puede utilizar para volver a la ultima ventana, pero no estoy seguro*/}
+                    <ButtonComponent icon={<IconArrowBackUp />} text="Volver" style="flex text-sm px-2 items-center gap-2 rounded-full" onClick={() => window.history.back()} />
                 </section>
                 <section className="flex px-10 pt-10 font-quicksand">
                     <div className="w-3/12">
@@ -111,7 +112,9 @@ export default function ProductPage() {
                     <div className="w-6/12 px-20 border-r-2 border-main mr-5">
                         <div className="flex flex-col gap-5">
                             <h2 className="text-xl font-bold">Audifonos Razer edición Pokemon</h2>
-                            <a className="text-xs font-bold" href="">Visitar la tienda de Unstable Games</a>
+                            <Link to="/sellerPage" className="text-xs font-bold">
+                            Visitar la tienda de Unstable Games
+                            </Link>
                             <div className="flex gap-2">
                                 <StarRatingComponent value={4} size={12} />
                                 <p className="text-xs">(20)</p>

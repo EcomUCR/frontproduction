@@ -7,13 +7,36 @@ import {
   IconShoppingBag,
   IconUser,
 } from "@tabler/icons-react";
-import logo from "../../img/tucaShopLogo.png";
+import logo from "../../img/TukiLogo.png";
 import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
+import { useProducts } from "../../modules/seller/infrastructure/useProducts";
+import { useEffect, useState } from "react";
+
+type Category = {
+  id: number;
+  name: string;
+};
 
 export default function NavBar() {
   const { user, logout } = useAuth();
+  const { getCategories } = useProducts();
   const navigate = useNavigate();
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        console.log("Categorías recibidas:", data);
+        setCategories(data);
+      } catch (err) {
+        console.error("Error al cargar categorías", err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Nombre a mostrar del usuario
   let displayName;
@@ -38,14 +61,11 @@ export default function NavBar() {
       {/*Esta es la parte superior del navbar*/}
       <div className="flex justify-between items-center ">
         <div className="w-1/3">
-          <Link to="/">
-            <a
-              href="*"
-              className="text-white font-fugaz text-3xl flex items-center gap-3 p-2"
-            >
-              <img src={logo} alt="" className="h-8 w-auto" />
-              TucaShop
-            </a>
+          <Link to="/" className="text-white font-fugaz text-3xl flex items-center gap-3 p-2">
+
+            <img src={logo} alt="" className="h-10 w-auto" />
+            TucaShop
+
           </Link>
         </div>
         <div className="flex items-center bg-white rounded-full px-0.5 w-1/3">
@@ -92,12 +112,12 @@ export default function NavBar() {
             <div className="flex space-x-2 items-center">
               <li>
                 <a href="#" className="">
-                  <IconHeart className="h-5 w-5" />
+                  <IconHeart className="h-6 w-6" />
                 </a>
               </li>
               <li>
                 <Link to="/shoppingCart">
-                  <IconShoppingBag className="h-5 w-5" />
+                  <IconShoppingBag className="h-6 w-6" />
                 </Link>
               </li>
             </div>
@@ -111,19 +131,20 @@ export default function NavBar() {
           <li className="flex items-center  hover:-translate-y-1 transform transition-all duration-300">
             {/*ItemList para desplegar las categorías*/}
             <IconMenu2 className="h-5 w-5" />
-            <select className="bg-transparent border-white focus:outline-none hover:cursor-pointer">
-              <option disabled value="" selected hidden>
+            <select
+              defaultValue=""
+              className="bg-transparent border-white focus:outline-none hover:cursor-pointer"
+              onChange={(e) => {
+                if (e.target.value) navigate(`/search/${e.target.value}`);
+              }}>
+              <option value="" disabled hidden>
                 Categorías
               </option>
-              <option className="text-main-dark" value="#">
-                Categoría 1
-              </option>
-              <option className="text-main-dark" value="#">
-                Categoría 2
-              </option>
-              <option className="text-main-dark" value="#">
-                Categoría 3
-              </option>
+              {categories?.map((category) => (
+                <option key={category.id} value={category.id} className="text-black flex justify-center">
+                  {category.name}
+                </option>
+              ))}
             </select>
           </li>
           <li className="hover:-translate-y-1 transform transition-all duration-300">

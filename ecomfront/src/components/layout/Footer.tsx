@@ -1,5 +1,5 @@
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandX } from "@tabler/icons-react";
-import logo from "../../img/tucaShopLogo.png";
+import logo from "../../img/TukiLogo.png";
 export default function Footer() {
     return (
         <footer className="h-auto py-10 bg-main text-white flex flex-col items-center font-quicksand px-10 space-y-10">

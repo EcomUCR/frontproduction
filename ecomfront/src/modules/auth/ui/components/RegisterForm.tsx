@@ -1,5 +1,5 @@
-import { use, useState } from "react";
-import logo from "../../../../img/tucaShopLogo.png";
+import { useState } from "react";
+import logo from "../../../../img/TukiLogo.png";
 import useRegister from "../../infrastructure/useRegister";
 
 type Props = {
