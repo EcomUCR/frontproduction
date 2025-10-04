@@ -1,23 +1,16 @@
-import  { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import axios from "axios";
+
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
-// Crea el tipado de tu valor de contexto:
 type UserType = {
   id: number;
   email: string;
-  client?: {
-    first_name: string;
-    last_name: string;
-    // otros campos...
-  };
-  vendor?: {
-    name: string;
-    // otros campos...
-  };
-  // staff?: { ... };
-  // etc.
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  role?: "ADMIN" | "SELLER" | "CUSTOMER";
 };
 
 type AuthContextType = {
@@ -35,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem("access_token")
   );
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (token) {
@@ -45,56 +38,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
-  useEffect(() => {
-    async function fetchUser() {
-      setLoading(true);
-      try {
-        if (token) {
-          const { data } = await axios.get("/me");
-          setUser({
-            ...data.user,
-            client: data.client,
-            vendor: data.vendor,
-            // staff: data.staff,
-          });
-        } else {
-          setUser(null);
-        }
-      } catch {
-        setUser(null);
-        setToken(null);
-        localStorage.removeItem("access_token");
-      }
-      setLoading(false);
-    }
-    fetchUser();
-    // eslint-disable-next-line
-  }, [token]);
-
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
+      // Tu backend retorna: { user, token }
       const { data } = await axios.post("/login", { email, password });
-      setToken(data.access_token);
-      localStorage.setItem("access_token", data.access_token);
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.access_token}`;
 
-      // Haz un GET /me para cargar el usuario expandido del backend
-      const { data: meData } = await axios.get("/me");
-      setUser({
-        ...meData.user,
-        client: meData.client,
-        vendor: meData.vendor,
-        staff: meData.staff,
-      });
+      const accessToken = data.token; // <-- clave correcta
+      if (!accessToken) throw new Error("Token no recibido");
+
+      setToken(accessToken);
+      localStorage.setItem("access_token", accessToken);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+
+      // Usa el usuario que ya viene en la respuesta del backend
+      setUser(data.user);
 
       setLoading(false);
       return true;
     } catch {
       setUser(null);
       setToken(null);
+      localStorage.removeItem("access_token");
+      delete axios.defaults.headers.common["Authorization"];
       setLoading(false);
       return false;
     }
@@ -102,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await axios.post("/logout");
+      await axios.post("/logout"); // si no existe en backend, puedes omitir el await
     } catch {}
     setUser(null);
     setToken(null);
@@ -117,7 +83,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook de acceso tipado
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

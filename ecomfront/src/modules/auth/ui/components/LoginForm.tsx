@@ -13,6 +13,7 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    console.log("Email:", email, "Password:", password);
     // Usar SIEMPRE el login de AuthContext
     const success = await login(email, password);
     if (!success) {

@@ -2,13 +2,12 @@ import { useState } from 'react';
 import axios from 'axios';
 
 export type RegisterData = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  username: string;
-  password: string;
-  password_confirmation: string;
-  type: string;
+email: string;
+password: string;
+first_name?: string;
+last_name?: string;
+phone_number?: string;
+role: 'ADMIN' | 'SELLER' | 'CUSTOMER';
 };
 
 export default function useRegister() {
@@ -19,7 +18,7 @@ export default function useRegister() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`, data);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/users`, data);
       setLoading(false);
       return response.data;
     } catch (err: any) {
