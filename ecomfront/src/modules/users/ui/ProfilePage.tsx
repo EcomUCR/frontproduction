@@ -18,7 +18,7 @@ export default function UserPage() {
                     <SideBar type="SELLER" onSelect={setSelected} selected={selected} />
                 </div>
                 <div className="w-[75%]">
-                    {selected === "profile" && <UserProfile type="SELLER" user={undefined} />}
+                    {selected === "profile" && <UserProfile type="SELLER"/>}
                     {selected === "transactions" && <TransactionHistory />}
                     {selected === "products" && <SellerProductsList />}
                 </div>
