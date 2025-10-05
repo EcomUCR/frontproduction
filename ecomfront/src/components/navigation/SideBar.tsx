@@ -1,7 +1,7 @@
 import { IconBuildingStore, IconClipboardText, IconFileCheck, IconUser } from "@tabler/icons-react";
 
 interface SideBarProps {
-    type: "SELLER" | "CUSTOMER";
+    type: "SELLER" | "CUSTOMER"| "ADMIN" | null | undefined; // tipo de usuario
     onSelect: (section: string) => void;
     selected: string; // sección seleccionada
 }

@@ -15,7 +15,7 @@ import {
 } from "@tabler/icons-react";
 
 interface UserProfileProps {
-    type: "CUSTOMER" | "SELLER";
+    type: "CUSTOMER" | "SELLER" | "ADMIN" | null | undefined; // tipo de usuario
 }
 
 interface SocialLink {

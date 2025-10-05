@@ -10,7 +10,12 @@ type UserType = {
   first_name?: string;
   last_name?: string;
   phone_number?: string;
-  role?: "ADMIN" | "SELLER" | "CUSTOMER";
+  role: "ADMIN" | "SELLER" | "CUSTOMER";
+  store?: {
+    id: number;
+    name: string;
+    description?: string;
+  } | null;
 };
 
 type AuthContextType = {
@@ -31,11 +36,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    } else {
-      delete axios.defaults.headers.common["Authorization"];
+    if (!token) {
+      setUser(null);
+      return;
     }
+    setLoading(true);
+    axios
+      .get("/me")
+      .then((res) => setUser(res.data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, [token]);
 
   const login = async (email: string, password: string) => {
