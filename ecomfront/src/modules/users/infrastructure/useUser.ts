@@ -9,7 +9,6 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  store?: Store | null;
 }
 
 export interface Store {
