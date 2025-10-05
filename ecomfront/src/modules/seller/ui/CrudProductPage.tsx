@@ -5,9 +5,14 @@ import ButtonComponent from "../../../components/ui/ButtonComponent";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import ProductCard from "../../../components/data-display/ProductCard";
-import { IconArrowBackUp } from "@tabler/icons-react";
+import { IconArrowBackUp, IconWand } from "@tabler/icons-react";
 import FeaturedProductCard from "../../../components/data-display/FeaturedProductCard";
 import CategorySelector from "../../../components/ui/CategorySelector";
+
+type ProductForm = Omit<Product, "price" | "discount"> & {
+  price: string | number;
+  discount: string | number;
+};
 
 export default function CrudProductPage() {
   const {
@@ -21,7 +26,7 @@ export default function CrudProductPage() {
 
   const [isFeatured, setIsFeatured] = useState(false);
 
-  const [form, setForm] = useState<Product>({
+  const [form, setForm] = useState<ProductForm>({
     name: "",
     description: "",
     price: 0,
@@ -34,6 +39,8 @@ export default function CrudProductPage() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
+  const [errorPrice, setErrorPrice] = useState<string | null>(null);
+  const [errorDiscount, setErrorDiscount] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -45,11 +52,16 @@ export default function CrudProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const dataToSend = {
+      ...form,
+      price: Number(form.price),
+      discount: Number(form.discount),
+    };
     try {
       if (form.id) {
-        await updateProduct(form.id, form);
+        await updateProduct(form.id, dataToSend);
       } else {
-        await createProduct(form);
+        await createProduct(dataToSend);
         setForm({
           name: "",
           description: "",
@@ -62,9 +74,7 @@ export default function CrudProductPage() {
         });
         setPreview(null);
       }
-    } catch (err) {
-      // El error se muestra en el hook
-    }
+    } catch (err) { }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,8 +102,8 @@ export default function CrudProductPage() {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mx-30 flex flex-col gap-10 py-10">
-            <div className="w-full flex gap-5">
-              <label className="flex flex-col w-6/12 gap-2">
+            <div className="w-full flex justify-between">
+              <label className="flex flex-col w-5/12 gap-2">
                 <p className="font-semibold">
                   Nombre del producto <span className="text-red-500">*</span>
                 </p>
@@ -104,7 +114,7 @@ export default function CrudProductPage() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="Nombre"
-                  className="bg-main-dark/20 rounded-2xl p-2 w-2/3"
+                  className="bg-main-dark/20 rounded-2xl p-2 w-auto"
                 />
               </label>
               <div className="flex w-6/12 gap-5">
@@ -113,26 +123,58 @@ export default function CrudProductPage() {
                     Precio <span className="text-red-500">*</span>
                   </p>
                   <input
-                    type="number"
+                    type="text"
                     value={form.price}
-                    onChange={(e) =>
-                      setForm({ ...form, price: Number(e.target.value) })
-                    }
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      if (/^\d*\.?\d*$/.test(value) || value === "") {
+                        if (/^0+\d/.test(value)) {
+                          value = value.replace(/^0+/, "");
+                        }
+                        setForm({ ...form, price: value });
+                        setErrorPrice(null);
+                      } else {
+                        setErrorPrice("Solo se permiten valores numéricos");
+                      }
+                    }}
+                    onBlur={() => {
+                      setForm({ ...form, price: Number(form.price) || 0 });
+                    }}
                     placeholder="Precio"
-                    className="bg-main-dark/20 rounded-2xl p-2"
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorPrice ? "border border-red-500" : ""
+                      }`}
                   />
+                  {errorPrice && (
+                    <p className="text-red-500 text-sm">{errorPrice}</p>
+                  )}
                 </label>
                 <label className="flex flex-col w-full gap-2">
                   <p className="font-semibold">Precio de oferta</p>
                   <input
-                    type="number"
+                    type="text"
                     value={form.discount}
-                    onChange={(e) =>
-                      setForm({ ...form, discount: Number(e.target.value) })
-                    }
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      if (/^\d*\.?\d*$/.test(value) || value === "") {
+                        if (/^0+\d/.test(value)) {
+                          value = value.replace(/^0+/, "");
+                        }
+                        setForm({ ...form, discount: value });
+                        setErrorDiscount(null);
+                      } else {
+                        setErrorDiscount("Solo se permiten valores numéricos");
+                      }
+                    }}
+                    onBlur={() => {
+                      setForm({ ...form, discount: Number(form.discount) || 0 });
+                    }}
                     placeholder="Precio de oferta"
-                    className="bg-main-dark/20 rounded-2xl p-2"
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorDiscount ? "border border-red-500" : ""
+                      }`}
                   />
+                  {errorDiscount && (
+                    <p className="text-red-500 text-sm">{errorDiscount}</p>
+                  )}
                 </label>
               </div>
             </div>
@@ -180,42 +222,51 @@ export default function CrudProductPage() {
               </div>
             </div>
           </div>
-          {/* Imagen y preview */}
-          <div className="flex gap-2 w-full px-30">
-            <div className="flex flex-col w-1/2 gap-6">
-              <label className="w-full">
+          <div className="flex gap-2 w-full justify-between px-30">
+            <div className="flex flex-col w-5/12 gap-6">
+              <label className="flex flex-col w-full gap-2">
                 <p className="font-semibold">Sobre este producto</p>
-                <textarea
-                  placeholder="Sobre este producto"
-                  value={form.description}
-                  onChange={(e) =>
-                    setForm({ ...form, description: e.target.value })
-                  }
-                  cols={50}
-                  rows={5}
-                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-auto"
-                />
+                <div className="flex flex-col gap-2">
+                  <textarea
+                    placeholder="Sobre este producto"
+                    value={form.description}
+                    onChange={(e) =>
+                      setForm({ ...form, description: e.target.value })
+                    }
+                    cols={30}
+                    rows={5}
+                    className="bg-main-dark/20 rounded-xl px-3 py-2 w-auto"
+                  />
+                  <div className="flex w-full justify-center">
+                    <ButtonComponent
+                      type="button"
+                      text="Autogenerar descripción"
+                      icon={<IconWand />}
+                      style="flex justify-center text-sm w-[50%] px-2 py-2 items-center gap-2 rounded-full bg-main text-white cursor-pointer hover:bg-contrast-secondary transition-colors duration-300 ease-in-out"
+                    />
+                  </div>
+                </div>
               </label>
-              <label>
+              <label className="flex flex-col gap-2">
                 <p className="font-semibold">Agregar imágenes</p>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="bg-main-dark/20 rounded-2xl p-2 w-auto"
+                  className="bg-main-dark/20 rounded-2xl p-2 w-full cursor-pointer"
                 />
               </label>
             </div>
-            <div className="flex flex-col items-center justify-center w-1/2 gap-2">
+            <div className="flex flex-col items-center justify-center w-6/12 gap-2">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
                 <input
                   type="checkbox"
                   checked={isFeatured}
                   onChange={(e) => setIsFeatured(e.target.checked)}
+                  className="cursor-pointer"
                 />
               </label>
-              {/* Preview */}
               {isFeatured ? (
                 <FeaturedProductCard
                   shop="Preview"
@@ -243,12 +294,12 @@ export default function CrudProductPage() {
               <div className="flex flex-col items-center gap-5 py-10 w-full">
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
-                  style="text-white text-lg p-2 items-center rounded-full bg-contrast-main w-2/3"
+                  style="text-white text-lg p-2 items-center rounded-full bg-contrast-main w-2/3 hover:bg-contrast-secondary transition-all duration-400 cursor-pointer"
                   type="submit"
                 />
                 <ButtonComponent
                   text="Cancelar"
-                  style="text-white text-lg p-2 items-center rounded-full bg-main-dark w-2/3"
+                  style="text-white text-lg p-2 items-center rounded-full bg-main-dark w-2/3 hover:bg-main transition-all duration-400 cursor-pointer"
                   onClick={() => window.history.back()}
                 />
               </div>

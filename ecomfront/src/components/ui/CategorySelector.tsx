@@ -30,7 +30,7 @@ export default function CategorySelector({ categories, selected, setSelected }: 
             <button
                 type="button"
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 bg-main-dark/20 p-2 rounded-full"
+                className="flex items-center gap-2 bg-main-dark/20 p-2 rounded-full cursor-pointer"
             >
                 <IconPlus size={16} />
                 Agregar categoría
