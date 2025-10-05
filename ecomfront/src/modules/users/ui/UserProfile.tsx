@@ -63,6 +63,7 @@ export default function UserProfile({ type }: UserProfileProps) {
     try {
       if (user?.id) {
         const storeData = await getStoreByUser(user.id);
+        console.log("Tienda obtenida:", storeData);
         setStore(storeData);
       }
     } catch (error) {
