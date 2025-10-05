@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useProducts } from "../infrastructure/useProducts";
+import { useOpenAI } from "../infrastructure/useOpenAI";
 import type { Product, Category } from "../infrastructure/useProducts";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import Footer from "../../../components/layout/Footer";
@@ -23,6 +24,8 @@ export default function CrudProductPage() {
     error,
     success,
   } = useProducts();
+
+  const { getDescription, loading: loadingDescription, error: errorDescription } = useOpenAI();
 
   const [isFeatured, setIsFeatured] = useState(false);
 
@@ -49,6 +52,13 @@ export default function CrudProductPage() {
     };
     fetchCategories();
   }, []);
+
+  const handleGenerateDescription = async () => {
+    const description = await getDescription(form.name);
+    if (description) {
+      setForm({ ...form, description: description });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,13 +247,17 @@ export default function CrudProductPage() {
                     rows={5}
                     className="bg-main-dark/20 rounded-xl px-3 py-2 w-auto"
                   />
-                  <div className="flex w-full justify-center">
+                  <div className="flex flex-col w-full items-center">
                     <ButtonComponent
                       type="button"
-                      text="Autogenerar descripción"
+                      text={loadingDescription ? "Cargando..." : "Autogenerar descripción"}
+                      onClick={handleGenerateDescription}
                       icon={<IconWand />}
                       style="flex justify-center text-sm w-[50%] px-2 py-2 items-center gap-2 rounded-full bg-main text-white cursor-pointer hover:bg-contrast-secondary transition-colors duration-300 ease-in-out"
                     />
+                    {errorDescription && (
+                      <p className="text-red-500 text-sm text-center">{errorDescription}</p>
+                    )}
                   </div>
                 </div>
               </label>
