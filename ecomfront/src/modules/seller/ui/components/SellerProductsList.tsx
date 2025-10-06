@@ -8,6 +8,7 @@ import { useProducts, type Product } from "../../infrastructure/useProducts";
 import { useAuth } from "../../../../hooks/context/AuthContext";
 import { getStoreByUser } from "../../../users/infrastructure/storeService";
 import audifonos from "../../../../img/resources/audifonos.jpg";
+import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";
 
 interface Store {
   id: number;
@@ -91,46 +92,58 @@ export default function SellerProductsList() {
         {loading && <p className="col-span-3 text-gray-500">Cargando productos...</p>}
         {error && <p className="col-span-3 text-red-500">{error}</p>}
         {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              shop={store?.name || "Sin vendedor"}
-              title={product.name}
-              price={product.price.toString()}
-              discountPrice={product.discount_price?.toString() || undefined}
-              img={product.image_url ? product.image_url : audifonos}
-              edit
-              id={0}            />
-          ))
+          filteredProducts
+            .filter((p) => !p.is_featured)
+            .map((product) => (
+              <ProductCard
+                key={product.id}
+                shop={store?.name || product.store?.name || "Sin vendedor"}
+                title={product.name}
+                price={product.price.toString()}
+                discountPrice={product.discount_price?.toString() || undefined}
+                img={product.image_url ? product.image_url : audifonos}
+                edit
+                id={product.id ?? 0}
+              />
+            ))
         ) : (
-          !loading && <p className="col-span-3 text-gray-500">No hay productos</p>
+          !loading && (
+            <p className="col-span-3 text-gray-500">No hay productos</p>
+          )
         )}
+
       </section>
 
       {/* Productos destacados */}
       <section className="my-10">
         <h2 className="text-2xl font-semibold font-quicksand">Productos destacados</h2>
-        {/*<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 justify-items-center py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 justify-items-center py-10">
           {filteredProducts
-            .filter((p) => p.discount && p.discount > 0)
+            .filter((p) => p.is_featured === true)
             .slice(0, 4)
             .map((product) => (
               <FeaturedProductCard
                 key={product.id}
-                shop={product.vendor?.name || "Sin vendedor"}
+                shop={store?.name || product.store?.name || "Sin vendedor"}
                 img={
-                  product.images?.length
-                    ? product.images[0].url
+                  product.image_url
+                    ? product.image_url
                     : "https://via.placeholder.com/300x200?text=Sin+Imagen"
                 }
                 title={product.name}
                 price={product.price.toString()}
-                discountPrice={product.discount?.toString() || undefined}
+                discountPrice={
+                  product.discount_price
+                    ? product.discount_price.toString()
+                    : undefined
+                }
                 rating={4.5}
                 edit
+                id={product.id ?? 0}
               />
             ))}
-        </div>*/}
+        </div>
+
       </section>
     </div>
   );
