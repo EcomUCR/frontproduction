@@ -12,16 +12,16 @@ import CategorySlider from "../../../components/data-display/CategorySlider";
 import ProductCard from "../../../components/data-display/ProductCard";
 import { IconChevronRight } from "@tabler/icons-react";
 import Footer from "../../../components/layout/Footer";
-
+import { useAuth } from "../../../hooks/context/AuthContext";
 export default function HomePage() {
   const { getProducts, getFeaturedProducts } = useProducts();
   const [offerProducts, setOfferProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-
+  const { user } = useAuth();
   useEffect(() => {
     (async () => {
       const prods = await getProducts();
-      setOfferProducts(prods.slice(0, 5));
+      setOfferProducts(prods.slice(0, 10));
     })();
   }, []);
 
