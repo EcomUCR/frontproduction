@@ -96,9 +96,9 @@ export default function UserProfile({ type }: UserProfileProps) {
     setAdding(false);
   };
 
-  const removeSocialLink = (index: number) => {
+  /*const removeSocialLink = (index: number) => {
     setSocialLinks((prev) => prev.filter((_, i) => i !== index));
-  };
+  };*/
 
   const handleCancel = () => {
     setEditableStore(store);
