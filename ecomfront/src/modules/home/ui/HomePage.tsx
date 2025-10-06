@@ -13,65 +13,25 @@ import ProductCard from "../../../components/data-display/ProductCard";
 import { IconChevronRight } from "@tabler/icons-react";
 import Footer from "../../../components/layout/Footer";
 
-/* Esto es para probar como se visualizan los items en el slider */
-const featuredProducts = [
-  {
-    id: 1,
-    shop: "Razer",
-    title: "Audifonos Razer x Pokemon | Edición Gengar",
-    price: "100.000",
-    discountPrice: "50.000",
-    rating: 4.5,
-    img: audifonos,
-  },
-  {
-    id: 1,
-    shop: "Razer",
-    title: "Audifonos Razer x Pokemon | Edición Gengar",
-    price: "100.000",
-    discountPrice: "50.000",
-    rating: 4.5,
-    img: audifonos,
-  },
-  {
-    id: 1,
-    shop: "Razer",
-    title: "Audifonos Razer x Pokemon | Edición Gengar",
-    price: "100.000",
-    discountPrice: "50.000",
-    rating: 4.5,
-    img: audifonos,
-  },
-  {
-    id: 1,
-    shop: "Razer",
-    title: "Audifonos Razer x Pokemon | Edición Gengar",
-    price: "100.000",
-    discountPrice: "50.000",
-    rating: 2.7,
-    img: audifonos,
-  },
-  {
-    id: 1,
-    shop: "Razer",
-    title: "Audifonos Razer x Pokemon | Edición Gengar",
-    price: "100.000",
-    discountPrice: "50.000",
-    rating: 4.5,
-    img: audifonos,
-  },
-];
-
 export default function HomePage() {
-  const { getProducts } = useProducts();
+  const { getProducts, getFeaturedProducts } = useProducts();
   const [offerProducts, setOfferProducts] = useState<Product[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     (async () => {
       const prods = await getProducts();
-      setOfferProducts(prods.slice(0, 5)); // Solo los primeros 5, por ejemplo
+      setOfferProducts(prods.slice(0, 5));
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const prods = await getFeaturedProducts();
+      setFeaturedProducts(prods); // O un slice si quieres limitarlo
+    })();
+  }, []);
+
   return (
     <div>
       <NavBar />
@@ -86,7 +46,19 @@ export default function HomePage() {
             Productos destacados
           </h2>
           <div>
-            <FeaturedProductsSlider products={featuredProducts} />
+            <FeaturedProductsSlider
+              products={featuredProducts.map((prod) => ({
+                id: prod.id!,
+                shop: "Tienda", // Cambia aquí por prod.shop si tienes ese campo
+                title: prod.name,
+                price: prod.price.toLocaleString("es-CL"),
+                discountPrice: prod.discount_price
+                  ? prod.discount_price.toLocaleString("es-CL")
+                  : "",
+                rating: 0, // O ajusta si no tienes rating!
+                img: prod.image_url || audifonos,
+              }))}
+            />{" "}
           </div>
         </section>
         {/* Section Categorías */}

@@ -42,7 +42,19 @@ export function useProducts() {
       setLoading(false);
     }
   };
-
+  const getFeaturedProducts = async (): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/products/featured`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos destacados");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
   // Subir imagen y obtener URL de cloudinary
   const uploadImage = async (imageFile: File): Promise<string> => {
     const formData = new FormData();
@@ -137,5 +149,5 @@ export function useProducts() {
       setLoading(false);
     }
   };
-  return { getProducts, getCategories, createProduct, updateProduct, loading, error, success };
+  return { getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
 }
