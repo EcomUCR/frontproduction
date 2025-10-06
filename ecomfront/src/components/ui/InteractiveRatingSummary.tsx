@@ -1,5 +1,5 @@
 import { IconStar, IconStarFilled } from "@tabler/icons-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface InteractiveRatingSummaryProps {
     initialValue?: number;
