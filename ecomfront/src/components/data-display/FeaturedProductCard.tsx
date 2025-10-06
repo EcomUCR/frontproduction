@@ -49,7 +49,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
               <p className="font-comme">₡ {props.discountPrice}</p>
             </>
           ) : (
-            <p>₡ {props.price}</p>
+            <p className="font-comme">₡ {props.price}</p>
           )}
         </div>
         {!props.edit && (

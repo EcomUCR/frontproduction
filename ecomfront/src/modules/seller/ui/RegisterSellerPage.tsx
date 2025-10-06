@@ -44,7 +44,7 @@ export default function RegisterSellerPage() {
       // Loguea y redirige:
       const loginSuccess = await login(form.email, form.password);
       if (loginSuccess) {
-        navigate("/sellerPage"); // Cambia la ruta a la deseada tras registro
+        navigate("/"); // Cambia la ruta a la deseada tras registro
       }
     } catch (err: any) {
       setRegisterError(

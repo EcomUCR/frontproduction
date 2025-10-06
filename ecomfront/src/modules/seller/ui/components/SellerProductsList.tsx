@@ -87,7 +87,7 @@ export default function SellerProductsList() {
       </section>
 
       {/* Lista de productos */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center py-10 border-b-2 border-main">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center py-10 border-b-2 border-main space-y-3">
         {loading && <p className="col-span-3 text-gray-500">Cargando productos...</p>}
         {error && <p className="col-span-3 text-red-500">{error}</p>}
         {filteredProducts.length > 0 ? (
@@ -100,7 +100,7 @@ export default function SellerProductsList() {
               discountPrice={product.discount_price?.toString() || undefined}
               img={product.image_url ? product.image_url : audifonos}
               edit
-            />
+              id={0}            />
           ))
         ) : (
           !loading && <p className="col-span-3 text-gray-500">No hay productos</p>

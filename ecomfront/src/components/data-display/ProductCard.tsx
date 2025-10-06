@@ -64,7 +64,7 @@ export default function ProductCard(props: ProductCardProps) {
                     <p className="font-comme">₡ {props.discountPrice}</p>
                   </>
                 ) : (
-                  <p>₡ {props.price}</p>
+                  <p className="font-comme">₡ {props.price}</p>
                 )}
               </div>
             </div>

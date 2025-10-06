@@ -79,25 +79,30 @@ export function useProducts() {
     setLoading(true);
     setError(null);
     setSuccess(null);
+
     try {
       const store = await getStoreByUser(user?.id ?? 0);
 
       if (!store || !store.id) {
         throw new Error("No se encontró la tienda asociada al usuario");
       }
+
       const store_id = store.id;
 
-      let imageUrl = "";
-
-      // Subir la imagen si es un File
-      if (product.image && product.image instanceof File) {
-        imageUrl = await uploadImage(product.image);
+      // ⚠️ Validar si se subió imagen antes de continuar
+      if (!product.image || !(product.image instanceof File)) {
+        setError("Debes subir una imagen antes de crear el producto");
+        setLoading(false);
+        return;
       }
-      // Ajustar los payload
+
+      // Subir la imagen
+      const imageUrl = await uploadImage(product.image);
+
+      // Payload del producto
       const payload: any = {
-        // store_id: ... (debes obtenerlo de la sesión o contexto!)
-        store_id: store_id, // 🔴 Cambia esto por el store real!
-        sku: product.name,//.substring(0, 30) + Date.now(), // Generas uno temporal
+        store_id: store_id,
+        sku: product.name,
         name: product.name,
         description: product.description || "",
         price: product.price,
@@ -105,13 +110,11 @@ export function useProducts() {
         stock: product.stock,
         status: product.status ? 1 : 0,
         is_featured: product.is_featured,
-        image_url: imageUrl,
-        // Agrega más si tu tabla productos lo requiere.
+        image_url: imageUrl, // ✅ Ahora garantizado que existe
       };
 
-      // Enviar producto
+      // Enviar producto al backend
       await axios.post(`${BASE_URL}/products`, payload);
-
       setSuccess("¡Producto creado con éxito!");
     } catch (e: any) {
       setError("Error al crear el producto: " + (e.response?.data?.message || e.message));
@@ -119,6 +122,7 @@ export function useProducts() {
       setLoading(false);
     }
   };
+
 
   // Editar producto
   const updateProduct = async (id: number, product: Product) => {
@@ -166,18 +170,18 @@ export function useProducts() {
   };
 
   const getProductById = async (id: number): Promise<Product | null> => {
-  setLoading(true);
-  setError(null);
-  try {
-    const res = await axios.get(`${BASE_URL}/products/${id}`);
-    return res.data;
-  } catch (e: any) {
-    setError("No se pudo cargar el producto");
-    return null;
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/products/${id}`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudo cargar el producto");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const getProductsByStore = async (store_id: number): Promise<Product[]> => {
@@ -195,5 +199,5 @@ export function useProducts() {
   };
 
 
-  return { getProductById,getProductsByStore, getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
+  return { getProductById, getProductsByStore, getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
 }
