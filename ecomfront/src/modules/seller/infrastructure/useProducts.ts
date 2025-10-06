@@ -11,6 +11,7 @@ export type Category = {
 };
 
 export type Product = {
+  store_id?: number;
   id?: number;
   name: string;
   description?: string;
