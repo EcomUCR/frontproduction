@@ -83,7 +83,7 @@ export function useProducts() {
       // Ajustar los payload
       const payload: any = {
         // store_id: ... (debes obtenerlo de la sesión o contexto!)
-        store_id: 1, // 🔴 Cambia esto por el store real!
+        store_id: product.store_id, // 🔴 Cambia esto por el store real!
         sku: product.name,//.substring(0, 30) + Date.now(), // Generas uno temporal
         name: product.name,
         description: product.description || "",
