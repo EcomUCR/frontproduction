@@ -195,7 +195,7 @@ export default function UserProfile({ type }: UserProfileProps) {
               <section className="flex flex-col gap-10">
                 <div className="flex gap-10">
                   <label htmlFor="" className="flex flex-col w-full">
-                    Nombre de la tienda
+                    {store?.name || "Nombre de la tienda"}
                     <textarea
                       rows={2}
                       placeholder={store?.name || "Nombre de la tienda"}
