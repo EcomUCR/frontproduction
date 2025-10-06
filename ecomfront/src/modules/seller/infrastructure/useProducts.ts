@@ -165,6 +165,21 @@ export function useProducts() {
     }
   };
 
+  const getProductById = async (id: number): Promise<Product | null> => {
+  setLoading(true);
+  setError(null);
+  try {
+    const res = await axios.get(`${BASE_URL}/products/${id}`);
+    return res.data;
+  } catch (e: any) {
+    setError("No se pudo cargar el producto");
+    return null;
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   const getProductsByStore = async (store_id: number): Promise<Product[]> => {
     setLoading(true);
     setError(null);
@@ -180,5 +195,5 @@ export function useProducts() {
   };
 
 
-  return { getProductsByStore, getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
+  return { getProductById,getProductsByStore, getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
 }

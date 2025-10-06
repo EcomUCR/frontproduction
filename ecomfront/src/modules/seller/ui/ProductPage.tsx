@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import audifonos from "../../../img/resources/audifonos.jpg";
@@ -6,9 +6,11 @@ import FormShopping from "../../../components/forms/FormShopping";
 import StarRatingComponent from "../../../components/ui/StarRatingComponent";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import FeaturedProductsSlider from "../../../components/data-display/FeaturedProductsSlider";
-import ProductCard from "../../../components/data-display/ProductCard";
+//import ProductCard from "../../../components/data-display/ProductCard";
 import { IconArrowBackUp, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandWhatsapp, IconBrandX, IconHeart, IconLink, IconShare } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import type { Product } from "../../seller/infrastructure/useProducts";
+import { useProducts } from "../../seller/infrastructure/useProducts";
 
 type BorderColors = {
     description: string;
@@ -71,8 +73,23 @@ const featuredProducts = [
 ];
 
 export default function ProductPage() {
+    const { id } = useParams(); // ← obtiene el ID de la URL
+    const { getProductById } = useProducts();
+    const [product, setProduct] = useState<Product | null>(null);
+
     const [activeTab, setActiveTab] = useState<keyof BorderColors>("description");
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (id) {
+            (async () => {
+                const prod = await getProductById(Number(id));
+                setProduct(prod);
+            })();
+        }
+    }, [id]);
+
+    if (!product) return <div>Cargando producto...</div>;
 
     return (
         <div>
@@ -85,12 +102,12 @@ export default function ProductPage() {
                 <section className="flex px-10 pt-10 font-quicksand">
                     <div className="w-3/12">
                         <div>
-                            <img className="rounded-2xl" src={audifonos} alt="" />
-                            <div className="flex justify-between pt-5 pb-10">
+                            <img className="rounded-2xl" src={product.image_url} alt="" />
+                            {/* <div className="flex justify-between pt-5 pb-10">
                                 <img className="w-20 h-auto rounded-xl p-1 border border-main hover:border-2" src={audifonos} alt="" />
                                 <img className="w-20 h-auto rounded-xl p-1 border border-main hover:border-2" src={audifonos} alt="" />
                                 <img className="w-20 h-auto rounded-xl p-1 border border-main hover:border-2" src={audifonos} alt="" />
-                            </div>
+                            </div>*/}
                         </div>
                         <div className="border-t-2 border-main pt-10">
                             <div className="flex relative border border-contrast-secondary rounded-full px-3 py-2">
@@ -111,17 +128,23 @@ export default function ProductPage() {
                     </div>
                     <div className="w-6/12 px-20 border-r-2 border-main mr-5">
                         <div className="flex flex-col gap-5">
-                            <h2 className="text-xl font-bold">Audifonos Razer edición Pokemon</h2>
+                            <h2 className="text-xl font-bold">{product.name}</h2>
                             <Link to="/sellerPage" className="text-xs font-bold">
-                            Visitar la tienda de Unstable Games
+                                Visitar la tienda de Unstable Games
                             </Link>
                             <div className="flex gap-2">
                                 <StarRatingComponent value={4} size={12} />
                                 <p className="text-xs">(20)</p>
                             </div>
                             <div className="font-comme">
-                                <p className="text-xs line-through">₡10.000</p>
-                                <p className="text-2xl font-bold text-main">₡5.000</p>
+                                {product.discount_price && product.discount_price > 0 ? (
+                                    <>
+                                        <p className="text-xs line-through">₡{product.price}</p>
+                                        <p className="text-2xl font-bold text-main">₡{product.discount_price}</p>
+                                    </>
+                                ) : (
+                                    <p className="text-2xl font-bold text-main">₡{product.price}</p>
+                                )}
                             </div>
                         </div>
                         <div className={`rounded-full border text-sm flex justify-between my-10 ${borderColors[activeTab]}`}>
@@ -146,12 +169,7 @@ export default function ProductPage() {
                                 <div>
                                     <p>
                                         {/*Aquí debe llamarse la descripcion del producto */}
-                                        Esta expansión de Casting Shadows presenta 2 nuevos personajes
-                                        jugables y 3 nuevos azulejos hexagonales, lo que te permite jugar
-                                        con hasta 6 jugadores en un mapa ampliado.
-                                        Con esta expansión, puedes Fortificar tus defensas para una
-                                        protección adicional, o quemar ubicaciones cercanas para
-                                        quemar a cualquiera que se atreva a cruzar tu camino.
+                                        {product.description}
                                     </p>
                                 </div>
                             )}
@@ -160,9 +178,7 @@ export default function ProductPage() {
                                 <div>
                                     <p>
                                         {/*Aquí debe llamarse todas las calificaciones del producto*/}
-                                        Con esta expansión, puedes Fortificar tus defensas para una
-                                        protección adicional, o quemar ubicaciones cercanas para
-                                        quemar a cualquiera que se atreva a cruzar tu camino.
+                                        FALTA HACER EL IMPORT DEL REVIEW
                                     </p>
                                 </div>
                             )}
@@ -171,8 +187,7 @@ export default function ProductPage() {
                                 <div>
                                     <p>
                                         {/*Aquí debe llamarse detalles especiales que el vendedor desea agregar del producto*/}
-                                        Información adicional de la expansión, materiales de juego,
-                                        instrucciones y reglas especiales.
+                                        FALTA IMPORTAR DETAILS QUE NO ESTÁ PENSADO EN EL BD
                                     </p>
                                 </div>
                             )}
@@ -191,7 +206,7 @@ export default function ProductPage() {
                 <section className="my-10 px-10">
                     <h2 className="text-2xl font-semibold font-quicksand">Productos Similares</h2>
                     <div className="grid grid-cols-5 my-10 space-y-5">
-                        {/*Aquí va el array que muestra los productos similares*/}
+                        {/*Aquí va el array que muestra los productos similares
                         <ProductCard shop="Unstable Games" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} />
                         <ProductCard shop="Unstable Games" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} />
                         <ProductCard shop="Unstable Games" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} />
@@ -202,7 +217,7 @@ export default function ProductPage() {
                         <ProductCard shop="Unstable Games" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} />
                         <ProductCard shop="Unstable Games" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} />
                         <ProductCard shop="Unstable Games" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} />
-                    </div>
+                        */}</div>
                 </section>
             </div>
             <Footer />

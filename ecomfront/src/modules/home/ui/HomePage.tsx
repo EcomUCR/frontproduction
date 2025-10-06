@@ -47,7 +47,7 @@ export default function HomePage() {
           </h2>
           <div>
             <FeaturedProductsSlider
-            products={featuredProducts.map((prod) => ({
+              products={featuredProducts.map((prod) => ({
                 id: prod.id!,
                 shop: prod.store?.name || "Sin tienda", // Cambia aquí por prod.shop si tienes ese campo
                 title: prod.name,
@@ -80,7 +80,7 @@ export default function HomePage() {
           </div>
           {/*Aquí debe de ir un arreglo de productos cards que se van a mostrar */}
           <div className="grid grid-cols-5 my-10 space-y-5">
-            <ProductCard
+            {/*<ProductCard
               shop="Razer"
               title="Audifonos Razer x Pokemon | Edición Gengar"
               price="100.000"
@@ -119,7 +119,7 @@ export default function HomePage() {
               discountPrice="50.000"
               img={audifonos}
               edit={false}
-            />
+            />*/}
           </div>
         </section>
         {/*Section para imágenes*/}
@@ -144,6 +144,7 @@ export default function HomePage() {
             {offerProducts.map((prod) => (
               <ProductCard
                 key={prod.id}
+                id={prod.id!}
                 shop={prod.store?.name || "No hay tienda"}
                 title={prod.name}
                 price={prod.price.toLocaleString("es-CRC")}

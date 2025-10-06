@@ -3,6 +3,7 @@ import { IconEdit, IconHeart, IconShoppingBag } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 
 interface ProductCardProps {
+  id: number;
   shop: string;
   title: string;
   price: string;
@@ -33,7 +34,7 @@ export default function ProductCard(props: ProductCardProps) {
       )}
 
       <Link
-        to="/productPage"
+        to={`/product/${props.id}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className="w-full h-[55%] mb-2"
       >
@@ -45,7 +46,7 @@ export default function ProductCard(props: ProductCardProps) {
       </Link>
       <div className="flex flex-col justify-center items-center gap-3 h-auto">
         <Link
-          to="/productPage"
+          to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
           <p className="font-semibold text-center text-sm">{props.title}</p>
