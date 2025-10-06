@@ -7,7 +7,7 @@ import ProductCard from "../../../../components/data-display/ProductCard";
 import { useProducts, type Product } from "../../infrastructure/useProducts";
 import { useAuth } from "../../../../hooks/context/AuthContext";
 import { getStoreByUser } from "../../../users/infrastructure/storeService";
-import audifonos from "../../../img/resources/audifonos.jpg";
+import audifonos from "../../../../img/resources/audifonos.jpg";
 
 interface Store {
   id: number;
