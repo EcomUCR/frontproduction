@@ -10,9 +10,9 @@ import { IconArrowBackUp, IconWand } from "@tabler/icons-react";
 import FeaturedProductCard from "../../../components/data-display/FeaturedProductCard";
 import CategorySelector from "../../../components/ui/CategorySelector";
 
-type ProductForm = Omit<Product, "price" | "discount"> & {
+type ProductForm = Omit<Product, "price" | "discount_price"> & {
   price: string | number;
-  discount: string | number;
+  discount_price: string | number;
 };
 
 export default function CrudProductPage() {
@@ -33,7 +33,7 @@ export default function CrudProductPage() {
     name: "",
     description: "",
     price: 0,
-    discount: 0,
+    discount_price: 0,
     stock: 0,
     status: true,
     categories: [],
@@ -65,7 +65,7 @@ export default function CrudProductPage() {
     const dataToSend = {
       ...form,
       price: Number(form.price),
-      discount: Number(form.discount),
+      discount_price: Number(form.discount_price),
     };
     try {
       if (form.id) {
@@ -76,7 +76,7 @@ export default function CrudProductPage() {
           name: "",
           description: "",
           price: 0,
-          discount: 0,
+          discount_price: 0,
           stock: 0,
           status: true,
           categories: [],
@@ -162,21 +162,21 @@ export default function CrudProductPage() {
                   <p className="font-semibold">Precio de oferta</p>
                   <input
                     type="text"
-                    value={form.discount}
+                    value={form.discount_price}
                     onChange={(e) => {
                       let value = e.target.value;
                       if (/^\d*\.?\d*$/.test(value) || value === "") {
                         if (/^0+\d/.test(value)) {
                           value = value.replace(/^0+/, "");
                         }
-                        setForm({ ...form, discount: value });
+                        setForm({ ...form, discount_price: value });
                         setErrorDiscount(null);
                       } else {
                         setErrorDiscount("Solo se permiten valores numéricos");
                       }
                     }}
                     onBlur={() => {
-                      setForm({ ...form, discount: Number(form.discount) || 0 });
+                      setForm({ ...form, discount_price: Number(form.discount_price) || 0 });
                     }}
                     placeholder="Precio de oferta"
                     className={`bg-main-dark/20 rounded-2xl p-2 ${errorDiscount ? "border border-red-500" : ""
@@ -287,7 +287,7 @@ export default function CrudProductPage() {
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
                   discountPrice={
-                    form.discount ? form.discount.toString() : undefined
+                    form.discount_price ? form.discount_price.toString() : undefined
                   }
                   img={preview || undefined}
                   rating={5}
@@ -299,7 +299,7 @@ export default function CrudProductPage() {
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
                   discountPrice={
-                    form.discount ? form.discount.toString() : undefined
+                    form.discount_price ? form.discount_price.toString() : undefined
                   }
                   img={preview || undefined}
                   edit={false}
