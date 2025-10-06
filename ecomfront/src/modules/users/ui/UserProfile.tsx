@@ -4,8 +4,7 @@ import { useAuth } from "../../../hooks/context/AuthContext";
 import { getStoreByUser } from "../infrastructure/storeService";
 
 import foto from "../../../img/perfil.png";
-import logo from "../../../img/unstable-games-logo.png";
-import banner from "../../../img/banner.png";
+
 import {
     IconBrandFacebook,
     IconBrandInstagram,
@@ -179,17 +178,16 @@ export default function UserProfile({ type }: UserProfileProps) {
                                 <p>Logo de tienda</p>
                                 <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
                             </div>
-                            <img src={logo} alt="" className="w-2/3 h-auto" />
+                            <img src={store?.image || ""} alt="" className="w-2/3 h-auto" />
                         </figure>
                         <figure className="flex flex-col gap-10 w-2/3">
                             <div className="flex items-center gap-2">
                                 <p>Banner de la tienda</p>
                                 <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
                             </div>
-                            <img src={banner} alt="" className="w-auto h-auto rounded-xl" />
+                            <img src={store?.banner || ""} alt="" className="w-auto h-auto rounded-xl" />
                         </figure>
                     </div>
-
                     <div className="w-full px-10">
                         <form className="flex flex-col gap-5 pt-10">
                             <section className="flex flex-col gap-10">
@@ -206,7 +204,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                         Correo electrónico
                                         <input
                                             type="text"
-                                            placeholder="Correo"
+                                            placeholder={ user.email || "Correo de la tienda"}
                                             className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
                                             disabled
                                         />
@@ -216,7 +214,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                     <label htmlFor="" className="flex flex-col w-full">
                                         Descripción de la tienda
                                         <textarea
-                                            placeholder="Descripción de la tienda"
+                                            placeholder={ store?.description || "Descripción de la tienda"}
                                             rows={4}
                                             className="bg-main-dark/10 rounded-xl px-3 py-2"
                                         />
@@ -224,7 +222,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                     <label htmlFor="" className="flex flex-col w-full">
                                         Dirección de la tienda
                                         <textarea
-                                            placeholder="Dirección de la tienda"
+                                            placeholder={ /*store?.address ||*/ "Dirección no en el BACKEND aún"} //TODO: Agregar la dirección de la tienda----------------
                                             rows={4}
                                             className="bg-main-dark/10 rounded-xl px-3 py-2"
                                         />
@@ -296,7 +294,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                         <IconPhone className="text-contrast-secondary" />
                                         <input
                                             type="text"
-                                            placeholder="+506 8888-8888"
+                                            placeholder={ store?.support_phone || "Número telefónico"}
                                             className="w-full h-full py-2 focus:outline-none"
                                         />
                                     </label>
