@@ -129,7 +129,7 @@ export default function ProductPage() {
                     <div className="w-6/12 px-20 border-r-2 border-main mr-5">
                         <div className="flex flex-col gap-5">
                             <h2 className="text-xl font-bold">{product.name}</h2>
-                            <Link to="/sellerPage" className="text-xs font-bold">
+                            <Link to={`/store/${product.store_id}`} className="text-xs font-bold">
                                 Visitar la tienda de Unstable Games
                             </Link>
                             <div className="flex gap-2">
