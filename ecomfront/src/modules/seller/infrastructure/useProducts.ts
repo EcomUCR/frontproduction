@@ -11,6 +11,7 @@ export type Category = {
 };
 
 export type Product = {
+  store?: { id: number; name: string }; // <--- agrega esto
   store_id?: number;
   id?: number;
   name: string;
