@@ -75,6 +75,7 @@ const featuredProducts = [
 export default function ProductPage() {
     const { id } = useParams(); // ← obtiene el ID de la URL
     const { getProductById } = useProducts();
+    
     const [product, setProduct] = useState<Product | null>(null);
 
     const [activeTab, setActiveTab] = useState<keyof BorderColors>("description");
@@ -130,7 +131,7 @@ export default function ProductPage() {
                         <div className="flex flex-col gap-5">
                             <h2 className="text-xl font-bold">{product.name}</h2>
                             <Link to={`/store/${product.store_id}`} className="text-xs font-bold">
-                                Visitar la tienda de Unstable Games
+                                Visitar la tienda {product.store?.name &&  ""}
                             </Link>
                             <div className="flex gap-2">
                                 <StarRatingComponent value={4} size={12} />
@@ -178,7 +179,7 @@ export default function ProductPage() {
                                 <div>
                                     <p>
                                         {/*Aquí debe llamarse todas las calificaciones del producto*/}
-                                        FALTA HACER EL IMPORT DEL REVIEW
+                                        Este producto aun no tiene calificaciones
                                     </p>
                                 </div>
                             )}
@@ -187,7 +188,7 @@ export default function ProductPage() {
                                 <div>
                                     <p>
                                         {/*Aquí debe llamarse detalles especiales que el vendedor desea agregar del producto*/}
-                                        FALTA IMPORTAR DETAILS QUE NO ESTÁ PENSADO EN EL BD
+                                        No se han agregado detalles a este producto
                                     </p>
                                 </div>
                             )}

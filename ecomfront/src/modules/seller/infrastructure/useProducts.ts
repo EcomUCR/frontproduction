@@ -89,6 +89,7 @@ export function useProducts() {
 
       const store_id = store.id;
 
+
       // ⚠️ Validar si se subió imagen antes de continuar
       if (!product.image || !(product.image instanceof File)) {
         setError("Debes subir una imagen antes de crear el producto");
@@ -110,7 +111,8 @@ export function useProducts() {
         stock: product.stock,
         status: product.status ? 1 : 0,
         is_featured: product.is_featured,
-        image_url: imageUrl, // ✅ Ahora garantizado que existe
+        image_url: imageUrl,
+        
       };
 
       // Enviar producto al backend
