@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import { getStoreByUser } from "../..//users/infrastructure/storeService";
+import { useAuth } from "../../../hooks/context/AuthContext";
 
 // ⚠️ Usamos el proxy de Vite en dev: en producción se debe usar VITE_API_URL
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
@@ -23,9 +25,14 @@ export type Product = {
   image: File | string | null;
   image_url?: string;
   is_featured: boolean;
+  store?: {
+    id: number;
+    name: string;
+  };
 };
 
 export function useProducts() {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -73,17 +80,23 @@ export function useProducts() {
     setError(null);
     setSuccess(null);
     try {
+      const store = await getStoreByUser(user?.id ?? 0);
+
+      if (!store || !store.id) {
+        throw new Error("No se encontró la tienda asociada al usuario");
+      }
+      const store_id = store.id;
+
       let imageUrl = "";
 
       // Subir la imagen si es un File
       if (product.image && product.image instanceof File) {
         imageUrl = await uploadImage(product.image);
       }
-
       // Ajustar los payload
       const payload: any = {
         // store_id: ... (debes obtenerlo de la sesión o contexto!)
-        store_id: product.store_id, // 🔴 Cambia esto por el store real!
+        store_id: store_id, // 🔴 Cambia esto por el store real!
         sku: product.name,//.substring(0, 30) + Date.now(), // Generas uno temporal
         name: product.name,
         description: product.description || "",
@@ -153,19 +166,19 @@ export function useProducts() {
   };
 
   const getProductsByStore = async (store_id: number): Promise<Product[]> => {
-  setLoading(true);
-  setError(null);
-  try {
-    const res = await axios.get(`${BASE_URL}/stores/${store_id}/products`);
-    return res.data;
-  } catch (e: any) {
-    setError("No se pudieron cargar los productos");
-    return [];
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/stores/${store_id}/products`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
-  return { getProductsByStore,getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
+  return { getProductsByStore, getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
 }

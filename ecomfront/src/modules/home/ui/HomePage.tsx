@@ -47,13 +47,13 @@ export default function HomePage() {
           </h2>
           <div>
             <FeaturedProductsSlider
-              products={featuredProducts.map((prod) => ({
+            products={featuredProducts.map((prod) => ({
                 id: prod.id!,
-                shop: "Tienda", // Cambia aquí por prod.shop si tienes ese campo
+                shop: prod.store?.name || "Sin tienda", // Cambia aquí por prod.shop si tienes ese campo
                 title: prod.name,
-                price: prod.price.toLocaleString("es-CL"),
+                price: prod.price.toLocaleString("es-CRC"),
                 discountPrice: prod.discount_price
-                  ? prod.discount_price.toLocaleString("es-CL")
+                  ? prod.discount_price.toLocaleString("es-CRC")
                   : "",
                 rating: 0, // O ajusta si no tienes rating!
                 img: prod.image_url || audifonos,
@@ -144,12 +144,12 @@ export default function HomePage() {
             {offerProducts.map((prod) => (
               <ProductCard
                 key={prod.id}
-                shop={"Tienda"}
+                shop={prod.store?.name || "No hay tienda"}
                 title={prod.name}
-                price={prod.price.toLocaleString("es-CL")}
+                price={prod.price.toLocaleString("es-CRC")}
                 discountPrice={
                   prod.discount_price != null && prod.discount_price !== 0
-                    ? prod.discount_price.toLocaleString("es-CL")
+                    ? prod.discount_price.toLocaleString("es-CRC")
                     : undefined
                 }
                 img={prod.image_url ? prod.image_url : audifonos}
