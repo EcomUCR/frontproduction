@@ -32,15 +32,9 @@ export default function UserPage() {
           />
         </div>
         <div className="w-[75%]">
-          {selected === "profile" && (
-            <UserProfile
-              type={user.role}
-            />
-          )}
+          {selected === "profile" && (<UserProfile type={user.role}/>)}
           {selected === "transactions" && <TransactionHistory />}
-          {selected === "products" && user.role === "SELLER" && (
-            <SellerProductsList />
-          )}
+          {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
         </div>
       </section>
       <Footer />
