@@ -21,6 +21,7 @@ export type Product = {
   categories: number[];
   image: File | string | null;
   image_url?: string;
+  is_featured: boolean;
 };
 
 export function useProducts() {
@@ -89,7 +90,7 @@ export function useProducts() {
         discount_price: product.discount_price || null,
         stock: product.stock,
         status: product.status ? 1 : 0,
-        is_featured: false,
+        is_featured: product.is_featured,
         image_url: imageUrl,
         // Agrega más si tu tabla productos lo requiere.
       };

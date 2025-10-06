@@ -25,9 +25,11 @@ export default function CrudProductPage() {
     success,
   } = useProducts();
 
-  const { getDescription, loading: loadingDescription, error: errorDescription } = useOpenAI();
-
-  const [isFeatured, setIsFeatured] = useState(false);
+  const {
+    getDescription,
+    loading: loadingDescription,
+    error: errorDescription,
+  } = useOpenAI();
 
   const [form, setForm] = useState<ProductForm>({
     name: "",
@@ -38,6 +40,7 @@ export default function CrudProductPage() {
     status: true,
     categories: [],
     image: null,
+    is_featured: false,
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -81,10 +84,11 @@ export default function CrudProductPage() {
           status: true,
           categories: [],
           image: null,
+          is_featured: false,
         });
         setPreview(null);
       }
-    } catch (err) { }
+    } catch (err) {}
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,8 +155,9 @@ export default function CrudProductPage() {
                       setForm({ ...form, price: Number(form.price) || 0 });
                     }}
                     placeholder="Precio"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorPrice ? "border border-red-500" : ""
-                      }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${
+                      errorPrice ? "border border-red-500" : ""
+                    }`}
                   />
                   {errorPrice && (
                     <p className="text-red-500 text-sm">{errorPrice}</p>
@@ -176,11 +181,15 @@ export default function CrudProductPage() {
                       }
                     }}
                     onBlur={() => {
-                      setForm({ ...form, discount_price: Number(form.discount_price) || 0 });
+                      setForm({
+                        ...form,
+                        discount_price: Number(form.discount_price) || 0,
+                      });
                     }}
                     placeholder="Precio de oferta"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorDiscount ? "border border-red-500" : ""
-                      }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${
+                      errorDiscount ? "border border-red-500" : ""
+                    }`}
                   />
                   {errorDiscount && (
                     <p className="text-red-500 text-sm">{errorDiscount}</p>
@@ -250,13 +259,19 @@ export default function CrudProductPage() {
                   <div className="flex flex-col w-full items-center">
                     <ButtonComponent
                       type="button"
-                      text={loadingDescription ? "Cargando..." : "Autogenerar descripción"}
+                      text={
+                        loadingDescription
+                          ? "Cargando..."
+                          : "Autogenerar descripción"
+                      }
                       onClick={handleGenerateDescription}
                       icon={<IconWand />}
                       style="flex justify-center text-sm w-[50%] px-2 py-2 items-center gap-2 rounded-full bg-main text-white cursor-pointer hover:bg-contrast-secondary transition-colors duration-300 ease-in-out"
                     />
                     {errorDescription && (
-                      <p className="text-red-500 text-sm text-center">{errorDescription}</p>
+                      <p className="text-red-500 text-sm text-center">
+                        {errorDescription}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -276,18 +291,22 @@ export default function CrudProductPage() {
                 <p className="font-semibold">Destacar producto</p>
                 <input
                   type="checkbox"
-                  checked={isFeatured}
-                  onChange={(e) => setIsFeatured(e.target.checked)}
+                  checked={form.is_featured}
+                  onChange={(e) =>
+                    setForm({ ...form, is_featured: e.target.checked })
+                  }
                   className="cursor-pointer"
                 />
               </label>
-              {isFeatured ? (
+              {form.is_featured ? (
                 <FeaturedProductCard
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
                   discountPrice={
-                    form.discount_price ? form.discount_price.toString() : undefined
+                    form.discount_price
+                      ? form.discount_price.toString()
+                      : undefined
                   }
                   img={preview || undefined}
                   rating={5}
@@ -299,7 +318,9 @@ export default function CrudProductPage() {
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
                   discountPrice={
-                    form.discount_price ? form.discount_price.toString() : undefined
+                    form.discount_price
+                      ? form.discount_price.toString()
+                      : undefined
                   }
                   img={preview || undefined}
                   edit={false}
