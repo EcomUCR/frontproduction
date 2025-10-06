@@ -96,7 +96,7 @@ export default function CrudProductPage() {
         });
         setPreview(null);
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,9 +163,8 @@ export default function CrudProductPage() {
                       setForm({ ...form, price: Number(form.price) || 0 });
                     }}
                     placeholder="Precio"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${
-                      errorPrice ? "border border-red-500" : ""
-                    }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorPrice ? "border border-red-500" : ""
+                      }`}
                   />
                   {errorPrice && (
                     <p className="text-red-500 text-sm">{errorPrice}</p>
@@ -195,9 +194,8 @@ export default function CrudProductPage() {
                       });
                     }}
                     placeholder="Precio de oferta"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${
-                      errorDiscount ? "border border-red-500" : ""
-                    }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorDiscount ? "border border-red-500" : ""
+                      }`}
                   />
                   {errorDiscount && (
                     <p className="text-red-500 text-sm">{errorDiscount}</p>
@@ -311,27 +309,25 @@ export default function CrudProductPage() {
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
-                  discountPrice={
-                    form.discount_price
-                      ? form.discount_price.toString()
-                      : undefined
-                  }
+                  discountPrice={form.discount_price
+                    ? form.discount_price.toString()
+                    : undefined}
                   img={preview || undefined}
-                  rating={5}
+                  rating={0}
                   edit={false}
+                  id={0}
                 />
               ) : (
                 <ProductCard
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
-                  discountPrice={
-                    form.discount_price
-                      ? form.discount_price.toString()
-                      : undefined
-                  }
+                  discountPrice={form.discount_price
+                    ? form.discount_price.toString()
+                    : undefined}
                   img={preview || undefined}
                   edit={false}
+                  id={0}
                 />
               )}
               <div className="flex flex-col items-center gap-5 py-10 w-full">

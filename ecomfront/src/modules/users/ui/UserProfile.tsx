@@ -2,7 +2,7 @@ import { useEffect, useState, type JSX } from "react";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import { getStoreByUser } from "../infrastructure/storeService";
-import  foto  from "../../../img/perfil.png";
+import foto from "../../../img/perfil.png";
 
 import {
   IconBrandFacebook,
@@ -142,6 +142,8 @@ export default function UserProfile({ type }: UserProfileProps) {
         <div className="flex w-full flex-col justify-center gap-4 mt-10">
           <div className="flex justify-center">
             <img src={user.image || foto} alt="" className="w-auto h-80 rounded-full" />
+            <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary "
+            />
           </div>
 
           <div className="w-[70%] mx-auto">
@@ -217,7 +219,8 @@ export default function UserProfile({ type }: UserProfileProps) {
 
       {type === "SELLER" && editableStore && (
         <div className="flex w-full flex-col justify-center gap-4 mt-10 font-quicksand">
-          <div className="flex justify-center gap-10 px-10">
+
+          <form onSubmit={/*handleSave*/ (e) => e.preventDefault()} className="flex justify-center gap-10 px-10">
             {/* Logo */}
             <figure className="flex flex-col gap-10 w-1/3">
               <div className="flex items-center gap-2">
@@ -265,7 +268,8 @@ export default function UserProfile({ type }: UserProfileProps) {
                 className="w-auto h-auto rounded-xl object-cover"
               />
             </figure>
-          </div>
+          </form>
+
 
           {/* Formulario */}
           <div className="w-full px-10">
