@@ -6,6 +6,7 @@ axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 type UserType = {
   id: number;
+  username: string;
   email: string;
   first_name?: string;
   last_name?: string;
@@ -15,6 +16,8 @@ type UserType = {
     id: number;
     name: string;
     description?: string;
+    image?: string;
+    
   } | null;
 };
 

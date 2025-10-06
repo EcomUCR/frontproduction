@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
+import { useAuth } from "../../../hooks/context/AuthContext";
+import { getStoreByUser } from "../infrastructure/storeService";
 
 import foto from "../../../img/perfil.png";
-import logo from "../../../img/unstable-games-logo.png";
-import banner from "../../../img/banner.png";
+
 import {
     IconBrandFacebook,
     IconBrandInstagram,
@@ -30,8 +31,55 @@ const iconMap = {
     link: <IconLink />,
 };
 
+interface Store {
+  id: number;
+  user_id?: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  image?: string | null;
+  banner?: string | null;
+  category_id?: number | null;
+  business_name?: string | null;
+  tax_id?: string | null;
+  legal_type?: string | null;
+  registered_address?: string | null;
+  support_email?: string | null;
+  support_phone?: string | null;
+  is_verified?: boolean | null;
+  verification_date?: string | null;
+  status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
+}
+
+
 export default function UserProfile({ type }: UserProfileProps) {
     const [cambiarPassword, setCambiarPassword] = useState(false);
+    const { user, loading } = useAuth();
+    const [store, setStore] = useState<Store | null>(null);
+
+    useEffect(() => {
+  const fetchStore = async () => {
+    try {
+      if (user?.id) {
+        const storeData = await getStoreByUser(user.id);
+        console.log("Tienda obtenida:", storeData);
+        setStore(storeData);
+      }
+    } catch (error) {
+      console.error("Error al cargar la tienda:", error);
+    }
+  };
+  fetchStore();
+}, [user]);
+
+
+    // Si está cargando, muestra loader
+  if (loading) return <div>Cargando...</div>;
+
+  // Si no hay usuario autenticado o su rol no es válido
+  if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER")) {
+    return <div>No autorizado</div>;
+  }
 
     // Estado para redes sociales dinámicas
     const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
@@ -66,12 +114,12 @@ export default function UserProfile({ type }: UserProfileProps) {
                             <div className="flex gap-2">
                                 <input
                                     type="text"
-                                    placeholder="Nombre"
+                                    placeholder={user.first_name}
                                     className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
                                 />
                                 <input
                                     type="text"
-                                    placeholder="correo"
+                                    placeholder={user.email || "correo"}
                                     className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
                                     disabled
                                 />
@@ -79,7 +127,7 @@ export default function UserProfile({ type }: UserProfileProps) {
 
                             <input
                                 type="text"
-                                placeholder="Nombre de usuario"
+                                placeholder={user.username || "Nombre de usuario"}
                                 className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
                             />
 
@@ -130,17 +178,16 @@ export default function UserProfile({ type }: UserProfileProps) {
                                 <p>Logo de tienda</p>
                                 <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
                             </div>
-                            <img src={logo} alt="" className="w-2/3 h-auto" />
+                            <img src={store?.image || ""} alt="" className="w-2/3 h-auto" />
                         </figure>
                         <figure className="flex flex-col gap-10 w-2/3">
                             <div className="flex items-center gap-2">
                                 <p>Banner de la tienda</p>
                                 <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
                             </div>
-                            <img src={banner} alt="" className="w-auto h-auto rounded-xl" />
+                            <img src={store?.banner || ""} alt="" className="w-auto h-auto rounded-xl" />
                         </figure>
                     </div>
-
                     <div className="w-full px-10">
                         <form className="flex flex-col gap-5 pt-10">
                             <section className="flex flex-col gap-10">
@@ -149,15 +196,15 @@ export default function UserProfile({ type }: UserProfileProps) {
                                         Nombre de la tienda
                                         <textarea
                                             rows={2}
-                                            placeholder="Nombre de la tienda"
-                                            className="bg-main-dark/10 rounded-xl px-3 py-2 w-full font-semibold"
+                                            placeholder={ store?.name || "Nombre de la tienda"}
+                                            className="bg-main-dark/10 rounded-xl px-3 py-2 w-full "
                                         />
                                     </label>
                                     <label htmlFor="" className="flex flex-col w-full">
                                         Correo electrónico
                                         <input
                                             type="text"
-                                            placeholder="Correo"
+                                            placeholder={ user.email || "Correo de la tienda"}
                                             className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
                                             disabled
                                         />
@@ -167,7 +214,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                     <label htmlFor="" className="flex flex-col w-full">
                                         Descripción de la tienda
                                         <textarea
-                                            placeholder="Descripción de la tienda"
+                                            placeholder={ store?.description || "Descripción de la tienda"}
                                             rows={4}
                                             className="bg-main-dark/10 rounded-xl px-3 py-2"
                                         />
@@ -175,7 +222,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                     <label htmlFor="" className="flex flex-col w-full">
                                         Dirección de la tienda
                                         <textarea
-                                            placeholder="Dirección de la tienda"
+                                            placeholder={ /*store?.address ||*/ "Dirección no en el BACKEND aún"} //TODO: Agregar la dirección de la tienda----------------
                                             rows={4}
                                             className="bg-main-dark/10 rounded-xl px-3 py-2"
                                         />
@@ -247,7 +294,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                                         <IconPhone className="text-contrast-secondary" />
                                         <input
                                             type="text"
-                                            placeholder="+506 8888-8888"
+                                            placeholder={ store?.support_phone || "Número telefónico"}
                                             className="w-full h-full py-2 focus:outline-none"
                                         />
                                     </label>
