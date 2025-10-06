@@ -15,11 +15,12 @@ export type Product = {
   name: string;
   description?: string;
   price: number;
-  discount?: number;
+  discount_price?: number;
   stock: number;
   status: boolean;
-  categories: number[]; // array de IDs
-  image: File | string | null; // Puede ser un archivo o la URL ya subida
+  categories: number[];
+  image: File | string | null;
+  image_url?: string;
 };
 
 export function useProducts() {
@@ -73,7 +74,7 @@ export function useProducts() {
         name: product.name,
         description: product.description || "",
         price: product.price,
-        discount_price: product.discount || null,
+        discount_price: product.discount_price || null,
         stock: product.stock,
         status: product.status ? 1 : 0,
         is_featured: false,
@@ -108,7 +109,7 @@ export function useProducts() {
         name: product.name,
         description: product.description,
         price: product.price,
-        discount_price: product.discount,
+        discount_price: product.discount_price,
         stock: product.stock,
         status: product.status ? 1 : 0,
         is_featured: false,
@@ -123,6 +124,18 @@ export function useProducts() {
       setLoading(false);
     }
   };
-
-  return { getCategories, createProduct, updateProduct, loading, error, success };
+  const getProducts = async (): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/products`);
+      return res.data; // Ajusta esto según el formato de tu backend
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+  return { getProducts, getCategories, createProduct, updateProduct, loading, error, success };
 }
