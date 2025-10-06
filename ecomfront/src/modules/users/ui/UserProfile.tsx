@@ -197,6 +197,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                   <label htmlFor="" className="flex flex-col w-full">
                     Nombre de la tienda
                     <textarea
+                      onChange={(e) => setStoreName(e.target.value)}
                       value={store?.name || ""}
                       rows={2}
                       placeholder={store?.name || "Nombre de la tienda"}
