@@ -153,19 +153,20 @@ export function useProducts() {
     }
   };
 
-  const getProductStore = async (): Promise<Product[]> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.get(`${BASE_URL}/products`);
-      return res.data; // Ajusta esto según el formato de tu backend
-    } catch (e: any) {
-      setError("No se pudieron cargar los productos");
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  };
+  const getProductsByStore = async (store_id: number): Promise<Product[]> => {
+  setLoading(true);
+  setError(null);
+  try {
+    const res = await axios.get(`${BASE_URL}/stores/${store_id}/products`);
+    return res.data;
+  } catch (e: any) {
+    setError("No se pudieron cargar los productos");
+    return [];
+  } finally {
+    setLoading(false);
+  }
+};
 
-  return { getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
+
+  return { getProductsByStore,getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
 }

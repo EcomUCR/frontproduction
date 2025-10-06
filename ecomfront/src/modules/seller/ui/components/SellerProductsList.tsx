@@ -3,25 +3,57 @@ import { IconSearch } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import ProductCard from "../../../../components/data-display/ProductCard";
-import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";
+//import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";
 import { useProducts, type Product } from "../../infrastructure/useProducts";
+import { useAuth } from "../../../../hooks/context/AuthContext";
+import { getStoreByUser } from "../../../users/infrastructure/storeService";
+import audifonos from "../../../../img/resources/audifonos.jpg";
+
+interface Store {
+  id: number;
+  user_id?: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  image?: string | null;
+  banner?: string | null;
+  category_id?: number | null;
+  business_name?: string | null;
+  tax_id?: string | null;
+  legal_type?: string | null;
+  registered_address?: string | null;
+  support_email?: string | null;
+  support_phone?: string | null;
+  is_verified?: boolean | null;
+  verification_date?: string | null;
+  status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
+}
 
 export default function SellerProductsList() {
-  const { getProducts, loading, error } = useProducts();
+  const { user } = useAuth();
+  const { getProductsByStore, loading, error } = useProducts();
+  const [store, setStore] = useState<Store | null>(null);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts();
-        setProducts(data);
-      } catch (err) {
-        console.error("Error cargando productos", err);
+        if (user?.id) {
+          const store = await getStoreByUser(user.id);
+          setStore(store);
+          if (store?.id) {
+            const data = await getProductsByStore(store.id);
+            setProducts(data);
+          }
+        }
+      } catch (e) {
+        console.error(e);
       }
     };
     fetchProducts();
-  }, []);
+  }, [user]);
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -62,15 +94,11 @@ export default function SellerProductsList() {
           filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
-              shop={product.vendor?.name || "Sin vendedor"}
+              shop={store?.name || "Sin vendedor"}
               title={product.name}
               price={product.price.toString()}
-              discountPrice={product.discount?.toString() || undefined}
-              img={
-                product.images?.length
-                  ? product.images[0].url
-                  : "https://via.placeholder.com/300x200?text=Sin+Imagen"
-              }
+              discountPrice={product.discount_price?.toString() || undefined}
+              img={product.image_url ? product.image_url : audifonos}
               edit
             />
           ))
@@ -82,7 +110,7 @@ export default function SellerProductsList() {
       {/* Productos destacados */}
       <section className="my-10">
         <h2 className="text-2xl font-semibold font-quicksand">Productos destacados</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 justify-items-center py-10">
+        {/*<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 justify-items-center py-10">
           {filteredProducts
             .filter((p) => p.discount && p.discount > 0)
             .slice(0, 4)
@@ -102,7 +130,7 @@ export default function SellerProductsList() {
                 edit
               />
             ))}
-        </div>
+        </div>*/}
       </section>
     </div>
   );
