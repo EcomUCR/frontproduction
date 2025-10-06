@@ -2,6 +2,7 @@ import { useEffect, useState, type JSX } from "react";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import { getStoreByUser } from "../infrastructure/storeService";
+import  foto  from "../../../img/perfil.png";
 
 import {
   IconBrandFacebook,
@@ -137,6 +138,82 @@ export default function UserProfile({ type }: UserProfileProps) {
       <div className="flex flex-col pl-10">
         <h1 className="text-xl font-quicksand">Información de la cuenta</h1>
       </div>
+      {type === "CUSTOMER" && (
+        <div className="flex w-full flex-col justify-center gap-4 mt-10">
+          <div className="flex justify-center">
+            <img src={user.image || foto} alt="" className="w-auto h-80 rounded-full" />
+          </div>
+
+          <div className="w-[70%] mx-auto">
+            <form className="flex flex-col gap-5 pt-10">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder={user.first_name}
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                />
+                <input
+                  type="text"
+                  placeholder={user.email || "correo"}
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                  disabled
+                />
+              </div>
+
+              <input
+                type="text"
+                placeholder={user.username || "Nombre de usuario"}
+                className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
+              />
+
+              <label className="flex items-center gap-2 pt-5">
+                Cambiar contraseña
+                <input
+                  type="checkbox"
+                  checked={cambiarPassword}
+                  onChange={() => setCambiarPassword(!cambiarPassword)}
+                />
+              </label>
+
+              {cambiarPassword && (
+                <div className="flex flex-col gap-5">
+                  <input
+                    type="password"
+                    placeholder="Contraseña actual"
+                    className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      placeholder="Nueva contraseña"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Confirmar contraseña"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                    />
+                  </div>
+                </div>
+              )}
+            </form>
+
+            <div className="flex justify-between gap-2">
+              <ButtonComponent
+                text="Cancelar"
+                onClick={handleCancel}
+                style="w-full p-3 rounded-full text-white bg-main gap-2 flex items-center justify-center mt-10"
+              />
+              <ButtonComponent
+                text="Guardar cambios"
+                onClick={handleSave}
+                style="w-full p-3 rounded-full text-white bg-contrast-secondary gap-2 flex items-center justify-center mt-10"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {type === "SELLER" && editableStore && (
         <div className="flex w-full flex-col justify-center gap-4 mt-10 font-quicksand">
