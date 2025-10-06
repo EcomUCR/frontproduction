@@ -101,7 +101,7 @@ export default function ProductPage() {
                 </section>
                 <section className="flex px-10 pt-10 font-quicksand">
                     <div className="w-3/12">
-                        <div>
+                        <div className="flex flex-col items-center">
                             <img className="rounded-2xl" src={product.image_url} alt="" />
                             {/* <div className="flex justify-between pt-5 pb-10">
                                 <img className="w-20 h-auto rounded-xl p-1 border border-main hover:border-2" src={audifonos} alt="" />
