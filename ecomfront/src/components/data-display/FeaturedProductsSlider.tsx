@@ -20,6 +20,8 @@ export default function FeaturedProductsSlider(props: FeaturedProductsSliderProp
                 {props.products.map(product => (
                     <CarouselItem className="basis-[50%] flex justify-center items-center pl-0 my-8" key={product.id}>
                         <FeaturedProductCard
+                            key={product.id}
+                            id={product.id}
                             shop={product.shop}
                             img={product.img}
                             title={product.title}

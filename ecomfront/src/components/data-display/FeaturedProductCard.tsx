@@ -3,6 +3,7 @@ import ButtonComponent from "../ui/ButtonComponent";
 import RaitingComponent from "../ui/StarRatingComponent";
 import { Link } from "react-router-dom";
 interface FeaturedProductCardProps {
+  id: number;
   shop: string;
   img?: string;
   title: string;
@@ -20,7 +21,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
         </div>
       )}
       <Link
-        to="/productPage"
+        to={`/product/${props.id}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className="w-1/2 flex items-center"
       >
@@ -33,7 +34,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
       <div className="flex flex-col justify-between w-1/2 pl-6 py-1">
         <p className="font-light font-poiret">{props.shop}</p>
         <Link
-          to="/productPage"
+          to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
           <h3 className="font-semibold text-md">{props.title}</h3>
