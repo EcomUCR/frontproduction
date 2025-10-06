@@ -6,6 +6,7 @@ import SideBar from "../../../components/navigation/SideBar";
 import TransactionHistory from "./TransactionHistory";
 import UserProfile from "./UserProfile";
 import { useAuth } from "../../../hooks/context/AuthContext";
+import OrderStatus from "./OrderStatus";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
@@ -35,6 +36,7 @@ export default function UserPage() {
           {selected === "profile" && (<UserProfile type={user.role}/>)}
           {selected === "transactions" && <TransactionHistory />}
           {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
+          {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
         </div>
       </section>
       <Footer />
