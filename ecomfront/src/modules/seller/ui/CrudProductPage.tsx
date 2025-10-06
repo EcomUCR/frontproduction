@@ -9,7 +9,7 @@ import ProductCard from "../../../components/data-display/ProductCard";
 import { IconArrowBackUp, IconWand } from "@tabler/icons-react";
 import FeaturedProductCard from "../../../components/data-display/FeaturedProductCard";
 import CategorySelector from "../../../components/ui/CategorySelector";
-
+import { useAuth } from "../../../hooks/context/AuthContext";
 type ProductForm = Omit<Product, "price" | "discount_price"> & {
   price: string | number;
   discount_price: string | number;
@@ -24,7 +24,7 @@ export default function CrudProductPage() {
     error,
     success,
   } = useProducts();
-
+  const { user } = useAuth();
   const {
     getDescription,
     loading: loadingDescription,
@@ -65,8 +65,15 @@ export default function CrudProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Usa el store_id del usuario logueado
+    const storeId = user?.store?.id; // (<-- revisa que sea así en tu estructura)
+    if (!storeId) {
+      alert("No se encontró la tienda asociada al usuario");
+      return;
+    }
     const dataToSend = {
       ...form,
+      store_id: storeId, // <- Aquí se agrega
       price: Number(form.price),
       discount_price: Number(form.discount_price),
     };
@@ -76,6 +83,7 @@ export default function CrudProductPage() {
       } else {
         await createProduct(dataToSend);
         setForm({
+          store_id: undefined, // limpia, por si acaso
           name: "",
           description: "",
           price: 0,
