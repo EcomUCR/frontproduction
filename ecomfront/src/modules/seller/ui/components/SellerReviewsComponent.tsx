@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import InteractiveRatingSummary from '../../../../components/ui/InteractiveRatingSummary';
 import LargeReviewComponent from "../../../../components/data-display/LargeReviewComponent"; 
 

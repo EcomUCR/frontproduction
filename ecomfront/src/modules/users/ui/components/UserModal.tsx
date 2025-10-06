@@ -90,7 +90,7 @@ export default function UserModal(){
                                 </div>
                                 <div className="w-1/2 flex flex-col items-center gap-10">
                                     <p>Ultima compra</p>
-                                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} />
+                                    <ProductCard shop="Razer" title="Audifonos Razer x Pokemon | Edición Gengar" price="100.000" discountPrice="50.000" img={audifonos} edit={false} id={0} />
                                 </div>
                             </div>
                             <div className="flex items-center justify-center pt-5">
