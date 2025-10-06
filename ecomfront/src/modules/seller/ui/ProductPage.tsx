@@ -131,7 +131,7 @@ export default function ProductPage() {
                         <div className="flex flex-col gap-5">
                             <h2 className="text-xl font-bold">{product.name}</h2>
                             <Link to={`/store/${product.store_id}`} className="text-xs font-bold">
-                                Visitar la tienda {product.store?.name &&  ""}
+                                Visitar la tienda {product.store?.name ||  ""}
                             </Link>
                             <div className="flex gap-2">
                                 <StarRatingComponent value={4} size={12} />
