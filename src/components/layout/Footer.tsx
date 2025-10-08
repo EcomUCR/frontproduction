@@ -38,7 +38,7 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col items-center gap-2 w-[33%]">
                     <img src={logo} alt="TucaShop" className="h-15 w-auto" />
-                    <a className="text-3xl font-fugaz" href="">TucaShop</a>
+                    <a className="text-3xl font-fugaz" href="">TukiShop</a>
                 </div>
                 <div className="flex flex-col gap-3 text-xs w-[33%] items-center pt-8">
                     <p className="font-semibold text-xl">Contactanos</p>
@@ -105,7 +105,7 @@ export default function Footer() {
                     </form>
                 </div>
             </div>
-            <p className="text-xs">© 2025 Ecom. Todos los derechos reservados. Todas las marcas son propiedad de sus respectivos dueños</p>
+            <p className="text-xs">© 2025 Ecom. Todos los derechos reservados. Todas las marcas son propiedad de sus respectivos dueños.</p>
         </footer>
     );
 }

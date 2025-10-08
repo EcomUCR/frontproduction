@@ -65,7 +65,7 @@ export default function NavBar() {
             className="text-white font-fugaz text-3xl flex items-center gap-3 p-2"
           >
             <img src={logo} alt="" className="h-10 w-auto" />
-            TucaShop
+            TukiShop
           </Link>
         </div>
         <div className="flex items-center bg-white rounded-full px-0.5 w-1/3">
