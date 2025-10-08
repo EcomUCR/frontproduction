@@ -1,7 +1,7 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../navigation/carousel";
 import CategoryCard from "./CategoryCard";
 import { IconBrush, IconCar, IconPerfume, IconToolsKitchen3, IconClock, IconBallFootball, IconDeviceGamepad2, IconTool, IconArmchair2, IconLeaf, IconBrandAppleArcade, IconHorseToy, IconBook2, IconWashMachine, IconPaw, IconMusic, IconFileInvoice, IconHanger, IconFirstAidKit, IconBrandStackshare, IconDots } from "@tabler/icons-react";
-import bg from '../../img/resources/Home.png';
+import bg from '../../img/Home.png';
 import { useProducts, type Category } from "../../modules/seller/infrastructure/useProducts";
 import { useEffect, useState } from "react";
 
