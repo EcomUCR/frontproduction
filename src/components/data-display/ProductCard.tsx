@@ -44,7 +44,7 @@ export default function ProductCard(props: ProductCardProps) {
           alt={props.title}
         />
       </Link>
-      <div className="flex flex-col justify-center items-center gap-3 h-auto">
+      <div className="flex flex-col justify-center items-center gap-3 h-auto pt-5">
         <Link
           to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
