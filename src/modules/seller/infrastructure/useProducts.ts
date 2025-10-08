@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { getStoreByUser } from "../..//users/infrastructure/storeService";
+import { getStoreByUser } from "../../users/infrastructure/storeService";
 import { useAuth } from "../../../hooks/context/AuthContext";
 
 // ⚠️ Usamos el proxy de Vite en dev: en producción se debe usar VITE_API_URL

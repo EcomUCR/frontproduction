@@ -9,8 +9,8 @@ import FeaturedProductsSlider from "../../../components/data-display/FeaturedPro
 //import ProductCard from "../../../components/data-display/ProductCard";
 import { IconArrowBackUp, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandWhatsapp, IconBrandX, IconHeart, IconLink, IconShare } from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
-import type { Product } from "../../seller/infrastructure/useProducts";
-import { useProducts } from "../../seller/infrastructure/useProducts";
+import type { Product } from "../infrastructure/useProducts";
+import { useProducts } from "../infrastructure/useProducts";
 
 type BorderColors = {
     description: string;
