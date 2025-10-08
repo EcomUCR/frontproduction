@@ -141,7 +141,7 @@ export default function UserProfile({ type }: UserProfileProps) {
       {type === "CUSTOMER" && (
         <div className="flex w-full flex-col justify-center gap-4 mt-10">
           <div className="flex justify-center">
-            <img src={user.image || foto} alt="" className="w-auto h-80 rounded-full" />
+            <img src={user.image || foto} alt="profile_image" className="w-auto h-80 rounded-full" />
             <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary "
             />
           </div>
@@ -239,7 +239,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                 </label>
               </div>
               <img
-                src={editableStore.image || ""}
+                src={editableStore.image || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
                 alt=""
                 className="w-2/3 h-auto rounded-xl object-cover"
               />
@@ -263,7 +263,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                 </label>
               </div>
               <img
-                src={editableStore.banner || ""}
+                src={editableStore.banner || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
                 alt=""
                 className="w-auto h-auto rounded-xl object-cover"
               />

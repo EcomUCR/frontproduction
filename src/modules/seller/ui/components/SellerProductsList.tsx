@@ -46,6 +46,8 @@ export default function SellerProductsList() {
           setStore(store);
           if (store?.id) {
             const data = await getProductsByStore(store.id);
+            console.log("🛍️ store:", store);
+            console.log("📦 productos recibidos:", data);
             setProducts(data);
           }
         }
@@ -89,34 +91,37 @@ export default function SellerProductsList() {
 
       {/* Lista de productos */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center py-10 border-b-2 border-main space-y-3">
-        {loading && <p className="col-span-3 text-gray-500">Cargando productos...</p>}
-        {error && <p className="col-span-3 text-red-500">{error}</p>}
-        {filteredProducts.length > 0 ? (
-          filteredProducts
-            .filter((p) => !p.is_featured)
-            .map((product) => (
-              <ProductCard
-                key={product.id}
-                shop={store?.name || product.store?.name || "Sin vendedor"}
-                title={product.name}
-                price={product.price.toString()}
-                discountPrice={product.discount_price?.toString() || undefined}
-                img={product.image_url ? product.image_url : audifonos}
-                edit
-                id={product.id ?? 0}
-              />
-            ))
-        ) : (
-          !loading && (
-            <p className="col-span-3 text-gray-500">No hay productos</p>
-          )
+        {loading && (
+          <p className="col-span-3 text-gray-500">Cargando productos...</p>
         )}
-
+        {error && <p className="col-span-3 text-red-500">{error}</p>}
+        {filteredProducts.length > 0
+          ? filteredProducts
+              .filter((p) => !p.is_featured)
+              .map((product) => (
+                <ProductCard
+                  key={product.id}
+                  shop={store?.name || product.store?.name || "Sin vendedor"}
+                  title={product.name}
+                  price={product.price.toString()}
+                  discountPrice={
+                    product.discount_price?.toString() || undefined
+                  }
+                  img={product.image_url ? product.image_url : audifonos}
+                  edit
+                  id={product.id ?? 0}
+                />
+              ))
+          : !loading && (
+              <p className="col-span-3 text-gray-500">No hay productos</p>
+            )}
       </section>
 
       {/* Productos destacados */}
       <section className="my-10">
-        <h2 className="text-2xl font-semibold font-quicksand">Productos destacados</h2>
+        <h2 className="text-2xl font-semibold font-quicksand">
+          Productos destacados
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 justify-items-center py-10">
           {filteredProducts
             .filter((p) => p.is_featured === true)
@@ -143,7 +148,6 @@ export default function SellerProductsList() {
               />
             ))}
         </div>
-
       </section>
     </div>
   );
