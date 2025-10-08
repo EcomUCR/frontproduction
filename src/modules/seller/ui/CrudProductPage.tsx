@@ -325,7 +325,7 @@ export default function CrudProductPage() {
                   discountPrice={form.discount_price
                     ? form.discount_price.toString()
                     : undefined}
-                  img={preview || undefined}
+                  img={preview || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
                   edit={false}
                   id={0}
                 />

@@ -128,7 +128,7 @@ export default function SellerProductsList() {
                 img={
                   product.image_url
                     ? product.image_url
-                    : "https://via.placeholder.com/300x200?text=Sin+Imagen"
+                    : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 title={product.name}
                 price={product.price.toString()}

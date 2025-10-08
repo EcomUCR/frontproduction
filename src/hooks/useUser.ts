@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export type UserRole = "SELLER" | "CUSTOMER" | "ADMIN";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 export interface UserData {
   id: number;
