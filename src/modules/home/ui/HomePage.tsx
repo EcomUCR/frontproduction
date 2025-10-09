@@ -46,11 +46,6 @@ export default function HomePage() {
       setLoadingFeatured(false);
     })();
   }, []);
-  useEffect(() => {
-    // Simulación de carga de categorías (1.2s aprox)
-    const timer = setTimeout(() => setLoadingCategories(false), 3200);
-    return () => clearTimeout(timer);
-  }, []);
   return (
     <div>
       <NavBar />
