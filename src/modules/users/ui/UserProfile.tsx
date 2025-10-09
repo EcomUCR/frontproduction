@@ -3,7 +3,7 @@ import ButtonComponent from "../../../components/ui/ButtonComponent";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import foto from "../../../img/perfil.png";
 import { uploadImage } from "../infrastructure/imageService";
-import { updateStore } from "../infrastructure/storeService";
+import { updateStore } from "../../seller/infrastructure/storeService";
 
 import {
   IconBrandFacebook,

@@ -6,7 +6,7 @@ import ProductCard from "../../../../components/data-display/ProductCard";
 //import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";
 import { useProducts, type Product } from "../../infrastructure/useProducts";
 import { useAuth } from "../../../../hooks/context/AuthContext";
-import { getStoreByUser } from "../../../users/infrastructure/storeService";
+import { getStoreByUser } from "../../infrastructure/storeService";
 import audifonos from "../../../../img/resources/audifonos.jpg";
 import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";
 
