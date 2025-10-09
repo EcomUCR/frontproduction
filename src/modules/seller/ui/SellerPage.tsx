@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from "react-router-dom";
+//import { useParams } from "react-router-dom";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import NavBarSeller from "./components/NavBarSeller";
@@ -12,7 +12,7 @@ import SellerReviewsComponent from "./components/SellerReviewsComponent";
 
 
 export default function SellerPage() {
-    const { id } = useParams();
+   // const { id } = useParams();
     const [view, setView] = useState<'home' | 'offers' | 'contact' | 'reviews'>('home');
 
 
