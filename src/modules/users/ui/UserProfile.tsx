@@ -1,8 +1,9 @@
 import { useEffect, useState, type JSX } from "react";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import { useAuth } from "../../../hooks/context/AuthContext";
-import { getStoreByUser } from "../infrastructure/storeService";
 import foto from "../../../img/perfil.png";
+import { uploadImage } from "../infrastructure/imageService";
+import { updateStore, getStoreByUser } from "../infrastructure/storeService";
 
 import {
   IconBrandFacebook,
@@ -53,13 +54,18 @@ interface Store {
 
 export default function UserProfile({ type }: UserProfileProps) {
   const { user, loading } = useAuth();
+  const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
+  const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const [store, setStore] = useState<Store | null>(null);
   const [editableStore, setEditableStore] = useState<Store | null>(null);
   const [cambiarPassword, setCambiarPassword] = useState(false);
 
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
-  const [originalSocialLinks, setOriginalSocialLinks] = useState<SocialLink[]>([]);
+  const [originalSocialLinks, setOriginalSocialLinks] = useState<SocialLink[]>(
+    []
+  );
   const [adding, setAdding] = useState(false);
   const [newType, setNewType] = useState<SocialLink["type"]>("instagram");
   const [newText, setNewText] = useState("");
@@ -108,16 +114,61 @@ export default function UserProfile({ type }: UserProfileProps) {
     setAdding(false);
     setNewText("");
     setNewType("instagram");
+    setNewLogoFile(null);
+    setNewBannerFile(null);
   };
 
-  const handleSave = () => {
-    console.log("Store a guardar:", editableStore);
-    console.log("Social links a guardar:", socialLinks);
+  const handleSave = async () => {
+    if (!editableStore) return;
+    setSaving(true);
+
+    try {
+      // 1) Campos editables desde el formulario
+      const updatedFields: Record<string, any> = {
+        name: editableStore.name ?? "",
+        description: editableStore.description ?? "",
+        registered_address: editableStore.registered_address ?? "",
+        support_phone: editableStore.support_phone ?? "",
+        // Si tienes más campos en el UI, agrégalos:
+        // address: editableStore.address ?? "",
+        // business_name: editableStore.business_name ?? "",
+        // support_email: editableStore.support_email ?? "",
+      };
+
+      // 2) Subir imágenes si el usuario seleccionó nuevas
+      if (newLogoFile) {
+        const logoUrl = await uploadImage(newLogoFile);
+        updatedFields.image = logoUrl;
+      }
+      if (newBannerFile) {
+        const bannerUrl = await uploadImage(newBannerFile);
+        updatedFields.banner = bannerUrl;
+      }
+
+      // 3) Llamar API de actualización
+      const updated = await updateStore(editableStore.id, updatedFields);
+
+      // 4) Refrescar estado local
+      setStore(updated);
+      setEditableStore(updated);
+      setOriginalSocialLinks(socialLinks);
+
+      // 5) Limpiar archivos temporales
+      setNewLogoFile(null);
+      setNewBannerFile(null);
+      // Opcional: toast o alerta de éxito
+    } catch (err) {
+      console.error("Error al guardar la tienda:", err);
+      alert("Ocurrió un error al guardar la tienda");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setNewLogoFile(file);
     const previewURL = URL.createObjectURL(file);
     setEditableStore((prev) => (prev ? { ...prev, image: previewURL } : prev));
   };
@@ -125,6 +176,7 @@ export default function UserProfile({ type }: UserProfileProps) {
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setNewBannerFile(file);
     const previewURL = URL.createObjectURL(file);
     setEditableStore((prev) => (prev ? { ...prev, banner: previewURL } : prev));
   };
@@ -141,8 +193,15 @@ export default function UserProfile({ type }: UserProfileProps) {
       {type === "CUSTOMER" && (
         <div className="flex w-full flex-col justify-center gap-4 mt-10">
           <div className="flex justify-center">
-            <img src={user.image || foto} alt="profile_image" className="w-auto h-80 rounded-full" />
-            <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary "
+            <img
+              src={user.image || foto}
+              alt="profile_image"
+              className="w-auto h-80 rounded-full"
+            />
+            <ButtonComponent
+              text={saving ? "Guardando..." : "Guardar cambios"}
+              onClick={handleSave}
+              style="w-full p-3 rounded-full text-white bg-contrast-secondary gap-2 flex items-center justify-center mt-10"
             />
           </div>
 
@@ -216,11 +275,12 @@ export default function UserProfile({ type }: UserProfileProps) {
         </div>
       )}
 
-
       {type === "SELLER" && editableStore && (
         <div className="flex w-full flex-col justify-center gap-4 mt-10 font-quicksand">
-
-          <form onSubmit={/*handleSave*/ (e) => e.preventDefault()} className="flex justify-center gap-10 px-10">
+          <form
+            onSubmit={/*handleSave*/ (e) => e.preventDefault()}
+            className="flex justify-center gap-10 px-10"
+          >
             {/* Logo */}
             <figure className="flex flex-col gap-10 w-1/3">
               <div className="flex items-center gap-2">
@@ -239,7 +299,10 @@ export default function UserProfile({ type }: UserProfileProps) {
                 </label>
               </div>
               <img
-                src={editableStore.image || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
+                src={
+                  editableStore.image ||
+                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                }
                 alt=""
                 className="w-2/3 h-auto rounded-xl object-cover"
               />
@@ -263,13 +326,15 @@ export default function UserProfile({ type }: UserProfileProps) {
                 </label>
               </div>
               <img
-                src={editableStore.banner || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
+                src={
+                  editableStore.banner ||
+                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                }
                 alt=""
                 className="w-auto h-auto rounded-xl object-cover"
               />
             </figure>
           </form>
-
 
           {/* Formulario */}
           <div className="w-full px-10">
@@ -345,21 +410,40 @@ export default function UserProfile({ type }: UserProfileProps) {
                         text={link.text}
                         icon={iconMap[link.type]}
                         style="text-main-dark flex gap-2 bg-main-dark/10 py-3 px-2 rounded-xl font-semibold"
-                        iconStyle="text-contrast-secondary" />))}
+                        iconStyle="text-contrast-secondary"
+                      />
+                    ))}
 
                     {adding && (
                       <div className="flex gap-2 items-center bg-main-dark/10 py-3 px-2 rounded-xl">
-                        <select value={newType} onChange={(e) => setNewType(e.target.value as SocialLink["type"])} className="bg-transparent outline-none" >
+                        <select
+                          value={newType}
+                          onChange={(e) =>
+                            setNewType(e.target.value as SocialLink["type"])
+                          }
+                          className="bg-transparent outline-none"
+                        >
                           <option value="instagram">Instagram</option>
                           <option value="x">X</option>
                           <option value="facebook">Facebook</option>
                           <option value="link">Link</option>
                         </select>
-                        <input type="text" placeholder="Usuario o link" value={newText} onChange={(e) => setNewText(e.target.value)} className="bg-transparent outline-none flex-1" />
-                        <button type="button" onClick={addSocialLink} className="text-contrast-secondary font-semibold" >
+                        <input
+                          type="text"
+                          placeholder="Usuario o link"
+                          value={newText}
+                          onChange={(e) => setNewText(e.target.value)}
+                          className="bg-transparent outline-none flex-1"
+                        />
+                        <button
+                          type="button"
+                          onClick={addSocialLink}
+                          className="text-contrast-secondary font-semibold"
+                        >
                           Guardar
                         </button>
-                      </div>)}
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
@@ -392,13 +476,27 @@ export default function UserProfile({ type }: UserProfileProps) {
                 />
               </label>
 
-              {cambiarPassword && (<div className="flex flex-col gap-5">
-                <input type="password" placeholder="Contraseña actual" className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]" />
-                <div className="flex gap-2">
-                  <input type="password" placeholder="Nueva contraseña" className="bg-main-dark/20 rounded-xl px-3 py-2 w-full" />
-                  <input type="password" placeholder="Confirmar contraseña" className="bg-main-dark/20 rounded-xl px-3 py-2 w-full" />
+              {cambiarPassword && (
+                <div className="flex flex-col gap-5">
+                  <input
+                    type="password"
+                    placeholder="Contraseña actual"
+                    className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      placeholder="Nueva contraseña"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Confirmar contraseña"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                    />
+                  </div>
                 </div>
-              </div>)}
+              )}
             </form>
 
             {/* Botones finales */}
@@ -409,7 +507,7 @@ export default function UserProfile({ type }: UserProfileProps) {
                 style="w-full p-3 rounded-full text-white bg-main gap-2 flex items-center justify-center mt-10"
               />
               <ButtonComponent
-                text="Guardar cambios"
+                text={saving ? "Guardando..." : "Guardar cambios"}
                 onClick={handleSave}
                 style="w-full p-3 rounded-full text-white bg-contrast-secondary gap-2 flex items-center justify-center mt-10"
               />
