@@ -46,6 +46,7 @@ function App() {
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/search/:categoryId" element={<SearchedProductPage />} />
           <Route path="/search" element={<SearchedProductPage />} />
+          
         </Routes>
       </Router>
     </AuthProvider>

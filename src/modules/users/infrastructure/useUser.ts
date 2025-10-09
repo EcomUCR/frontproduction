@@ -10,7 +10,11 @@ export interface User {
   email: string;
   role: UserRole;
 }
-
+export interface StoreSocial {
+  id: number;
+  platform: string; // instagram, facebook, x, etc.
+  url: string;
+}
 export interface Store {
   id: number;
   name: string;
@@ -26,8 +30,16 @@ export interface Store {
   banner?: string | null;
   image?: string | null;
   user_id?: number;
-}
+  address?: string | null;
+  registered_address?: string | null;
 
+  // 👇 Relaciones agregadas (opcionalmente según tus with() de Laravel)
+  store_socials?: StoreSocial[];
+  banners?: any[];
+  products?: any[];
+  reviews?: any[];
+  user?: any;
+}
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<UserRole>(null);

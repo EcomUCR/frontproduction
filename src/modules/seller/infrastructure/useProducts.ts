@@ -140,6 +140,19 @@ export function useProducts() {
       setLoading(false);
     }
   };
+  const getFeaturedProductsByStore = async (store_id: number): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/stores/${store_id}/featured`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos destacados de la tienda");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Editar producto
   const updateProduct = async (id: number, product: Product) => {
@@ -217,16 +230,18 @@ export function useProducts() {
 
 
   return {
-    getProductById,
-    getProductsByStore,
-    getProducts,
-    getFeaturedProducts,
-    getCategories,
-    getProductsByCategory, // 👈 nuevo
-    createProduct,
-    updateProduct,
-    loading,
-    error,
-    success
-  };
+  getProductById,
+  getProductsByStore,
+  getFeaturedProductsByStore,
+  getProducts,
+  getFeaturedProducts,
+  getCategories,
+  getProductsByCategory,
+  createProduct,
+  updateProduct,
+  loading,
+  error,
+  success,
+};
+
 }

@@ -1,44 +1,140 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { IconBrandFacebook, IconBrandInstagram, IconBrandX } from "@tabler/icons-react";
-import logo from "../../../../img/resources/Group 50.png";
+import { getStore } from "../../infrastructure/storeService";
+import type { Store } from "../../../users/infrastructure/useUser";
+import logoFallback from "../../../../img/resources/Group 50.png";
 
 export default function SellerContactComponent() {
+  const { id } = useParams();
+  const [store, setStore] = useState<Store | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    const fetchStore = async () => {
+      const data = await getStore(Number(id));
+      setStore(data);
+      setLoading(false);
+    };
+    fetchStore();
+  }, [id]);
+
+  if (loading || !store) {
     return (
-        <div className="flex flex-col mx-10 my-5 font-quicksand">
-            <div className="flex items-center justify-center">
-                <div className="flex items-center w-[40%]">
-                    <img src={logo} alt="" />
-                </div>
-                {/*En el <p> están los br del cambio de linea, eso hay que modificarlo ya que es el formato que desee poner la tienda */}
-                <div className="flex flex-col text-center w-[60%] gap-5">
-                    <h2 className="text-3xl">Unstable Games</h2>
-                    <p>Durante los últimos años, la misión de nuestro equipo ha sido diseñar juegos altamente interactivos que merezcan la pena jugar una y otra vez.
-                        Queremos que nuestros juegos unan a las personas, les ayuden a expresarse y, en definitiva, a hacer del mundo un lugar mejor.
-                        <br/><br/>Somos un equipo de creadores de corazón, y hemos identificado cuatro valores fundamentales que nos guían. Estos valores nos han
-                        ayudado en todo momento a la hora de colaborar, superar nuestros límites creativos y construir nuestra marca.</p>
-                </div>
-            </div>
-            <div className="flex justify-center gap-25">
-                <div className="flex flex-col gap-2">
-                    <h3 className="text-2xl font-bold">Contacto:</h3>
-                    <p>+506 0000-0000</p>
-                    <p>unstable@examples.com</p>
-                </div>
-                <div className="flex flex-col gap-2">
-                    <h3 className="text-2xl font-bold">Direccion:</h3>
-                    <p>Calle Principal, Ciudad, País</p>
-                </div>
-                <div className="flex flex-col gap-2 pb-10">
-                    <h3 className="text-2xl font-bold">Páginas y Redes:</h3>
-                        <p>
-                            unstable.com
-                        </p>
-                        <ul className="flex gap-5">
-                            <li><IconBrandInstagram /></li>
-                            <li><IconBrandFacebook /></li>
-                            <li><IconBrandX /></li>
-                        </ul>
-                </div>
-            </div>
-        </div>
+      <div className="flex justify-center items-center py-20 text-gray-400 font-quicksand">
+        Cargando información de la tienda...
+      </div>
     );
+  }
+
+  return (
+    <div className="flex flex-col mx-10 my-5 font-quicksand">
+      {/* 🔹 Logo + Descripción */}
+      <div className="flex items-center justify-center">
+        {/* Logo */}
+        <div className="flex items-center w-[40%] justify-center">
+          <img
+            src={store.image || logoFallback}
+            alt={store.name}
+            className="max-h-[180px] object-contain rounded-xl"
+          />
+        </div>
+
+        {/* Descripción */}
+        <div className="flex flex-col text-center w-[60%] gap-5">
+          <h2 className="text-3xl font-bold">{store.name}</h2>
+          <p className="text-main-dark text-base leading-relaxed whitespace-pre-line">
+            {store.description ||
+              "Esta tienda aún no ha agregado una descripción."}
+          </p>
+        </div>
+      </div>
+
+      {/* 🔹 Contacto / Dirección / Redes */}
+      <div className="flex justify-center gap-25 mt-10">
+        {/* Contacto */}
+        <div className="flex flex-col gap-2">
+          <h3 className="text-2xl font-bold">Contacto:</h3>
+          <p>{store.support_phone || "+506 0000-0000"}</p>
+          <p>{store.support_email || "correo@ejemplo.com"}</p>
+        </div>
+
+        {/* Dirección */}
+        <div className="flex flex-col gap-2">
+          <h3 className="text-2xl font-bold">Dirección:</h3>
+          <p>
+            {store.address ||
+              store.registered_address ||
+              "Calle Principal, Ciudad, País"}
+          </p>
+        </div>
+
+        {/* Páginas y redes */}
+        <div className="flex flex-col gap-2 pb-10">
+          <h3 className="text-2xl font-bold">Páginas y Redes:</h3>
+          <p>{store.business_name || "unstable.com"}</p>
+
+          <ul className="flex gap-5">
+            {/* Instagram */}
+            {store.store_socials?.some((s) => s.platform === "instagram") ? (
+              <li>
+                <a
+                  href={
+                    store.store_socials.find((s) => s.platform === "instagram")
+                      ?.url
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <IconBrandInstagram />
+                </a>
+              </li>
+            ) : (
+              <li className="opacity-50">
+                <IconBrandInstagram />
+              </li>
+            )}
+
+            {/* Facebook */}
+            {store.store_socials?.some((s) => s.platform === "facebook") ? (
+              <li>
+                <a
+                  href={
+                    store.store_socials.find((s) => s.platform === "facebook")
+                      ?.url
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <IconBrandFacebook />
+                </a>
+              </li>
+            ) : (
+              <li className="opacity-50">
+                <IconBrandFacebook />
+              </li>
+            )}
+
+            {/* X / Twitter */}
+            {store.store_socials?.some((s) => s.platform === "x") ? (
+              <li>
+                <a
+                  href={store.store_socials.find((s) => s.platform === "x")?.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <IconBrandX />
+                </a>
+              </li>
+            ) : (
+              <li className="opacity-50">
+                <IconBrandX />
+              </li>
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
 }
