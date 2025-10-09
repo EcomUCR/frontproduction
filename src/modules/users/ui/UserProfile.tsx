@@ -193,6 +193,10 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER"))
     return <div>No autorizado</div>;
 
+  function handleEdit(): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="mx-10 border-l-2 border-main-dark/20 pl-4">
       <div className="flex flex-col pl-10">
@@ -201,7 +205,7 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
 
       {/* ============ PERFIL CLIENTE ============ */}
       {type === "CUSTOMER" && (
-        <div className="flex w-full flex-col justify-center gap-4 mt-10">
+        <div className="flex relative w-full flex-col justify-center gap-4 mt-10">
           <div className="flex justify-center">
             <img
               src={user.image || foto}
@@ -209,9 +213,9 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
               className="w-auto h-80 rounded-full"
             />
             <ButtonComponent
-              text={saving ? "Guardando..." : "Guardar cambios"}
-              onClick={handleSave}
-              style="w-full p-3 rounded-full text-white bg-contrast-secondary gap-2 flex items-center justify-center mt-10"
+              onClick={handleEdit}
+              style="cursor-pointer absolute top-70 right-55 bg-main-dark/20 hover:bg-main-dark/90 p-2 rounded-full"
+              icon={<IconEdit size={30} className="text-contrast-secondary" />}
             />
           </div>
 
