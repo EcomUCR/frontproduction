@@ -65,7 +65,7 @@ return (
               ? prod.discount_price.toLocaleString("es-CRC")
               : "",
             rating: 0,
-            img: prod.image_url || audifonos,
+            img: prod.image_1_url || audifonos,
           }))}
         />
       </div>
@@ -101,7 +101,7 @@ return (
                 ? prod.discount_price.toLocaleString("es-CRC")
                 : undefined
             }
-            img={prod.image_url ? prod.image_url : audifonos}
+            img={prod.image_1_url ? prod.image_1_url : audifonos}
             edit={false}
           />
         ))}
@@ -138,7 +138,7 @@ return (
                 ? prod.discount_price.toLocaleString("es-CRC")
                 : undefined
             }
-            img={prod.image_url ? prod.image_url : audifonos}
+            img={prod.image_1_url ? prod.image_1_url : audifonos}
             edit={false}
           />
         ))}

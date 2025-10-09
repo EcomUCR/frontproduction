@@ -23,7 +23,7 @@ export type Product = {
   status: boolean;
   categories: number[];
   image: File | string | null;
-  image_url?: string;
+  image_1_url?: string;
   is_featured: boolean;
   store?: {
     id: number;
@@ -111,7 +111,7 @@ export function useProducts() {
         stock: product.stock,
         status: product.status ? 1 : 0,
         is_featured: product.is_featured,
-        image_url: imageUrl,
+        image_1_url: imageUrl,
         
       };
 
@@ -146,7 +146,7 @@ export function useProducts() {
         stock: product.stock,
         status: product.status ? 1 : 0,
         is_featured: false,
-        image_url: imageUrl,
+        image_1_url: imageUrl,
       };
 
       await axios.put(`${BASE_URL}/products/${id}`, payload);

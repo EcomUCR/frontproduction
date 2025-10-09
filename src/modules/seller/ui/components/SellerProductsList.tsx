@@ -107,7 +107,7 @@ export default function SellerProductsList() {
                   discountPrice={
                     product.discount_price?.toString() || undefined
                   }
-                  img={product.image_url ? product.image_url : audifonos}
+                  img={product.image_1_url ? product.image_1_url : audifonos}
                   edit
                   id={product.id ?? 0}
                 />
@@ -131,8 +131,8 @@ export default function SellerProductsList() {
                 key={product.id}
                 shop={store?.name || product.store?.name || "Sin vendedor"}
                 img={
-                  product.image_url
-                    ? product.image_url
+                  product.image_1_url
+                    ? product.image_1_url
                     : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 title={product.name}
