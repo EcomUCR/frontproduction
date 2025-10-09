@@ -34,18 +34,17 @@ export default function SellerPage() {
     return (
         <div className="flex flex-col w-full">
             <NavBar />
-            <div className='mx-auto max-w-[80rem]'>
-
+            <div className='mx-auto max-w-[80rem] w-full'>
                 <header className="flex flex-col justify-center w-full px-5 py-5 gap-3 ">
-                    <img src={store.banner || ""} alt="Banner Store" className="w-full h-[20rem] object-cover rounded-2xl" />
+                    <img src={store.banner || ""} alt="Banner Store" className="w-full h-[15rem] object-cover rounded-2xl" />
                     <NavBarSeller setView={setView} currentView={view} id={id} />
                 </header>
-
+                <div className=''>
                 {view === 'home' && <HomeSeller />}
                 {view === 'offers' && <SellerOffers />}
                 {view === 'contact' && <SellerContactComponent />}
                 {view === 'reviews' && <SellerReviewsComponent />}
-
+                </div>
             </div>
             <Footer />
         </div>
