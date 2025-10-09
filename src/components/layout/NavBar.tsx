@@ -45,7 +45,7 @@ export default function NavBar() {
       displayName =
         `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() || user.email;
     } else {
-      displayName = user.email;
+      displayName = user.store?.name || user.email;
     }
   }
 
@@ -56,7 +56,7 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="bg-main px-10 pt-2">
+    <nav className="bg-main px-10 pt-2 lg:px-35 ">
       {/*Esta es la parte superior del navbar*/}
       <div className="flex justify-between items-center ">
         <div className="w-1/3">
