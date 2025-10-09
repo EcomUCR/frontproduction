@@ -5,6 +5,7 @@ import Footer from "../../../components/layout/Footer";
 import ProductCard from "../../../components/data-display/ProductCard";
 import { useProducts } from "../../seller/infrastructure/useProducts";
 import type { Product } from "../../seller/infrastructure/useProducts";
+import { SkeletonProduct } from "../../../components/ui/AllSkeletons";
 
 export default function SearchedProductPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -86,7 +87,10 @@ export default function SearchedProductPage() {
           {getTitle()}
         </h1>
 
-        {!loading && products.length > 0 ? (
+        {/* 🔹 Estado de carga */}
+        {loading ? (
+          <SkeletonProduct count={30} />
+        ) : products.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {paginated.map((prod) => (
@@ -106,6 +110,7 @@ export default function SearchedProductPage() {
                 />
               ))}
             </div>
+
             {hasNext && (
               <div className="flex justify-center mt-6">
                 <button
@@ -118,11 +123,9 @@ export default function SearchedProductPage() {
             )}
           </>
         ) : (
-          !loading && (
-            <p className="text-center text-gray-500">
-              No hay productos disponibles.
-            </p>
-          )
+          <p className="text-center text-gray-500">
+            No hay productos disponibles.
+          </p>
         )}
       </div>
 
