@@ -45,7 +45,7 @@ export default function NavBar() {
       displayName =
         `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() || user.email;
     } else {
-      displayName = user.store?.name || user.email;
+      displayName = user.store?.name ;
     }
   }
 
