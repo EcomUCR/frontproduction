@@ -10,6 +10,9 @@ import ForgotPasswordPage from "./modules/auth/ui/ForgotPasswordPage";
 import LoginRegisterPage from "./modules/auth/ui/LoginRegisterPage";
 import ResetPasswordPage from "./modules/auth/ui/ResetPasswordPage";
 
+//Search product
+import SearchedProductPage from "./modules/search/ui/SearchedProductPage";
+
 //home
 import HomePage from "./modules/home/ui/HomePage";
 
@@ -41,6 +44,8 @@ function App() {
           <Route path='/forgotPassword' element={<ForgotPasswordPage />} />
           <Route path='/crudProduct' element={<CrudProductPage />} />
           <Route path='/admin' element={<AdminPage />} />
+          <Route path='/search' element={<SearchedProductPage />} />
+
         </Routes>
       </Router>
     </AuthProvider>
