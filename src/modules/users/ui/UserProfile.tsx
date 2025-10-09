@@ -3,7 +3,7 @@ import ButtonComponent from "../../../components/ui/ButtonComponent";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import foto from "../../../img/perfil.png";
 import { uploadImage } from "../infrastructure/imageService";
-import { updateStore, getStoreByUser } from "../infrastructure/storeService";
+import { updateStore } from "../infrastructure/storeService";
 
 import {
   IconBrandFacebook,
@@ -15,6 +15,10 @@ import {
   IconSquareRoundedPlus,
   IconX,
 } from "@tabler/icons-react";
+
+// ========================
+// Interfaces y tipos
+// ========================
 
 interface UserProfileProps {
   type: "CUSTOMER" | "SELLER" | "ADMIN" | null | undefined;
@@ -36,7 +40,7 @@ interface Store {
   id: number;
   user_id?: number;
   name: string;
-  slug: string;
+  slug?: string; // opcional para evitar errores
   description?: string | null;
   image?: string | null;
   banner?: string | null;
@@ -52,8 +56,13 @@ interface Store {
   status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
 }
 
-export default function UserProfile({ type }: UserProfileProps) {
+// ========================
+// Componente principal
+// ========================
+
+export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   const { user, loading } = useAuth();
+
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -70,23 +79,28 @@ export default function UserProfile({ type }: UserProfileProps) {
   const [newType, setNewType] = useState<SocialLink["type"]>("instagram");
   const [newText, setNewText] = useState("");
 
+  // ========================
+  // Cargar datos de tienda
+  // ========================
+
   useEffect(() => {
-    const fetchStore = async () => {
-      try {
-        if (user?.id) {
-          const storeData = await getStoreByUser(user.id);
-          setStore(storeData);
-          setEditableStore(storeData);
-          const linksFromApi: SocialLink[] = [];
-          setSocialLinks(linksFromApi);
-          setOriginalSocialLinks(linksFromApi);
-        }
-      } catch (error) {
-        console.error("Error al cargar la tienda:", error);
-      }
-    };
-    fetchStore();
+    if (user?.store) {
+      const storeData: Store = {
+        ...user.store,
+        slug: user.store.slug || "", // evita error TS
+      };
+      setStore(storeData);
+      setEditableStore(storeData);
+    }
+
+    const linksFromApi: SocialLink[] = [];
+    setSocialLinks(linksFromApi);
+    setOriginalSocialLinks(linksFromApi);
   }, [user]);
+
+  // ========================
+  // Handlers
+  // ========================
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -102,10 +116,6 @@ export default function UserProfile({ type }: UserProfileProps) {
     setNewType("instagram");
     setAdding(false);
   };
-
-  /*const removeSocialLink = (index: number) => {
-    setSocialLinks((prev) => prev.filter((_, i) => i !== index));
-  };*/
 
   const handleCancel = () => {
     setEditableStore(store);
@@ -123,40 +133,34 @@ export default function UserProfile({ type }: UserProfileProps) {
     setSaving(true);
 
     try {
-      // 1) Campos editables desde el formulario
       const updatedFields: Record<string, any> = {
         name: editableStore.name ?? "",
         description: editableStore.description ?? "",
         registered_address: editableStore.registered_address ?? "",
         support_phone: editableStore.support_phone ?? "",
-        // Si tienes más campos en el UI, agrégalos:
-        // address: editableStore.address ?? "",
-        // business_name: editableStore.business_name ?? "",
-        // support_email: editableStore.support_email ?? "",
       };
 
-      // 2) Subir imágenes si el usuario seleccionó nuevas
+      // eliminar valores vacíos
+      Object.keys(updatedFields).forEach((key) => {
+        if (updatedFields[key] === "") delete updatedFields[key];
+      });
+
       if (newLogoFile) {
         const logoUrl = await uploadImage(newLogoFile);
         updatedFields.image = logoUrl;
       }
+
       if (newBannerFile) {
         const bannerUrl = await uploadImage(newBannerFile);
         updatedFields.banner = bannerUrl;
       }
 
-      // 3) Llamar API de actualización
       const updated = await updateStore(editableStore.id, updatedFields);
-
-      // 4) Refrescar estado local
       setStore(updated);
       setEditableStore(updated);
       setOriginalSocialLinks(socialLinks);
-
-      // 5) Limpiar archivos temporales
       setNewLogoFile(null);
       setNewBannerFile(null);
-      // Opcional: toast o alerta de éxito
     } catch (err) {
       console.error("Error al guardar la tienda:", err);
       alert("Ocurrió un error al guardar la tienda");
@@ -181,6 +185,10 @@ export default function UserProfile({ type }: UserProfileProps) {
     setEditableStore((prev) => (prev ? { ...prev, banner: previewURL } : prev));
   };
 
+  // ========================
+  // Renderizado
+  // ========================
+
   if (loading) return <div>Cargando...</div>;
   if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER"))
     return <div>No autorizado</div>;
@@ -190,6 +198,8 @@ export default function UserProfile({ type }: UserProfileProps) {
       <div className="flex flex-col pl-10">
         <h1 className="text-xl font-quicksand">Información de la cuenta</h1>
       </div>
+
+      {/* ============ PERFIL CLIENTE ============ */}
       {type === "CUSTOMER" && (
         <div className="flex w-full flex-col justify-center gap-4 mt-10">
           <div className="flex justify-center">
@@ -240,18 +250,18 @@ export default function UserProfile({ type }: UserProfileProps) {
                 <div className="flex flex-col gap-5">
                   <input
                     type="password"
-                    placeholder="Contraseña actual"
+                    placeholder="Contraseña actual"
                     className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
                   />
                   <div className="flex gap-2">
                     <input
                       type="password"
-                      placeholder="Nueva contraseña"
+                      placeholder="Nueva contraseña"
                       className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
                     />
                     <input
                       type="password"
-                      placeholder="Confirmar contraseña"
+                      placeholder="Confirmar contraseña"
                       className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
                     />
                   </div>
@@ -275,13 +285,14 @@ export default function UserProfile({ type }: UserProfileProps) {
         </div>
       )}
 
+      {/* ============ PERFIL VENDEDOR ============ */}
       {type === "SELLER" && editableStore && (
         <div className="flex w-full flex-col justify-center gap-4 mt-10 font-quicksand">
+          {/* Logo y banner */}
           <form
-            onSubmit={/*handleSave*/ (e) => e.preventDefault()}
+            onSubmit={(e) => e.preventDefault()}
             className="flex justify-center gap-10 px-10"
           >
-            {/* Logo */}
             <figure className="flex flex-col gap-10 w-1/3">
               <div className="flex items-center gap-2">
                 <p>Logo de tienda</p>
@@ -303,12 +314,11 @@ export default function UserProfile({ type }: UserProfileProps) {
                   editableStore.image ||
                   "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
-                alt=""
+                alt="Logo"
                 className="w-2/3 h-auto rounded-xl object-cover"
               />
             </figure>
 
-            {/* Banner */}
             <figure className="flex flex-col gap-10 w-2/3">
               <div className="flex items-center gap-2">
                 <p>Banner de la tienda</p>
@@ -330,13 +340,13 @@ export default function UserProfile({ type }: UserProfileProps) {
                   editableStore.banner ||
                   "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
-                alt=""
+                alt="Banner"
                 className="w-auto h-auto rounded-xl object-cover"
               />
             </figure>
           </form>
 
-          {/* Formulario */}
+          {/* Formulario principal */}
           <div className="w-full px-10">
             <form className="flex flex-col gap-8 pt-10">
               <section className="flex flex-col gap-10">
@@ -403,7 +413,6 @@ export default function UserProfile({ type }: UserProfileProps) {
                   </div>
 
                   <div className="grid grid-cols-2 gap-x-10 gap-y-5">
-                    {/*Hay que hacer un cambio en el botón para que al volver a clickearlo se muestre de nuevo el formulario y se pueda editar la información en caso de ser necesario */}
                     {socialLinks.map((link, index) => (
                       <ButtonComponent
                         key={index}
@@ -465,38 +474,6 @@ export default function UserProfile({ type }: UserProfileProps) {
                   </label>
                 </div>
               </section>
-
-              {/* Contraseña */}
-              <label className="flex items-center gap-2 pt-2">
-                Cambiar contraseña
-                <input
-                  type="checkbox"
-                  checked={cambiarPassword}
-                  onChange={() => setCambiarPassword(!cambiarPassword)}
-                />
-              </label>
-
-              {cambiarPassword && (
-                <div className="flex flex-col gap-5">
-                  <input
-                    type="password"
-                    placeholder="Contraseña actual"
-                    className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="password"
-                      placeholder="Nueva contraseña"
-                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
-                    />
-                    <input
-                      type="password"
-                      placeholder="Confirmar contraseña"
-                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
-                    />
-                  </div>
-                </div>
-              )}
             </form>
 
             {/* Botones finales */}

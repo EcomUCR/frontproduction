@@ -4,6 +4,27 @@ import axios from "axios";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
+type StoreType = {
+  id: number;
+  user_id?: number;
+  name: string;
+  slug?: string;
+  description?: string | null;
+  image?: string | null;
+  banner?: string | null;
+  category_id?: number | null;
+  business_name?: string | null;
+  tax_id?: string | null;
+  legal_type?: string | null;
+  registered_address?: string | null;
+  support_email?: string | null;
+  support_phone?: string | null;
+  is_verified?: boolean | null;
+  verification_date?: string | null;
+  status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
+};
+
+
 type UserType = {
   image: string;
   id: number;
@@ -13,14 +34,9 @@ type UserType = {
   last_name?: string;
   phone_number?: string;
   role: "ADMIN" | "SELLER" | "CUSTOMER";
-  store?: {
-    id: number;
-    name: string;
-    description?: string;
-    image?: string;
-    
-  } | null;
+  store?: StoreType | null;
 };
+
 
 type AuthContextType = {
   user: UserType | null;
