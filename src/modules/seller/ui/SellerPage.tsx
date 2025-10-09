@@ -3,8 +3,6 @@ import { useParams } from "react-router-dom";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import NavBarSeller from "./components/NavBarSeller";
-
-import banner from '../../../img/resources/banner.png';
 import HomeSeller from "./components/SellerHomeComponent";
 import SellerOffers from "./components/SellerOffersComponent";
 import SellerContactComponent from "./components/SellerContactComponent";
