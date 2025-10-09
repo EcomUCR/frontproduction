@@ -44,7 +44,7 @@ export default function SellerContactComponent() {
         {/* Descripción */}
         <div className="flex flex-col text-center w-[60%] gap-5">
           <h2 className="text-3xl font-bold">{store.name}</h2>
-          <p className="text-main-dark text-base leading-relaxed whitespace-pre-line">
+          <p className="text-main-dark leading-relaxed whitespace-pre-line pt-2">
             {store.description ||
               "Esta tienda aún no ha agregado una descripción."}
           </p>
@@ -52,16 +52,16 @@ export default function SellerContactComponent() {
       </div>
 
       {/* 🔹 Contacto / Dirección / Redes */}
-      <div className="flex justify-center gap-25 mt-10">
+      <div className="grid grid-cols-3 justify-items-center mt-20">
         {/* Contacto */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-2/3">
           <h3 className="text-2xl font-bold">Contacto:</h3>
           <p>{store.support_phone || "+506 0000-0000"}</p>
           <p>{store.support_email || "correo@ejemplo.com"}</p>
         </div>
 
         {/* Dirección */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-2/3">
           <h3 className="text-2xl font-bold">Dirección:</h3>
           <p>
             {store.address ||
@@ -71,7 +71,7 @@ export default function SellerContactComponent() {
         </div>
 
         {/* Páginas y redes */}
-        <div className="flex flex-col gap-2 pb-10">
+        <div className="flex flex-col gap-2 pb-10 w-2/3">
           <h3 className="text-2xl font-bold">Páginas y Redes:</h3>
           <p>{store.business_name || "unstable.com"}</p>
 

@@ -280,7 +280,7 @@ export default function ProductPage() {
                     {/* 🔹 Contenido Tabs */}
                     <div>
                       {activeTab === "description" && (
-                        <p>{product.description || "Sin descripción."}</p>
+                        <p className="whitespace-pre-line">{product.description || "Sin descripción."}</p>
                       )}
                       {activeTab === "reviews" && (
                         <p>Este producto aún no tiene calificaciones.</p>
