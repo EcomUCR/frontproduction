@@ -30,7 +30,10 @@ import {
   IconDots,
 } from "@tabler/icons-react";
 import bg from "../../img/Home.png";
-import { useProducts, type Category } from "../../modules/seller/infrastructure/useProducts";
+import {
+  useProducts,
+  type Category,
+} from "../../modules/seller/infrastructure/useProducts";
 import { useEffect, useState } from "react";
 
 interface CategorySliderProps {
@@ -66,18 +69,23 @@ export default function CategorySlider({ onLoaded }: CategorySliderProps) {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
+    let mounted = true;
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
-        console.log("Categorías recibidas:", data);
-        setCategories(data);
-        onLoaded?.(); // 👈 notifica al padre que terminó de cargar
+        if (mounted) {
+          setCategories(data);
+          onLoaded?.(); // 👈 Notifica al padre una sola vez
+        }
       } catch (err) {
         console.error("Error al cargar categorías", err);
       }
     };
     fetchCategories();
-  }, [getCategories, onLoaded]);
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <Carousel className="mx-10">
