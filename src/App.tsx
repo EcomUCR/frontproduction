@@ -44,7 +44,8 @@ function App() {
           <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
           <Route path="/crudProduct" element={<CrudProductPage />} />
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/category/:categoryId" element={<SearchedProductPage />}/>
+          <Route path="/search/:categoryId" element={<SearchedProductPage />} />
+          <Route path="/search" element={<SearchedProductPage />} />
         </Routes>
       </Router>
     </AuthProvider>
