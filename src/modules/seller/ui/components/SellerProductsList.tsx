@@ -124,7 +124,7 @@ export default function SellerProductsList() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 justify-items-center py-10">
           {filteredProducts
-            .filter((p) => p.is_featured === true)
+            .filter((p) => p.is_featured)
             .slice(0, 4)
             .map((product) => (
               <FeaturedProductCard

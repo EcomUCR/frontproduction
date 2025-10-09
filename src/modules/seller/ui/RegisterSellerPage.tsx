@@ -87,12 +87,29 @@ export default function RegisterSellerPage() {
                   name="phone_number"
                   className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
                   placeholder="Teléfono"
-                  type="text"
+                  type="tel"
                   value={form.phone_number}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    // Elimina todo excepto números
+                    let value = e.target.value.replace(/\D/g, "");
+
+                    // Limita a 8 dígitos (puedes ajustar según país)
+                    if (value.length > 8) value = value.slice(0, 8);
+
+                    // Formato tipo Costa Rica: 8888 8888
+                    let formatted = value;
+                    if (value.length > 4) {
+                      formatted = `${value.slice(0, 4)} ${value.slice(4)}`;
+                    }
+
+                    setForm({ ...form, phone_number: formatted });
+                  }}
+                  maxLength={9} // incluye el espacio
                   required
                   autoComplete="tel"
                 />
+
+
               </div>
               <div className="flex flex-col space-y-5 w-full items-center">
                 <input
@@ -137,9 +154,8 @@ export default function RegisterSellerPage() {
               <button
                 type="submit"
                 disabled={registering}
-                className={`bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand ${
-                  registering ? "opacity-60" : ""
-                }`}
+                className={`bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand ${registering ? "opacity-60" : ""
+                  }`}
               >
                 {registering ? "Creando cuenta..." : "Crear cuenta"}
               </button>

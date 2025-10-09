@@ -101,19 +101,21 @@ export function useProducts() {
       const imageUrl = await uploadImage(product.image);
 
       // Payload del producto
-      const payload: any = {
-        store_id: store_id,
-        sku: product.name,
-        name: product.name,
-        description: product.description || "",
-        price: product.price,
-        discount_price: product.discount_price || null,
-        stock: product.stock,
-        status: product.status ? 1 : 0,
-        is_featured: product.is_featured,
-        image_1_url: imageUrl,
-        
-      };
+      // Payload del producto
+const payload: any = {
+  store_id: store_id,
+  sku: `SKU-${Date.now()}`, // ⚙️ genera uno temporal
+  name: product.name,
+  description: product.description || "",
+  price: product.price,
+  discount_price: product.discount_price || null,
+  stock: product.stock,
+  status: product.status ? 1 : 0,
+  is_featured: product.is_featured,
+  image_1_url: imageUrl,
+  category_ids: product.categories, // ✅ enviar categorías seleccionadas
+};
+
 
       // Enviar producto al backend
       await axios.post(`${BASE_URL}/products`, payload);
