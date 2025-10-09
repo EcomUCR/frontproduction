@@ -77,11 +77,11 @@ export default function SellerContactComponent() {
 
           <ul className="flex gap-5">
             {/* Instagram */}
-            {store.store_socials?.some((s) => s.platform === "instagram") ? (
+            {store.store_socials?.some((s: { platform: string; }) => s.platform === "instagram") ? (
               <li>
                 <a
                   href={
-                    store.store_socials.find((s) => s.platform === "instagram")
+                    store.store_socials.find((s: { platform: string; }) => s.platform === "instagram")
                       ?.url
                   }
                   target="_blank"
@@ -97,11 +97,11 @@ export default function SellerContactComponent() {
             )}
 
             {/* Facebook */}
-            {store.store_socials?.some((s) => s.platform === "facebook") ? (
+            {store.store_socials?.some((s: { platform: string; }) => s.platform === "facebook") ? (
               <li>
                 <a
                   href={
-                    store.store_socials.find((s) => s.platform === "facebook")
+                    store.store_socials.find((s: { platform: string; }) => s.platform === "facebook")
                       ?.url
                   }
                   target="_blank"
@@ -117,10 +117,10 @@ export default function SellerContactComponent() {
             )}
 
             {/* X / Twitter */}
-            {store.store_socials?.some((s) => s.platform === "x") ? (
+            {store.store_socials?.some((s: { platform: string; }) => s.platform === "x") ? (
               <li>
                 <a
-                  href={store.store_socials.find((s) => s.platform === "x")?.url}
+                  href={store.store_socials.find((s: { platform: string; }) => s.platform === "x")?.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

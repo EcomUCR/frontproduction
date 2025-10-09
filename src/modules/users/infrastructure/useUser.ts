@@ -12,6 +12,11 @@ export interface User {
 }
 
 export interface Store {
+  store_socials: any;
+  registered_address: any;
+  address: any;
+  image: string;
+  banner: string;
   id: number;
   name: string;
   slug: string;
