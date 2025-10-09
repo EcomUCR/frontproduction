@@ -68,7 +68,7 @@ export default function HomeSeller() {
           </div>
         ) : offers.length > 0 ? (
           <div
-            className={`flex justify-between my-5 flex-wrap gap-4 transition-opacity duration-500 ${
+            className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
               loading ? "opacity-0" : "opacity-100"
             }`}
           >
