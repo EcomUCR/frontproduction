@@ -40,17 +40,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!token) {
-      setUser(null);
-      return;
-    }
-    setLoading(true);
-    axios
-      .get("/me")
-      .then((res) => setUser(res.data))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, [token]);
+  if (!token) {
+    setUser(null);
+    return;
+  }
+
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+  setLoading(true);
+  axios
+    .get("/me")
+    .then((res) => {
+      const data = res.data.user ?? res.data; // <-- maneja ambos casos
+      setUser(data);
+    })
+    .catch(() => setUser(null))
+    .finally(() => setLoading(false));
+}, [token]);
+
 
   const login = async (email: string, password: string) => {
     setLoading(true);
