@@ -1,46 +1,61 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import NavBar from "../../../components/layout/NavBar";
 import Footer from "../../../components/layout/Footer";
+import ProductCard from "../../../components/data-display/ProductCard";
+import { useProducts } from "../../seller/infrastructure/useProducts";
+import type { Product } from "../../seller/infrastructure/useProducts";
 
-export default function HomePage() {
-  // Simulamos 30 productos
-  const products = Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    name: `Producto ${i + 1}`,
-    price: (Math.random() * 10000 + 5000).toFixed(2),
-    image: "asd",
-  }));
+export default function SearchedProductPage() {
+  const { categoryId } = useParams<{ categoryId: string }>();
+  const { getProductsByCategory } = useProducts();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!categoryId) return;
+
+    (async () => {
+      setLoading(true);
+      const data = await getProductsByCategory(Number(categoryId));
+      setProducts(data);
+      setLoading(false);
+    })();
+  }, [categoryId]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <NavBar />
 
       <div className="mx-auto max-w-[80rem] px-5 py-10 w-full">
         <h1 className="text-3xl font-bold font-quicksand mb-8 text-center">
-          Lista de productos
+          {loading
+            ? "Cargando productos..."
+            : products.length > 0
+            ? `Productos de la categoría #${categoryId}`
+            : "No hay productos en esta categoría"}
         </h1>
 
-        {/* GRID RESPONSIVE */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="flex flex-col items-center bg-white shadow-md rounded-xl p-4 hover:shadow-lg transition-shadow duration-300"
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-cover rounded-md"
+        {!loading && products.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {products.map((prod) => (
+              <ProductCard
+                key={prod.id}
+                id={prod.id!}
+                shop={prod.store?.name || "Sin tienda"}
+                title={prod.name}
+                price={prod.price.toLocaleString("es-CRC")}
+                discountPrice={
+                  prod.discount_price
+                    ? prod.discount_price.toLocaleString("es-CRC")
+                    : undefined
+                }
+                img={prod.image_1_url || "https://via.placeholder.com/200"}
+                edit={false}
               />
-              <h2 className="mt-3 text-lg font-semibold text-gray-800">
-                {product.name}
-              </h2>
-              <p className="text-main font-bold mt-1">₡{product.price}</p>
-              <button className="mt-3 bg-main text-white font-medium px-5 py-2 rounded-full hover:bg-contrast-secondary transition">
-                Ver producto
-              </button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <Footer />

@@ -32,20 +32,19 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='/loginRegister' element={<LoginRegisterPage />} />
-          <Route path='/registerSeller' element={<RegisterSellerPage />} />
-          <Route path='/beSellerPage' element={<BeSellerPage />} />
-          <Route path='/store/:id' element={<SellerPage />} />
-          <Route path='/profile' element={<ProfilePage />} />
-          <Route path='/shoppingCart' element={<ShoppingCartPage />} />
-          <Route path='/product/:id' element={<ProductPage />} />
-          <Route path='/resetPassword' element={<ResetPasswordPage />} />
-          <Route path='/forgotPassword' element={<ForgotPasswordPage />} />
-          <Route path='/crudProduct' element={<CrudProductPage />} />
-          <Route path='/admin' element={<AdminPage />} />
-          <Route path='/search' element={<SearchedProductPage />} />
-
+          <Route path="/" element={<HomePage />} />
+          <Route path="/loginRegister" element={<LoginRegisterPage />} />
+          <Route path="/registerSeller" element={<RegisterSellerPage />} />
+          <Route path="/beSellerPage" element={<BeSellerPage />} />
+          <Route path="/store/:id" element={<SellerPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/shoppingCart" element={<ShoppingCartPage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/resetPassword" element={<ResetPasswordPage />} />
+          <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+          <Route path="/crudProduct" element={<CrudProductPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/category/:categoryId" element={<SearchedProductPage />}/>
         </Routes>
       </Router>
     </AuthProvider>

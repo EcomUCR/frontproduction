@@ -102,19 +102,19 @@ export function useProducts() {
 
       // Payload del producto
       // Payload del producto
-const payload: any = {
-  store_id: store_id,
-  sku: `SKU-${Date.now()}`, // ⚙️ genera uno temporal
-  name: product.name,
-  description: product.description || "",
-  price: product.price,
-  discount_price: product.discount_price || null,
-  stock: product.stock,
-  status: product.status ? 1 : 0,
-  is_featured: product.is_featured,
-  image_1_url: imageUrl,
-  category_ids: product.categories, // ✅ enviar categorías seleccionadas
-};
+      const payload: any = {
+        store_id: store_id,
+        sku: `SKU-${Date.now()}`, // ⚙️ genera uno temporal
+        name: product.name,
+        description: product.description || "",
+        price: product.price,
+        discount_price: product.discount_price || null,
+        stock: product.stock,
+        status: product.status ? 1 : 0,
+        is_featured: product.is_featured,
+        image_1_url: imageUrl,
+        category_ids: product.categories, // ✅ enviar categorías seleccionadas
+      };
 
 
       // Enviar producto al backend
@@ -127,6 +127,19 @@ const payload: any = {
     }
   };
 
+  const getProductsByCategory = async (categoryId: number): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/categories/${categoryId}/products`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos de esta categoría");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Editar producto
   const updateProduct = async (id: number, product: Product) => {
@@ -203,5 +216,17 @@ const payload: any = {
   };
 
 
-  return { getProductById, getProductsByStore, getProducts, getFeaturedProducts, getCategories, createProduct, updateProduct, loading, error, success };
+  return {
+    getProductById,
+    getProductsByStore,
+    getProducts,
+    getFeaturedProducts,
+    getCategories,
+    getProductsByCategory, // 👈 nuevo
+    createProduct,
+    updateProduct,
+    loading,
+    error,
+    success
+  };
 }
