@@ -35,6 +35,7 @@ import {
   type Category,
 } from "../../modules/seller/infrastructure/useProducts";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface CategorySliderProps {
   onLoaded?: () => void; // 👈 nueva prop opcional
@@ -97,12 +98,14 @@ export default function CategorySlider({ onLoaded }: CategorySliderProps) {
               className="basis-[22%] flex justify-center items-center pl-0 my-8"
               key={category.id}
             >
+              <Link to={`/search/${category.id}`}>
               <CategoryCard
                 title={category.name}
                 img={bg}
                 icon={IconComponent}
                 url="#"
-              />
+                />
+                </Link>
             </CarouselItem>
           );
         })}
