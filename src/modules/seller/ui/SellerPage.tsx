@@ -38,7 +38,7 @@ export default function SellerPage() {
 
                 <header className="flex flex-col justify-center w-full px-5 py-5 gap-3 ">
                     <img src={store.banner || ""} alt="Banner Store" className="w-full h-[20rem] object-cover rounded-2xl" />
-                    <NavBarSeller setView={setView} currentView={view} />
+                    <NavBarSeller setView={setView} currentView={view} id={id} />
                 </header>
 
                 {view === 'home' && <HomeSeller />}

@@ -24,7 +24,7 @@ export interface Store {
   support_phone?: string | null;
   status?: string;
   banner?: string | null;
-  logo_url?: string | null;
+  image?: string | null;
   user_id?: number;
 }
 

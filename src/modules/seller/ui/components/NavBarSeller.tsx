@@ -1,16 +1,39 @@
 import { IconSearch } from "@tabler/icons-react";
-import logo from "../../../../img/tucaShopLogo.png";
+import { useEffect, useState } from "react";
+import type { Store } from "../../../users/infrastructure/useUser";
+import { getStore } from "../../infrastructure/storeService";
 
 interface NavBarSellerProps {
     setView: (view: 'home' | 'offers' | 'contact' | 'reviews') => void;
     currentView: 'home' | 'offers' | 'contact' | 'reviews';
+    id?: string | undefined;
 }
 
-export default function NavBarSeller({ setView, currentView }: NavBarSellerProps) {
+export default function NavBarSeller({ setView, currentView, id }: NavBarSellerProps) {
+
+    const [store, setStore] = useState<Store | null>(null);
+    
+        useEffect(() => {
+            if (!id) return;
+    
+            const fetchStore = async () => {
+                const data = await getStore(Number(id));
+                setStore(data);
+            };
+    
+            fetchStore();
+        }, [id]);
+    
+        if (!store) {
+            return <p>
+                /////////////////////////////////////////////////////////////////////////////////////
+            </p>;
+        }
+
     return (
         <nav className="w-full bg-main-dark/10 text-main-dark px-10 py-4 flex justify-between items-center rounded-xl font-quicksand">
             <div className="w-1/3">
-                <img src={logo} alt="" className="h-8 w-auto" />
+                <img src={store.image || ""} alt="" className="h-8 w-auto" />
             </div>
             <div className="flex justify-center items-center w-1/3">
                 <ul className="flex gap-10 p-3 text-white text-sm font-medium">
