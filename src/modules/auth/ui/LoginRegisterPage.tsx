@@ -22,10 +22,10 @@ export default function LoginRegisterPage() {
                         
                         {/* Fondo animado del selector */}
                         <div className={`bg-white absolute right-0 z-0 h-30 w-55 rounded-l-full transform transition-all duration-300 ${view === 'login' ? '-top-6' : 'translate-y-30'}`}>
-                            <div className="-rotate-90 absolute w-10 h-10 -top-6 left-0 bg-transparent flex items-center justify-center rounded-2xl">
+                            <div className="-rotate-90 absolute w-10 h-10 -top-6 -right-4 bg-transparent flex items-center justify-center rounded-2xl">
                                 <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
                             </div>
-                            <div className="-rotate-180 absolute w-10 h-10 -bottom-6 left-0 bg-transparent flex items-center justify-center rounded-2xl">
+                            <div className="-rotate-180 absolute w-10 h-10 -bottom-6 -right-4 bg-transparent flex items-center justify-center rounded-2xl">
                                 <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
                             </div>
                         </div>
@@ -52,7 +52,7 @@ export default function LoginRegisterPage() {
                 </div>
 
                 {/* PANEL DERECHO */}
-                <div className="flex flex-col items-center justify-center h-[90vh] w-[65%] bg-white">
+                <div className="flex flex-col items-center justify-center h-[90vh] w-[65%] px-40 bg-white">
                     {view === 'login' ? (
                         <LoginForm />
                     ) : (
