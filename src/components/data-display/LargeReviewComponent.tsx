@@ -1,4 +1,4 @@
-import { IconThumbUp } from "@tabler/icons-react";
+//import { IconThumbUp } from "@tabler/icons-react";
 import foto from "../../img/perfil.png";
 import StarRatingComponent from "../ui/StarRatingComponent";
 
@@ -7,9 +7,6 @@ interface LargeReviewProps {
     rating: number;
     comment: string;
     date: string;
-    likes: number;
-    dislikes: number;
-    onVote: (type: 'like' | 'dislike') => void;
 }
 
 export default function LargeReviewComponent({
@@ -17,9 +14,6 @@ export default function LargeReviewComponent({
     rating,
     comment,
     date,
-    likes,
-    dislikes,
-    onVote
 }: LargeReviewProps) {
     return (
         <figure className="flex flex-col gap-5 font-quicksand mt-5">
@@ -36,20 +30,6 @@ export default function LargeReviewComponent({
             <div className="flex justify-between items-center">
                 <p className="text-sm text-main-dark/50">{date}</p>
                 <div className="flex gap-2 items-center">
-                    <button
-                        onClick={() => onVote('like')}
-                        className="flex items-center gap-1 text-main-dark hover:text-green-600 transition"
-                    >
-                        <IconThumbUp />
-                        {likes}
-                    </button>
-                    <button
-                        onClick={() => onVote('dislike')}
-                        className="flex items-center gap-1 text-main-dark hover:text-red-600 transition"
-                    >
-                        <IconThumbUp className="rotate-180" />
-                        {dislikes}
-                    </button>
                 </div>
             </div>
 

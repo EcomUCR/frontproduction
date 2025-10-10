@@ -7,8 +7,6 @@ interface Review {
     rating: number;
     comment: string;
     date: string;
-    likes: number;
-    dislikes: number;
 }
 
 export default function SellerReviewsComponent() {
@@ -28,8 +26,6 @@ export default function SellerReviewsComponent() {
         const reviewWithDate: Review = {
             ...newReview,
             date: new Date().toLocaleDateString(),
-            likes: 0,
-            dislikes: 0,
         };
         setReviews(prev => {
             const updated = [reviewWithDate, ...prev];
@@ -39,22 +35,6 @@ export default function SellerReviewsComponent() {
         setCurrentRating(0);
     };
 
-    
-    const handleVote = (index: number, type: 'like' | 'dislike') => {
-        setReviews(prev =>
-            prev.map((r, i) => {
-                if (i === index) {
-                    const updatedReview = {
-                        ...r,
-                        likes: type === 'like' ? r.likes + 1 : r.likes,
-                        dislikes: type === 'dislike' ? r.dislikes + 1 : r.dislikes
-                    };
-                    return updatedReview;
-                }
-                return r;
-            })
-        );
-    };
 
     const handleRatingChange = (newRating: number) => {
         setCurrentRating(newRating);
@@ -95,14 +75,11 @@ export default function SellerReviewsComponent() {
                                 rating={r.rating}
                                 comment={r.comment}
                                 date={r.date}
-                                likes={r.likes}
-                                dislikes={r.dislikes}
-                                onVote={(type) => handleVote(index, type)}
                             />
                         ))
                     ) : (
                         <p className="text-sm text-gray-500 mt-5">
-                            No hay opiniones aún. ¡Sé el primero en dejar una!
+                            No hay opiniones aún. ¡Sé el primero en dejar una! {/*llamar a las opiniones del back*/}
                         </p>
 
                     )}
