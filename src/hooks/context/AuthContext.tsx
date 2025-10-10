@@ -4,6 +4,10 @@ import axios from "axios";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
+// ============================
+// 🧩 Tipos de datos
+// ============================
+
 type StoreType = {
   id: number;
   user_id?: number;
@@ -24,7 +28,6 @@ type StoreType = {
   status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
 };
 
-
 type UserType = {
   image: string;
   id: number;
@@ -37,14 +40,40 @@ type UserType = {
   store?: StoreType | null;
 };
 
+export type CartItemType = {
+  id: number;
+  product_id: number;
+  quantity: number;
+  product: {
+    id: number;
+    name: string;
+    image_1_url: string;
+    price: number;
+    discount_price?: number | null;
+    stock: number;
+  };
+};
+
+type CartType = {
+  id: number;
+  user_id: number;
+  total?: number;
+  items: CartItemType[];
+};
 
 type AuthContextType = {
   user: UserType | null;
   token: string | null;
   loading: boolean;
+  cart: CartType | null;
+  setCart: React.Dispatch<React.SetStateAction<CartType | null>>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 };
+
+// ============================
+// ⚙️ Creación del contexto
+// ============================
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -54,48 +83,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.getItem("access_token")
   );
   const [loading, setLoading] = useState<boolean>(false);
+  const [cart, setCart] = useState<CartType | null>(null);
 
+  // ============================
+  // 🔄 Cargar usuario y carrito
+  // ============================
   useEffect(() => {
-  if (!token) {
-    setUser(null);
-    return;
-  }
+    if (!token) {
+      setUser(null);
+      setCart(null);
+      return;
+    }
 
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-  setLoading(true);
-  axios
-    .get("/me")
-    .then((res) => {
-      const data = res.data.user ?? res.data; // <-- maneja ambos casos
-      setUser(data);
-    })
-    .catch(() => setUser(null))
-    .finally(() => setLoading(false));
-}, [token]);
+    setLoading(true);
+    axios
+      .get("/me")
+      .then(async (res) => {
+        const data = res.data.user ?? res.data;
+        setUser(data);
 
+        // Cargar carrito asociado al usuario
+        try {
+          const cartRes = await axios.get("/cart/me");
+          setCart(cartRes.data);
+        } catch {
+          setCart(null);
+        }
+      })
+      .catch(() => {
+        setUser(null);
+        setCart(null);
+      })
+      .finally(() => setLoading(false));
+  }, [token]);
 
+  // ============================
+  // 🔐 Login
+  // ============================
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Tu backend retorna: { user, token }
       const { data } = await axios.post("/login", { email, password });
-      console.log("Respuesta del login:", data);
-      console.log(email, password);
-      const accessToken = data.token; // <-- clave correcta
+      const accessToken = data.token;
       if (!accessToken) throw new Error("Token no recibido");
 
+      // Guardar token
       setToken(accessToken);
       localStorage.setItem("access_token", accessToken);
       axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
-      // Usa el usuario que ya viene en la respuesta del backend
+      // Guardar usuario
       setUser(data.user);
+
+      // Cargar carrito (si el backend no lo devuelve, lo crea)
+      try {
+        const cartRes = await axios.get("/cart/me");
+        setCart(cartRes.data);
+      } catch {
+        setCart(null);
+      }
 
       setLoading(false);
       return true;
     } catch {
       setUser(null);
+      setCart(null);
       setToken(null);
       localStorage.removeItem("access_token");
       delete axios.defaults.headers.common["Authorization"];
@@ -104,23 +158,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // ============================
+  // 🚪 Logout
+  // ============================
   const logout = async () => {
     try {
-      await axios.post("/logout"); // si no existe en backend, puedes omitir el await
+      await axios.post("/logout");
     } catch {}
     setUser(null);
+    setCart(null);
     setToken(null);
     localStorage.removeItem("access_token");
     delete axios.defaults.headers.common["Authorization"];
   };
 
+  // ============================
+  // 🌎 Provider
+  // ============================
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, cart, setCart, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
+// ============================
+// 🔍 Hook personalizado
+// ============================
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
