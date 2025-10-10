@@ -29,11 +29,10 @@ export default function LoginRegisterPage() {
                                 <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
                             </div>
                         </div>
-
                         {/* Botones */}
                         <li className="relative flex items-center">
                             <button
-                                className={`z-10 text-xl font-semibold py-5 pr-8 rounded-full transition ${view === 'login' ? 'text-contrast-secondary' : 'text-white'}`}
+                                className={`z-10 text-xl font-semibold py-5 rounded-full transition ${view === 'login' ? 'text-contrast-secondary' : 'text-white'}`}
                                 onClick={() => setView('login')}
                             >
                                 Iniciar sesión
@@ -42,7 +41,7 @@ export default function LoginRegisterPage() {
 
                         <li className="relative flex items-center">
                             <button
-                                className={`z-10 text-xl font-semibold py-5 pr-8 rounded-full transition ${view === 'register' ? 'text-contrast-secondary' : 'text-white'}`}
+                                className={`z-10 text-xl font-semibold py-5 rounded-full transition ${view === 'register' ? 'text-contrast-secondary' : 'text-white'}`}
                                 onClick={() => setView('register')}
                             >
                                 Registrarse
