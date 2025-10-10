@@ -13,7 +13,7 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    console.log("Email:",email,"Password:", password);
+    console.log("Email:", email, "Password:", password);
     // Usar SIEMPRE el login de AuthContext
     const success = await login(email, password);
     if (!success) {
@@ -33,7 +33,7 @@ export default function LoginForm() {
           onSubmit={handleSubmit}
         >
           <input
-            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[45%] font-quicksand"
+            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[65%] font-quicksand"
             placeholder="Correo electrónico"
             type="email"
             value={email}
@@ -41,7 +41,7 @@ export default function LoginForm() {
             required
           />
           <input
-            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[45%] font-quicksand"
+            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[65%] font-quicksand"
             placeholder="Contraseña"
             type="password"
             value={password}
