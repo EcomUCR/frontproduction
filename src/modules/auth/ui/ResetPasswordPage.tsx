@@ -1,4 +1,4 @@
-import logo from "../../../img/tucaShopLogo.png";
+import logo from "../../../img/TukiLogo.png";
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../infrastructure/useAuth";
@@ -26,13 +26,23 @@ export default function ResetPasswordPage() {
     return (
         <div>
             <section className='flex justify-center items-center'>
-                <div className='flex flex-col justify-center items-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[100vh] w-[35%] gap-4'>
-                    <p className="text-white font-semibold py-2 px-4 rounded-full">Recuperación de contraseña</p>
+                <div className="relative  flex flex-col justify-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[100vh] w-[35%] gap-4">
+                    <div className={`bg-white absolute right-0 top-40 z-1 h-30 w-75 rounded-l-full transform transition-all duration-300 `}>
+                        <div className="-rotate-90 absolute w-10 h-10 -top-6 -right-4 bg-transparent flex items-center justify-center rounded-2xl">
+                            <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
+                        </div>
+                        <div className="-rotate-180 absolute w-10 h-10 -bottom-6 -right-4 bg-transparent flex items-center justify-center rounded-2xl">
+                            <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
+                        </div>
+                        <p className={`font-quicksand z-10 text-xl font-semibold py-11 rounded-full absolute text-contrast-secondary right-10`}>
+                            Actualizar contraseña
+                        </p>
+                    </div>
                 </div>
                 <div className='flex flex-col items-center justify-center h-[100vh] w-[65%]'>
                     <div className="flex flex-col items-center w-full justify-center">
                         <img className='h-20' src={logo} alt="" />
-                        <p className='font-fugaz text-2xl'>TucaShop</p>
+                        <p className='font-fugaz text-2xl'>TukiShop</p>
                         <div className='flex flex-col w-full items-center space-y-5 mt-10'>
                             {/* Formulario de actualización */}
                             <form className="flex flex-col items-center w-full space-y-5" onSubmit={handleSubmit}>
