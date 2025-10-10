@@ -345,7 +345,7 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
                   "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 alt="Banner"
-                className="w-auto h-auto rounded-xl object-cover"
+                className={editableStore.banner ? "w-auto h-auto rounded-xl object-cover" : "w-auto h-30 rounded-xl object-cover"}
               />
             </figure>
           </form>
