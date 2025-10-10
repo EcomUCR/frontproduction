@@ -1,6 +1,5 @@
 import { IconStar, IconStarFilled } from "@tabler/icons-react";
 import { useState } from "react";
-import { useAuth } from "../../modules/auth/infrastructure/useAuth";
 
 
 interface InteractiveRatingSummaryProps {
