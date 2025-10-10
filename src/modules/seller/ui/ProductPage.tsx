@@ -13,6 +13,7 @@ import {
   IconBrandTiktok,
   IconBrandWhatsapp,
   IconBrandX,
+  IconChevronRight,
   IconHeart,
   IconLink,
   IconShare,
@@ -24,7 +25,9 @@ import {
   SkeletonProductPageMain,
   SkeletonFeaturedSlider,
   SkeletonSimilarProducts,
+  SkeletonFeatured,
 } from "../../../components/ui/AllSkeletons";
+import ProductCard from "../../../components/data-display/ProductCard";
 
 type BorderColors = {
   description: string;
@@ -38,57 +41,85 @@ const borderColors: BorderColors = {
   details: "border-contrast-secondary",
 };
 
-// 🔹 Ejemplo temporal de productos destacados
-const featuredProducts = [
-  {
-    id: 1,
-    shop: "Razer",
-    title: "Audífonos Razer x Pokémon | Edición Gengar",
-    price: "100.000",
-    discountPrice: "50.000",
-    rating: 4.5,
-    img: audifonos,
-  },
-  {
-    id: 2,
-    shop: "Razer",
-    title: "Audífonos Razer Kraken",
-    price: "80.000",
-    discountPrice: "55.000",
-    rating: 4.2,
-    img: audifonos,
-  },
-  {
-    id: 3,
-    shop: "Razer",
-    title: "Mouse Razer Basilisk V3",
-    price: "60.000",
-    discountPrice: "49.000",
-    rating: 4.8,
-    img: audifonos,
-  },
-];
 
 export default function ProductPage() {
   const { id } = useParams();
-  const { getProductById } = useProducts();
+  const { getProductById, getProductsByCategory, getProductsByStore } = useProducts();
 
   const [product, setProduct] = useState<Product | null>(null);
+  const [prodStore, setProdStore] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<keyof BorderColors>("description");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 🔹 Cargar producto desde backend
   useEffect(() => {
-    if (id) {
-      (async () => {
-        setLoading(true);
+    if (!id) return;
+
+    (async () => {
+      setLoading(true);
+      try {
+        // 1️⃣ Obtener el producto principal
         const prod = await getProductById(Number(id));
         setProduct(prod);
-        setTimeout(() => setLoading(false), 600); // leve retraso visual para el fade
-      })();
-    }
+
+        // 2️⃣ Si tiene store_id válido, traer productos de la misma tienda
+        if (prod?.store_id) {
+          const storeProducts = await getProductsByStore(prod.store_id);
+          setProdStore(
+            storeProducts
+              .filter((p) => p.id !== prod.id) // excluir el mismo producto
+              .slice(0, 10)
+          );
+        } else {
+          setProdStore([]);
+        }
+      } catch (err) {
+        console.error("Error al cargar producto o tienda:", err);
+      } finally {
+        setTimeout(() => setLoading(false), 600);
+      }
+    })();
   }, [id]);
+
+
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (!product) return;
+
+    (async () => {
+      try {
+        // 1️⃣ Obtener IDs de categorías del producto actual
+        const categoryIds = product.categories?.map((c: any) => c.id) || [];
+
+        if (categoryIds.length === 0) {
+          setSimilarProducts([]);
+          return;
+        }
+
+        // 2️⃣ Obtener productos por categoría (acumulando sin duplicar)
+        const allRelated: Product[] = [];
+        for (const catId of categoryIds) {
+          const products = await getProductsByCategory(catId);
+          allRelated.push(...products);
+        }
+
+        // 3️⃣ Filtrar duplicados y el producto actual
+        const unique = allRelated.filter(
+          (p, i, arr) =>
+            p.id !== product.id &&
+            arr.findIndex((x) => x.id === p.id) === i
+        );
+
+        // 4️⃣ Limitar a máximo 5
+        setSimilarProducts(unique.slice(0, 10));
+
+      } catch (err) {
+        console.error("Error al cargar productos similares:", err);
+      }
+    })();
+  }, [product]);
+
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -163,44 +194,38 @@ export default function ProductPage() {
                         <div className="absolute left-15 top-30">
                           <ul className="flex gap-3">
                             <li
-                              className={`relative bottom-10 left-27 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${
-                                isModalOpen ? "scale-100" : "scale-0"
-                              }`}
+                              className={`relative bottom-10 left-27 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"
+                                }`}
                             >
                               <IconLink />
                             </li>
                             <li
-                              className={`relative bottom-0 left-24 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-25 ${
-                                isModalOpen ? "scale-100" : "scale-0"
-                              }`}
+                              className={`relative bottom-0 left-24 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-25 ${isModalOpen ? "scale-100" : "scale-0"
+                                }`}
                             >
                               <IconBrandWhatsapp />
                             </li>
                             <li
-                              className={`relative -bottom-1 left-24 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${
-                                isModalOpen ? "scale-100" : "scale-0"
-                              }`}
+                              className={`relative -bottom-1 left-24 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"
+                                }`}
                             >
                               <IconBrandFacebook />
                             </li>
                             <li
-                              className={`relative bottom-5 left-23 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-75 ${
-                                isModalOpen ? "scale-100" : "scale-0"
-                              }`}
+                              className={`relative bottom-5 left-23 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-75 ${isModalOpen ? "scale-100" : "scale-0"
+                                }`}
                             >
                               <IconBrandInstagram />
                             </li>
                             <li
-                              className={`relative bottom-17 left-15 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${
-                                isModalOpen ? "scale-100" : "scale-0"
-                              }`}
+                              className={`relative bottom-17 left-15 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"
+                                }`}
                             >
                               <IconBrandTiktok />
                             </li>
                             <li
-                              className={`relative bottom-30 -left-1 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-125 ${
-                                isModalOpen ? "scale-100" : "scale-0"
-                              }`}
+                              className={`relative bottom-30 -left-1 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-125 ${isModalOpen ? "scale-100" : "scale-0"
+                                }`}
                             >
                               <IconBrandX />
                             </li>
@@ -227,7 +252,7 @@ export default function ProductPage() {
 
                       <div className="font-comme">
                         {product.discount_price &&
-                        product.discount_price > 0 ? (
+                          product.discount_price > 0 ? (
                           <>
                             <p className="text-xs line-through">
                               ₡{product.price}
@@ -305,16 +330,70 @@ export default function ProductPage() {
                   <h2 className="text-2xl font-semibold font-quicksand">
                     Más de {product.store?.name || "la tienda"}
                   </h2>
-                  <FeaturedProductsSlider products={featuredProducts} />
+                  {loading ? (
+                    <div className="transition-opacity duration-500 opacity-100">
+                      <SkeletonFeatured count={2} />
+                    </div>
+                  ) : prodStore.length > 0 ? (
+                    <div
+                      className={`transition-opacity duration-500 ${loading ? "opacity-0" : "opacity-100"
+                        }`}
+                    >
+                      <FeaturedProductsSlider
+                        products={prodStore.map((prod) => ({
+                          id: prod.id!,
+                          shop: prod.store?.name || "Tienda",
+                          title: prod.name,
+                          price: prod.price.toLocaleString("es-CRC"),
+                          discountPrice: prod.discount_price
+                            ? prod.discount_price.toLocaleString("es-CRC")
+                            : "",
+                          rating: 0,
+                          img: prod.image_1_url || audifonos,
+                        }))}
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 my-5">La tienda no tiene más productos.</p>
+                  )}
                 </section>
 
                 {/* 🔹 Productos similares */}
                 <section className="my-10 px-10">
-                  <h2 className="text-2xl font-semibold font-quicksand">
-                    Productos similares
-                  </h2>
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-semibold font-quicksand">
+                      Productos similares
+                    </h2>
+                    <div>
+                      <a href="/search?mode=explore" className="font-semibold cursor-pointer">
+                        Ver todo
+                      </a>
+                      <IconChevronRight className="inline" />
+                    </div>
+                  </div>
                   <div className="grid grid-cols-5 my-10 gap-5">
-                    {/* Acá iría ProductCard con productos reales similares */}
+                    {similarProducts.length > 0 ? (
+                      similarProducts.slice(0, 10).map((prod) => (
+                        <ProductCard
+                          key={prod.id}
+                          id={prod.id!}
+                          shop={prod.store?.name || "Sin tienda"}
+                          title={prod.name}
+                          price={prod.price.toLocaleString("es-CRC")}
+                          discountPrice={
+                            prod.discount_price
+                              ? prod.discount_price.toLocaleString("es-CRC")
+                              : undefined
+                          }
+                          img={prod.image_1_url || "https://via.placeholder.com/200"}
+                          edit={false}
+                        />
+                      ))
+                    ) : (
+                      <p className="col-span-5 text-center text-sm text-gray-500 font-quicksand">
+                        No hay productos similares.
+                      </p>
+                    )}
                   </div>
                 </section>
               </>

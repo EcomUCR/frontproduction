@@ -87,7 +87,7 @@ export default function SearchedProductPage() {
           {getTitle()}
         </h1>
 
-        {/* 🔹 Estado de carga */}
+        {/* Estado de carga */}
         {loading ? (
           <SkeletonProduct count={30} />
         ) : products.length > 0 ? (

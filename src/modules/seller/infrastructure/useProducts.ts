@@ -22,6 +22,7 @@ export type Product = {
   stock: number;
   status: boolean;
   categories: number[];
+  rating?: number;
   image: File | string | null;
   image_1_url?: string;
   is_featured: boolean;

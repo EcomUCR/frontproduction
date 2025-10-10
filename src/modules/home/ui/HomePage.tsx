@@ -142,7 +142,7 @@ export default function HomePage() {
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold font-quicksand">Explorar</h2>
             <div>
-              <a href="#" className="font-semibold cursor-pointer">
+              <a href="/search?mode=explore" className="font-semibold cursor-pointer">
                 Ver todo
               </a>
               <IconChevronRight className="inline" />
