@@ -9,8 +9,6 @@ export default function ShoppingCartPage() {
   const { cart, loading } = useAuth();
 
   if (loading) return <p className="text-center py-10">Cargando carrito...</p>;
-  if (!cart || cart.items.length === 0)
-    return <p className="text-center py-10">Tu carrito está vacío 🛒</p>;
 
   return (
     <div>
@@ -18,10 +16,16 @@ export default function ShoppingCartPage() {
       <div className="mx-auto max-w-[80rem]">
         <section className="mx-10 flex">
           {/* 🛒 Lista de productos */}
-          <div className="my-5 w-2/3 border-r-2 pr-5 border-main">
-            {cart.items.map((item) => (
-              <ProductCardShopping key={item.id} item={item} />
-            ))}
+          <div className="my-5 w-2/3 border-r-2 pr-5 border-main flex flex-col items-center justify-center">
+            {cart && cart.items.length > 0 ? (
+              cart.items.map((item) => (
+                <ProductCardShopping key={item.id} item={item} />
+              ))
+            ) : (
+              <p className="text-center font-semibold text-purple-700 text-lg py-10">
+                No hay productos que mostrar 🛒
+              </p>
+            )}
           </div>
 
           {/* 🧾 Formulario de pago */}
@@ -33,8 +37,8 @@ export default function ShoppingCartPage() {
         {/* 🔹 Banners */}
         <section>
           <div className="flex justify-between px-10 py-5">
-            <img className="w-auto h-auto" src={banner2} alt="" />
-            <img className="w-auto h-auto" src={banner2} alt="" />
+            <img className="w-auto h-auto" src={banner2} alt="banner" />
+            <img className="w-auto h-auto" src={banner2} alt="banner" />
           </div>
         </section>
       </div>
