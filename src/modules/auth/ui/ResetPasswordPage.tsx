@@ -69,7 +69,15 @@ export default function ResetPasswordPage() {
                                 >
                                     {loading ? "Actualizando..." : "Actualizar contraseña"}
                                 </button>
-                                {error && <p className="text-red-500">{error}</p>}
+                                <p className="text-red-500 text-sm text-center">
+                                    {error === "This password reset token is invalid."
+                                        ? "El enlace de restablecimiento ha expirado o es inválido."
+                                        : error === "The password confirmation does not match."
+                                            ? "Las contraseñas no coinciden."
+                                            : error === "We can't find a user with that email address."
+                                                ? "El correo no está registrado."
+                                                : error}
+                                </p>
                                 {success && <p className="text-green-600">{success}</p>}
                             </form>
                         </div>
