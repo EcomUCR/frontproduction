@@ -14,10 +14,10 @@ export default function FormShopping() {
                         <p>Subtotal de la compra:</p>
                         <p className="text-main">₡13.000</p>
                     </div>
-                    <div className="flex justify-between">
+                   {/* <div className="flex justify-between">
                         <p>Descuento de cupones</p>
                         <p className="text-main">-₡500 </p>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="border-t pt-5">
                     <div className="flex justify-between">
@@ -31,12 +31,9 @@ export default function FormShopping() {
                 <p>Enviar a [Usuario]</p>
             </div>
             <div className="pt-10 flex flex-col gap-4">
-                <input type="text" placeholder="Código de descuento" className="border-2 border-main text-main rounded-full px-3 py-2 w-full font-quicksand" name="" id="" />
-                <button className="bg-main text-white rounded-full py-3 px-4 w-full font-quicksand">Aplicar cupon</button>
+                {/*<input type="text" placeholder="Código de descuento" className="border-2 border-main text-main rounded-full px-3 py-2 w-full font-quicksand" name="" id="" />
+                <button className="bg-main text-white rounded-full py-3 px-4 w-full font-quicksand">Aplicar cupon</button>*/}
                 <button className="bg-contrast-secondary text-white rounded-full py-3 px-4 w-full font-quicksand">Finalizar compra</button>
-            </div>
-            <div className="pt-10">
-                <a className="text-sm underline" href="">Términos y condiciones</a>
             </div>
             <div className="pt-10">
                 <h3>Métodos de pago</h3>
