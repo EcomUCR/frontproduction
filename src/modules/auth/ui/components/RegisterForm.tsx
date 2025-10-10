@@ -61,12 +61,12 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
       <img className="h-20" src={logo} alt="" />
       <p className="font-fugaz text-2xl">TukiShop</p>
 
-      <div className="flex flex-col w-full items-center space-y-5 mt-10 px-30">
+      <div className="flex flex-col w-full items-center space-y-5 mt-10">
         <form
           className="flex flex-col items-center w-full space-y-5"
           onSubmit={handleSubmit}
         >
-          <div className="flex justify-center gap-5 w-full">
+          <div className="flex justify-center gap-5 w-[80%]">
             <input
               className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
               placeholder="Nombre"
@@ -87,9 +87,9 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
             />
           </div>
 
-          <div className="flex justify-center items-center flex-col space-y-5 w-full">
+          <div className="flex justify-center items-center flex-col space-y-5 w-[80%]">
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[92%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-[94%] font-quicksand"
               placeholder="Correo electrónico"
               type="email"
               name="email"
@@ -98,7 +98,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               required
             />
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[92%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-[94%] font-quicksand"
               placeholder="Nombre de usuario (opcional)"
               type="text"
               name="username"
@@ -107,7 +107,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
             />
           </div>
 
-          <div className="flex justify-center gap-5 w-full">
+          <div className="flex justify-center gap-5 w-[80%]">
             <input
               className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
               placeholder="Contraseña"

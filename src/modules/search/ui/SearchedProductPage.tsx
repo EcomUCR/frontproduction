@@ -70,7 +70,7 @@ export default function SearchedProductPage() {
   // 🔹 Título dinámico
   const getTitle = () => {
     if (loading) return "Cargando productos...";
-    if (categoryId) return `Productos de la categoría #${categoryId}`;
+    if (categoryId) return `Resultados de ${categoryId}`;
     if (mode === "explore") return "Explorar productos";
     if (mode === "offers") return "Ofertas especiales";
     if (mode === "best-sellers") return "Lo más vendido";
@@ -83,7 +83,7 @@ export default function SearchedProductPage() {
       <NavBar />
 
       <div className="mx-auto max-w-[80rem] px-5 py-10 w-full">
-        <h1 className="text-3xl font-bold font-quicksand mb-8 text-center">
+        <h1 className="text-3xl font-bold font-quicksand mb-8">
           {getTitle()}
         </h1>
 
