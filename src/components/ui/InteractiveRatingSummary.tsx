@@ -1,5 +1,6 @@
 import { IconStar, IconStarFilled } from "@tabler/icons-react";
 import { useState } from "react";
+import { useAuth } from "../../hooks/context/AuthContext";
 
 
 interface InteractiveRatingSummaryProps {
@@ -72,18 +73,23 @@ export default function InteractiveRatingSummary({
     };
 
     const handleSave = () => {
-        if (!name.trim() || !comment.trim() || rating === 0) {
+        const userFullName = user ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim(): ""; //concatenamos el nombre y apellido
+
+        if (!userFullName || !comment.trim() || rating === 0) {
             alert("Por favor completa todos los campos y selecciona una calificación.");
             return;
         }
-        onSaveReview({ name, comment, rating });
-        setName("");
+
+        onSaveReview({ name: userFullName, comment, rating });
+
         setComment("");
         setShowForm(false);
         setRating(0);
         setLastClickedStar(null);
         setClickCount(0);
     };
+
+    const { user } = useAuth();
 
     return (
         <div className="p-4 w-full font-quicksand">
@@ -151,13 +157,10 @@ export default function InteractiveRatingSummary({
                     <label className="block mb-2 text-sm font-semibold">Nombre</label>
                     <input
                         type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full border rounded p-2 mb-3 text-sm"
-                        placeholder="Tu nombre"
-
-                        
-                    /> 
+                        value={user ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() : ""} //concatenamos el nombre y apellido
+                        readOnly
+                        className="w-full border rounded p-2 mb-3 text-sm bg-gray-100 cursor-not-allowed"
+                    />
 
                     <label className="block mb-2 text-sm font-semibold">Comentario</label>
                     <textarea
