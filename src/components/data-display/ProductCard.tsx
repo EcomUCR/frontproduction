@@ -15,7 +15,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { token, cart, setCart } = useAuth(); // 👈 traemos el carrito global y el token
+  const { token, setCart } = useAuth(); // 👈 traemos el carrito global y el token
 
   // 👇 Maneja añadir al carrito
   const handleAddToCart = async () => {

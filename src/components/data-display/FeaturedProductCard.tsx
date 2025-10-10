@@ -2,6 +2,9 @@ import { IconEdit, IconHeart } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import RaitingComponent from "../ui/StarRatingComponent";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/context/AuthContext"; // 👈 Importante
+import axios from "axios";
+
 interface FeaturedProductCardProps {
   id: number;
   shop: string;
@@ -13,6 +16,36 @@ interface FeaturedProductCardProps {
   edit: boolean;
 }
 export default function FeaturedProductCard(props: FeaturedProductCardProps) {
+
+  const { token, setCart } = useAuth(); // 👈 traemos el carrito global y el token
+
+   // 👇 Maneja añadir al carrito
+  const handleAddToCart = async () => {
+    if (!token) {
+      alert("Debes iniciar sesión para agregar al carrito 🛒");
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(
+        "/cart/add",
+        { product_id: props.id, quantity: 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Actualiza el carrito global con la respuesta del backend
+      setCart(data.cart);
+      alert("Producto añadido al carrito ✅");
+    } catch (error) {
+      console.error(error);
+      alert("Error al añadir el producto al carrito ❌");
+    }
+  };
+
   return (
     <figure className="relative w-full max-w-lg p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden flex font-quicksand hover:scale-105 transition-all duration-300">
       {props.edit && (
@@ -57,6 +90,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
             <ButtonComponent
               style="bg-contrast-secondary w-full rounded-full text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 shadow-md"
               text={"Añadir al carrito"}
+              onClick={handleAddToCart} // 👈 evento
             />
             <ButtonComponent
               style="bg-contrast-main rounded-full h-auto w-auto p-2 flex items-center justify-center hover:bg-contrast-secondary transition-all duration-400 shadow-md"
