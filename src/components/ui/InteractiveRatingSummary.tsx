@@ -1,5 +1,7 @@
 import { IconStar, IconStarFilled } from "@tabler/icons-react";
 import { useState } from "react";
+import { useAuth } from "../../modules/auth/infrastructure/useAuth";
+
 
 interface InteractiveRatingSummaryProps {
     initialValue?: number;
@@ -15,6 +17,7 @@ export default function InteractiveRatingSummary({
     barColor = "#ff7e47",
     onRatingChange,
     onSaveReview,
+
 }: InteractiveRatingSummaryProps) {
     const [rating, setRating] = useState(initialValue);
     const [hover, setHover] = useState(0);
@@ -45,24 +48,23 @@ export default function InteractiveRatingSummary({
         );
     };
 
-    
     const handleClick = (index: number) => {
         const starNumber = index + 1;
 
         if (lastClickedStar === index) {
-           
+
             if (clickCount === 1) {
                 setRating(starNumber);
                 onRatingChange(starNumber);
                 setClickCount(2);
             } else {
-              
+
                 setRating(starNumber - 1);
                 onRatingChange(starNumber - 1);
                 setClickCount(1);
             }
         } else {
-            
+
             setRating(starNumber - 0.5);
             onRatingChange(starNumber - 0.5);
             setLastClickedStar(index);
@@ -129,7 +131,15 @@ export default function InteractiveRatingSummary({
             </div>
 
             <button
-                onClick={() => setShowForm(!showForm)}
+                onClick={() => {
+                    const token = localStorage.getItem("access_token");
+
+                    if (token) {
+                        setShowForm(!showForm);
+                    } else {
+                        window.location.href = "/loginRegister"; //no hay token entonces lo mandamos a registrarse
+                    }
+                }}
                 className="w-full py-3 text-white font-semibold rounded-lg transition duration-200"
                 style={{ backgroundColor: barColor }}
                 disabled={rating === 0}
@@ -146,7 +156,9 @@ export default function InteractiveRatingSummary({
                         onChange={(e) => setName(e.target.value)}
                         className="w-full border rounded p-2 mb-3 text-sm"
                         placeholder="Tu nombre"
-                    />
+
+                        
+                    /> 
 
                     <label className="block mb-2 text-sm font-semibold">Comentario</label>
                     <textarea
