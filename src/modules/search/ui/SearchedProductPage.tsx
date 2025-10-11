@@ -7,6 +7,8 @@ import { useProducts } from "../../seller/infrastructure/useProducts";
 import type { Product } from "../../seller/infrastructure/useProducts";
 import { SkeletonProduct } from "../../../components/ui/AllSkeletons";
 
+
+
 export default function SearchedProductPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
   const location = useLocation();
@@ -15,6 +17,30 @@ export default function SearchedProductPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const limit = 30;
+
+  const categories: Record<number | string, string> = {
+    1: "Arte",
+    2: "Automotriz",
+    3: "Belleza",
+    4: "Comida",
+    5: "Decoración",
+    6: "Deportes",
+    7: "Gaming",
+    8: "Herramientas",
+    9: "Hogar",
+    10: "Jardinería",
+    11: "Juegos",
+    12: "Juguetes",
+    13: "Libros",
+    14: "Limpieza",
+    15: "Mascotas",
+    16: "Música",
+    17: "Oficina",
+    18: "Ropa",
+    19: "Salud",
+    20: "Tecnología",
+    21: "Otros",
+  };
 
   // Detectar modo de búsqueda
   const searchParams = new URLSearchParams(location.search);
@@ -70,7 +96,7 @@ export default function SearchedProductPage() {
   // 🔹 Título dinámico
   const getTitle = () => {
     if (loading) return "Cargando productos...";
-    if (categoryId) return `Resultados de ${categoryId}`;
+    if (categoryId) return `Resultados de ${categories[categoryId]}`;
     if (mode === "explore") return "Explorar productos";
     if (mode === "offers") return "Ofertas especiales";
     if (mode === "best-sellers") return "Lo más vendido";
