@@ -50,82 +50,80 @@ export default function HomeSeller() {
 
   return (
     <div>
-      {/* 🟣 Ofertas */}
       <section className="mx-10 my-5">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-semibold font-quicksand">Ofertas</h2>
-          <div>
-            <a href="#" className="font-semibold">
-              Ver todo
-            </a>
-            <IconChevronRight className="inline" />
-          </div>
-        </div>
+        {/* Ofertas */}
+        {!loading && offers.length > 0 && (
+          <>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold font-quicksand">Ofertas</h2>
+              <div className="flex items-center">
+                <a href="#" className="font-semibold hover:text-contrast-main transition-colors">
+                  Ver todo
+                </a>
+                <IconChevronRight className="inline ml-1" />
+              </div>
+            </div>
 
-        {loading ? (
-          <div className="transition-opacity duration-500 opacity-100">
-            <SkeletonProduct count={5} />
-          </div>
-        ) : offers.length > 0 ? (
-          <div
-            className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
-              loading ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            {offers.slice(0, 5).map((prod) => (
-              <ProductCard
-                key={prod.id}
-                id={prod.id!}
-                shop={prod.store?.name || "Tienda"}
-                title={prod.name}
-                price={prod.price.toLocaleString("es-CRC")}
-                discountPrice={prod.discount_price?.toLocaleString("es-CRC")}
-                img={prod.image_1_url || audifonos}
-                edit={false}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 my-5">No hay productos en oferta.</p>
+            <div
+              className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${loading ? "opacity-0" : "opacity-100"
+                }`}
+            >
+              {offers.slice(0, 5).map((prod) => (
+                <ProductCard
+                  key={prod.id}
+                  id={prod.id!}
+                  shop={prod.store?.name || "Tienda"}
+                  title={prod.name}
+                  price={prod.price.toLocaleString("es-CRC")}
+                  discountPrice={prod.discount_price?.toLocaleString("es-CRC")}
+                  img={prod.image_1_url || audifonos}
+                  edit={false}
+                />
+              ))}
+            </div>
+
+          </>
+        )}
+      </section>
+      {/*Productos destacados */}
+      <section className="mx-10 my-5">
+        {!loading && offers.length > 0 && (
+          <>
+            <h2 className="text-2xl font-semibold font-quicksand">
+              Productos destacados
+            </h2>
+
+            {loading ? (
+              <div className="transition-opacity duration-500 opacity-100">
+                <SkeletonFeatured count={2} />
+              </div>
+            ) : featuredProducts.length > 0 ? (
+              <div
+                className={`transition-opacity duration-500 ${loading ? "opacity-0" : "opacity-100"
+                  }`}
+              >
+                <FeaturedProductsSlider
+                  products={featuredProducts.map((prod) => ({
+                    id: prod.id!,
+                    shop: prod.store?.name || "Tienda",
+                    title: prod.name,
+                    price: prod.price.toLocaleString("es-CRC"),
+                    discountPrice: prod.discount_price
+                      ? prod.discount_price.toLocaleString("es-CRC")
+                      : "",
+                    rating: 0,
+                    img: prod.image_1_url || audifonos,
+                  }))}
+                />
+              </div>
+            ) : (
+              <p className="text-gray-500 my-5">No hay productos destacados.</p>
+            )}
+          </>
         )}
       </section>
 
-      {/* ⭐ Productos destacados */}
-      <section className="mx-10 my-5">
-        <h2 className="text-2xl font-semibold font-quicksand">
-          Productos destacados
-        </h2>
-
-        {loading ? (
-          <div className="transition-opacity duration-500 opacity-100">
-            <SkeletonFeatured count={2} />
-          </div>
-        ) : featuredProducts.length > 0 ? (
-          <div
-            className={`transition-opacity duration-500 ${
-              loading ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            <FeaturedProductsSlider
-              products={featuredProducts.map((prod) => ({
-                id: prod.id!,
-                shop: prod.store?.name || "Tienda",
-                title: prod.name,
-                price: prod.price.toLocaleString("es-CRC"),
-                discountPrice: prod.discount_price
-                  ? prod.discount_price.toLocaleString("es-CRC")
-                  : "",
-                rating: 0,
-                img: prod.image_1_url || audifonos,
-              }))}
-            />
-          </div>
-        ) : (
-          <p className="text-gray-500 my-5">No hay productos destacados.</p>
-        )}
-      </section>
-
-      {/* 🧩 Todos los productos */}
+      {/*Todos los productos */}
       <section className="mx-10 my-5">
         <h2 className="text-2xl font-semibold font-quicksand">
           Todos los productos
@@ -137,9 +135,8 @@ export default function HomeSeller() {
           </div>
         ) : products.length > 0 ? (
           <div
-            className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
-              loading ? "opacity-0" : "opacity-100"
-            }`}
+            className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${loading ? "opacity-0" : "opacity-100"
+              }`}
           >
             {products.slice(0, 10).map((prod) => (
               <ProductCard
