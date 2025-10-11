@@ -1,235 +1,245 @@
 import { IconStar, IconStarFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { useAuth } from "../../hooks/context/AuthContext";
-import axios from "axios";
+import { useRatings } from "../../modules/seller/infrastructure/useRatings"; // ⬅️ usa el hook
+import { SkeletonRatingSummary } from "../../components/ui/AllSkeletons";
 
 interface InteractiveRatingSummaryProps {
-    initialValue?: number;
-    maxStars?: number;
-    barColor?: string;
-    onRatingChange: (value: number) => void;
-    onSaveReview: (review: { name: string; comment: string; rating: number }) => void;
-    storeId: number; // 👈 id de la tienda que el usuario está viendo
+  onSaveReview: (review: {
+    name: string;
+    comment: string;
+    rating: number;
+  }) => void;
+  storeId: number;
+  barColor?: string;
 }
 
 export default function InteractiveRatingSummary({
-    initialValue = 0,
-    maxStars = 5,
-    barColor = "#ff7e47",
-    onRatingChange,
-    onSaveReview,
-    storeId,
+  onSaveReview,
+  storeId,
+  barColor = "#ff7e47",
 }: InteractiveRatingSummaryProps) {
-    const BASE_URL = "https://ecomapi-kruj.onrender.com/api";
-    const { user } = useAuth();
+  const { user } = useAuth();
+  const { summary, loading, refreshSummary, createReview } =
+    useRatings(storeId);
 
-    const [rating, setRating] = useState(initialValue);
-    const [hover, setHover] = useState(0);
-    const [showForm, setShowForm] = useState(false);
-    const [comment, setComment] = useState("");
-    const [lastClickedStar, setLastClickedStar] = useState<number | null>(null);
-    const [clickCount, setClickCount] = useState(0);
+  const [mode, setMode] = useState<"view" | "write">("view");
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState("");
 
-    const displayRating = hover || rating;
-    const selectedFloorRating = Math.floor(displayRating);
-    const isHalfBar = displayRating % 1 !== 0;
+  const handleSave = async () => {
+    if (!user) {
+      window.location.href = "/loginRegister";
+      return;
+    }
+    if (user?.role === "SELLER") {
+      alert("Para enviar una review debe ser un comprador.");
+      return;
+    }
+    if (rating === 0 || !comment.trim()) {
+      alert("Por favor selecciona una calificación y escribe un comentario.");
+      return;
+    }
 
-    const RatingBar = ({ star }: { star: number }) => {
-        let width = "0%";
-        if (star === selectedFloorRating + 1 && isHalfBar) width = "50%";
-        else if (star <= selectedFloorRating) width = "100%";
-        return (
-            <div className="flex items-center space-x-2">
-                <span className="text-sm font-semibold text-gray-700 w-3">{star}★</span>
-                <div className="flex-grow h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                        className="h-full rounded-full transition-all duration-300"
-                        style={{ width, backgroundColor: barColor }}
-                    ></div>
-                </div>
-            </div>
-        );
-    };
+    try {
+      await createReview({
+        store_id: storeId,
+        user_id: user.id,
+        rating,
+        comment: comment.trim(),
+        like: false,
+        dislike: false,
+      });
 
-    const handleClick = (index: number) => {
-        const starNumber = index + 1;
+      onSaveReview({
+        name: `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim(),
+        comment: comment.trim(),
+        rating,
+      });
 
-        if (lastClickedStar === index) {
-            if (clickCount === 1) {
-                setRating(starNumber);
-                onRatingChange(starNumber);
-                setClickCount(2);
-            } else {
-                setRating(starNumber - 1);
-                onRatingChange(starNumber - 1);
-                setClickCount(1);
-            }
-        } else {
-            setRating(starNumber - 0.5);
-            onRatingChange(starNumber - 0.5);
-            setLastClickedStar(index);
-            setClickCount(1);
-        }
-    };
+      alert("¡Reseña enviada con éxito!");
+      await refreshSummary(); // ⬅️ recarga promedio/barras
+      setMode("view");
+      setComment("");
+      setRating(0);
+      setHover(0);
+    } catch (err: any) {
+      console.error(
+        "Error al guardar la reseña:",
+        err?.response?.data || err?.message
+      );
+      alert("Ocurrió un error al enviar la reseña.");
+    }
+  };
 
-    const handleSave = async () => {
-        if (!storeId) {
-            alert("No se pudo identificar la tienda para esta reseña.");
-            return;
-        }
+  const displayRating = hover > 0 ? hover : rating;
 
-        const userFullName = user
-            ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim()
-            : "";
-
-        if (!userFullName || !comment.trim() || rating === 0) {
-            alert("Por favor completa todos los campos y selecciona una calificación.");
-            return;
-        }
-
-        try {
-            const token = localStorage.getItem("access_token");
-
-            const data = {
-                store_id: storeId, // 👈 tienda que el usuario está viendo
-                user_id: user?.id,
-                rating: Math.round(rating),
-                comment: comment.trim(),
-                like: false,
-                dislike: false,
-            };
-
-            const res = await axios.post(`${BASE_URL}/store-reviews`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            console.log("Reseña guardada:", res.data);
-            alert("¡Reseña enviada con éxito!");
-
-            onSaveReview({ name: userFullName, comment: comment.trim(), rating });
-
-            // Limpiar formulario
-            setComment("");
-            setShowForm(false);
-            setRating(0);
-            setLastClickedStar(null);
-            setClickCount(0);
-        } catch (err: any) {
-            console.error("Error al guardar la reseña:", err.response?.data || err.message);
-            alert("Ocurrió un error al enviar la reseña.");
-        }
-    };
+  const StarGroup = ({
+    interactive = false,
+    size = 20,
+    value,
+  }: {
+    interactive?: boolean;
+    size?: number;
+    value?: number;
+  }) => {
+    const activeValue = value ?? displayRating;
 
     return (
-        <div className="p-4 w-full font-quicksand">
-            <div className="flex justify-between items-start mb-4">
-                <div className="flex flex-col items-start w-1/3">
-                    <h2 className="text-5xl font-bold mb-1">{displayRating.toFixed(1)}</h2>
-                    <div className="flex">
-                        {Array.from({ length: maxStars }).map((_, i) => {
-                            const starSize = 20;
-                            const isFull = i + 1 <= Math.floor(displayRating);
-                            const isHalf = displayRating - i > 0 && displayRating - i < 1;
+      <div className="flex gap-1 justify-center">
+        {Array.from({ length: 5 }).map((_, i) => {
+          const index = i + 1;
+          const fillPercent = Math.max(
+            0,
+            Math.min(1, activeValue - (index - 1))
+          );
+          const widthPct = `${fillPercent * 100}%`;
 
-                            return (
-                                <div
-                                    key={i}
-                                    className="relative cursor-pointer"
-                                    style={{ width: starSize, height: starSize }}
-                                    onClick={() => handleClick(i)}
-                                    onMouseEnter={() => setHover(i + 0.5)}
-                                    onMouseLeave={() => setHover(0)}
-                                >
-                                    <IconStar size={starSize} className="text-gray-300" />
-                                    {(isFull || isHalf) && (
-                                        <div
-                                            className="absolute left-0 top-0 overflow-hidden"
-                                            style={{
-                                                width: isFull ? "100%" : `${(displayRating - i) * 100}%`,
-                                                height: starSize,
-                                            }}
-                                        >
-                                            <IconStarFilled size={starSize} className="text-orange-400" />
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <p className="text-sm text-gray-500 mt-1">Tu calificación</p>
-                </div>
+          return (
+            <div
+              key={i}
+              className={`relative ${
+                interactive ? "cursor-pointer" : "cursor-default"
+              }`}
+              role={interactive ? "button" : undefined}
+              aria-label={interactive ? `${index} estrellas` : undefined}
+              tabIndex={interactive ? 0 : -1}
+              onPointerDown={() => {
+                if (interactive) {
+                  setRating(index); // selección inmediata con 1 clic
+                  setHover(index); // feedback instantáneo
+                }
+              }}
+              onPointerEnter={() => interactive && setHover(index)}
+              onPointerLeave={() => interactive && setHover(0)}
+              onKeyDown={(e) => {
+                if (!interactive) return;
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setRating(index);
+                  setHover(index);
+                }
+              }}
+            >
+              <IconStar
+                size={size}
+                className="text-gray-300 pointer-events-none"
+              />
+              <div
+                className="absolute left-0 top-0 overflow-hidden pointer-events-none"
+                style={{ width: widthPct, height: size }}
+              >
+                <IconStarFilled size={size} className="text-orange-400" />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
-                <div className="flex flex-col w-1/2 space-y-1">
-                    {[5, 4, 3, 2, 1].map((star) => (
-                        <RatingBar key={star} star={star} />
-                    ))}
-                </div>
+if (loading) return <SkeletonRatingSummary show />;
+  return (
+    <div className="p-4 w-full font-quicksand transition-all duration-300">
+      {mode === "view" ? (
+        <>
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-col items-start w-1/3">
+              <h2 className="text-5xl font-bold mb-1">
+                {summary.average.toFixed(1)}
+              </h2>
+              <StarGroup size={20} value={summary.average} />{" "}
+              {/* ⭐ promedio visible */}
+              <p className="text-sm text-gray-500 mt-1">
+                {summary.total} opiniones
+              </p>
             </div>
 
-            <button
-                onClick={() => {
-                    const token = localStorage.getItem("access_token");
-
-                    if (!token) {
-                        window.location.href = "/loginRegister"; // no autenticado
-                        return;
-                    }
-
-                    if (user?.role === "SELLER") {
-                        alert("Para enviar una review debe ser un comprador.");
-                        return;
-                    }
-
-                    setShowForm(!showForm);
-                }}
-                className="w-full py-3 text-white font-semibold rounded-lg transition duration-200"
-                style={{ backgroundColor: barColor }}
-                disabled={rating === 0}
-            >
-                Escribir opinión
-            </button>
-
-            {showForm && (
-                <div className="mt-4 border border-main/40 rounded-lg p-3 bg-white shadow-sm">
-                    <label className="block mb-2 text-sm font-semibold">Nombre</label>
-                    <input
-                        type="text"
-                        value={
-                            user
-                                ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim()
-                                : ""
-                        }
-                        readOnly
-                        className="w-full border rounded p-2 mb-3 text-sm bg-gray-100 cursor-not-allowed"
-                    />
-
-                    <label className="block mb-2 text-sm font-semibold">Comentario</label>
-                    <textarea
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        className="w-full border rounded p-2 h-20 text-sm resize-none"
-                        placeholder="Escribe tu opinión aquí..."
-                    />
-
-                    <div className="flex justify-end gap-2 mt-3">
-                        <button
-                            onClick={() => setShowForm(false)}
-                            className="px-4 py-2 rounded bg-gray-200 text-sm"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            className="px-4 py-2 rounded text-white text-sm"
-                            style={{ backgroundColor: barColor }}
-                        >
-                            Guardar
-                        </button>
+            <div className="flex flex-col w-1/2 space-y-1">
+              {[5, 4, 3, 2, 1].map((star) => {
+                const count = summary.distribution[star] || 0;
+                const width =
+                  summary.total > 0
+                    ? `${(count / summary.total) * 100}%`
+                    : "0%";
+                return (
+                  <div key={star} className="flex items-center space-x-2">
+                    <span className="text-sm font-semibold text-gray-700 w-3">
+                      {star}★
+                    </span>
+                    <div className="flex-grow h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-300"
+                        style={{ width, backgroundColor: barColor }}
+                      />
                     </div>
-                </div>
-            )}
-        </div>
-    );
+                    <span className="text-xs text-gray-500">{count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            onClick={() => setMode("write")}
+            className="w-full py-3 text-white font-semibold rounded-lg transition duration-200"
+            style={{ backgroundColor: barColor }}
+          >
+            Escribir opinión
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="flex flex-col items-center mb-4 transition-all duration-300">
+            <h2 className="text-6xl font-bold mb-3">
+              {displayRating.toFixed(1)}
+            </h2>
+            <StarGroup interactive size={40} />
+            <p className="text-sm text-gray-500 mt-1">Tu calificación</p>
+          </div>
+
+          <div className="mt-4 border border-main/40 rounded-lg p-3 bg-white shadow-sm">
+            <label className="block mb-2 text-sm font-semibold">Nombre</label>
+            <input
+              type="text"
+              value={
+                user
+                  ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim()
+                  : ""
+              }
+              readOnly
+              className="w-full border rounded p-2 mb-3 text-sm bg-gray-100 cursor-not-allowed"
+            />
+
+            <label className="block mb-2 text-sm font-semibold">
+              Comentario
+            </label>
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-full border rounded p-2 h-20 text-sm resize-none"
+              placeholder="Escribe tu opinión aquí..."
+            />
+
+            <div className="flex justify-end gap-2 mt-3">
+              <button
+                onClick={() => setMode("view")}
+                className="px-4 py-2 rounded bg-gray-200 text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 rounded text-white text-sm"
+                style={{ backgroundColor: barColor }}
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }

@@ -31,6 +31,104 @@ function FadeWrapper({
     </div>
   ) : null;
 }
+export const SkeletonRatingSummary: React.FC<{ show?: boolean }> = ({
+  show = true,
+}) => (
+  <FadeWrapper show={show}>
+    <div className="p-4 w-full font-quicksand animate-pulse">
+      <div className="flex justify-between items-start mb-4">
+        {/* 🔹 Promedio y estrellas */}
+        <div className="flex flex-col items-start w-1/3">
+          <Skeleton className="w-[70px] h-[40px] rounded-md bg-gray-300/70 mb-2" />
+          <div className="flex gap-1 mb-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton
+                key={i}
+                className="w-[20px] h-[20px] rounded-full bg-gray-300/70"
+              />
+            ))}
+          </div>
+          <Skeleton className="w-[80px] h-[14px] rounded-md bg-gray-300/70" />
+        </div>
+
+        {/* 🔹 Barras de distribución */}
+        <div className="flex flex-col w-1/2 space-y-2">
+          {[5, 4, 3, 2, 1].map((star) => (
+            <div key={star} className="flex items-center space-x-2">
+              <Skeleton className="w-[20px] h-[14px] rounded-md bg-gray-300/70" />
+              <Skeleton className="flex-grow h-[8px] rounded-full bg-gray-300/70" />
+              <Skeleton className="w-[20px] h-[14px] rounded-md bg-gray-300/70" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Skeleton className="w-full h-[42px] rounded-lg bg-gray-300/70" />
+    </div>
+  </FadeWrapper>
+);
+export const SkeletonSellerReviews: React.FC<{ show?: boolean }> = ({
+  show = true,
+}) => (
+  <FadeWrapper show={show}>
+    <section className="mx-10 my-5 font-quicksand animate-pulse">
+      <div className="flex justify-between items-center mb-5">
+        <Skeleton className="w-1/3 h-[28px] rounded-md bg-gray-300/70" />
+        <Skeleton className="w-[80px] h-[28px] rounded-full bg-gray-300/70" />
+      </div>
+
+      <div className="flex w-full gap-10">
+        {/* 🔸 Columna izquierda: resumen/formulario */}
+        <div className="flex flex-col w-[35%] border border-main rounded-2xl p-4 bg-white">
+          <div className="flex flex-col items-center mb-4">
+            <Skeleton className="w-[60px] h-[60px] rounded-full mb-3 bg-gray-300/70" />
+            <Skeleton className="w-1/3 h-[20px] mb-2 rounded-md bg-gray-300/70" />
+            <Skeleton className="w-1/2 h-[14px] rounded-md bg-gray-300/70" />
+          </div>
+
+          <div className="flex flex-col gap-2 mb-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="w-5 h-3 rounded-full bg-gray-300/70" />
+                <Skeleton className="w-full h-2 rounded-full bg-gray-300/70" />
+              </div>
+            ))}
+          </div>
+
+          <Skeleton className="w-full h-[40px] rounded-lg bg-gray-300/70 mt-4" />
+        </div>
+
+        {/* 🔹 Columna derecha: reseñas */}
+        <div className="flex flex-col w-[65%] pl-10">
+          <div className="flex items-center gap-2 mb-3">
+            <Skeleton className="w-[100px] h-[20px] rounded-md bg-gray-300/70" />
+            <Skeleton className="w-[40px] h-[20px] rounded-full bg-gray-300/70" />
+          </div>
+
+          <div className="space-y-5">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="border border-main/20 rounded-2xl p-4 shadow-sm bg-white"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <Skeleton className="w-[40px] h-[40px] rounded-full bg-gray-300/70" />
+                  <div className="flex flex-col gap-1">
+                    <Skeleton className="w-[120px] h-[14px] rounded-md bg-gray-300/70" />
+                    <Skeleton className="w-[80px] h-[12px] rounded-md bg-gray-300/70" />
+                  </div>
+                </div>
+                <Skeleton className="w-full h-[14px] mb-2 rounded-md bg-gray-300/70" />
+                <Skeleton className="w-3/4 h-[14px] mb-2 rounded-md bg-gray-300/70" />
+                <Skeleton className="w-2/3 h-[14px] rounded-md bg-gray-300/70" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </FadeWrapper>
+);
 
 /* ============================================================
    💎 Skeleton para productos normales (tarjetas verticales)
