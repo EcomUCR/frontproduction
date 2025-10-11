@@ -25,13 +25,7 @@ import {
     IconBrandStackshare,
 } from "@tabler/icons-react";
 
-export default function CategoryDropdown({
-    categories,
-    navigate,
-}: {
-    categories: any[];
-    navigate: any;
-}) {
+export default function CategoryDropdown({categories,navigate,}: {categories: any[];navigate: any;}) {
     const categoryIcons: Record<string, React.ElementType> = {
         Arte: IconBrush,
         Automotriz: IconCar,
