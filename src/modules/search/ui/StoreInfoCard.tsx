@@ -24,7 +24,7 @@ export default function StoreInfoCard({ store }: StoreProps) {
       <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
 
       <div className="relative z-10 flex flex-col items-center justify-center group/store transition-all duration-500">
-        <div className="flex items-center justify-center bg-white/20 backdrop-blur-lg w-72 h-50 rounded-2xl shadow-lg border border-white/30 transition-all duration-500 group-hover/store:w-120">
+        <div className="flex items-center justify-center bg-gradient-to-br from-contrast-main/50 via-contrast-secondary/50 to-main/50 backdrop-blur-lg w-72 h-50 rounded-2xl shadow-lg border border-white/30 transition-all duration-500 group-hover/store:w-120">
           <div className="flex flex-col justify-center items-center">
             <img
               src={store.image || "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"}
