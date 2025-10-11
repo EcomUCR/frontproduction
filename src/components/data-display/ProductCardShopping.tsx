@@ -14,7 +14,7 @@ export default function ProductCardShopping({ item }: Props) {
 
   // 🔹 Actualizar cantidad (+/-)
   const updateQuantity = async (newQuantity: number) => {
-    if (newQuantity < 1) return; // evita cantidades menores a 1
+    if (newQuantity < 1) return;
     try {
       const { data } = await axios.patch(
         `/cart/item/${item.id}`,
@@ -30,12 +30,11 @@ export default function ProductCardShopping({ item }: Props) {
     }
   };
 
-  // 🔹 Eliminar producto (popup nativo)
+  // 🔹 Eliminar producto
   const handleDelete = async () => {
     const confirmed = window.confirm(
       `¿Seguro que deseas eliminar "${product.name}" del carrito?`
     );
-
     if (!confirmed) return;
 
     try {
@@ -51,76 +50,100 @@ export default function ProductCardShopping({ item }: Props) {
   };
 
   return (
-    <figure className="flex border border-main rounded-xl my-5 w-full justify-between p-5 transition-all duration-300 hover:shadow-lg">
+    <figure
+      className="relative flex items-center justify-between w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-5 shadow-md border border-gray-100 
+                 hover:shadow-xl hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden hover:scale-[1.01]"
+    >
       {/* Imagen */}
-      <div className="1/6 flex items-center justify-center pr-5">
+      <div className="flex-shrink-0 flex items-center justify-center w-32 h-32 rounded-2xl overflow-hidden bg-white shadow-inner">
         <img
-          className="p-5 rounded-xl w-28 h-28 object-cover"
-          src={product.image_1_url}
+          src={
+            product.image_1_url ||
+            "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"
+          }
           alt={product.name}
+          className="object-contain w-full h-full transition-transform duration-500 hover:scale-110"
         />
       </div>
 
-      {/* Información */}
-      <div className="font-quicksand w-4/6 flex flex-col justify-between">
-        <div className="flex flex-col gap-2">
+      {/* Información principal */}
+      <div className="flex flex-col justify-between flex-grow px-6 py-2 font-quicksand">
+        <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <p className="font-bold">{product.name}</p>
-            <p className="text-xs text-green-600">
+            <h3 className="font-bold text-lg text-gray-800">{product.name}</h3>
+            <span
+              className={`text-xs ${
+                product.stock > 0
+                  ? "text-green-600"
+                  : "text-red-500 font-semibold"
+              }`}
+            >
               {product.stock > 0 ? "Disponible" : "Agotado"}
-            </p>
+            </span>
           </div>
-          <p className="text-xs text-gray-500">Tienda: {product.name ?? "—"}</p>
-          <StarRatingComponent value={4} size={10} />
+          <p className="text-xs text-gray-500">
+            Tienda: <span className="font-medium">Desconocida</span>
+          </p>
+          <StarRatingComponent value={4} size={12} />
         </div>
 
         {/* Cantidad */}
-        <div className="flex justify-between">
-          <div className="flex justify-between items-center border border-contrast-secondary rounded-full p-1">
-            <p className="text-sm px-4">Cantidad</p>
-            <div className="flex gap-8 border border-contrast-secondary rounded-full px-4">
-              <button
-                onClick={() => updateQuantity(item.quantity - 1)}
-                className="hover:text-contrast-secondary"
-              >
-                -
-              </button>
-              <p className="font-bold">{item.quantity}</p>
-              <button
-                onClick={() => updateQuantity(item.quantity + 1)}
-                className="hover:text-contrast-secondary"
-              >
-                +
-              </button>
-            </div>
+        <div className="mt-3 flex items-center justify-start gap-3">
+          <div className="flex items-center bg-white border border-contrast-secondary/60 rounded-full shadow-sm">
+            <button
+              onClick={() => updateQuantity(item.quantity - 1)}
+              className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary transition-colors"
+            >
+              −
+            </button>
+            <span className="px-3 text-base font-semibold text-gray-800">
+              {item.quantity}
+            </span>
+            <button
+              onClick={() => updateQuantity(item.quantity + 1)}
+              className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary transition-colors"
+            >
+              +
+            </button>
           </div>
         </div>
       </div>
 
       {/* Precio y acciones */}
-      <div className="flex flex-col w-1/6 justify-between items-end">
-        <div>
+      <div className="flex flex-col items-end justify-between h-full gap-3 pr-2">
+        <div className="text-right">
           {product.discount_price && product.discount_price > 0 ? (
             <>
               <p className="text-xs line-through text-gray-400">
                 ₡{product.price}
               </p>
-              <p className="font-bold text-main text-2xl">
+              <p className="text-xl font-bold bg-gradient-to-r from-contrast-main to-contrast-secondary bg-clip-text text-transparent">
                 ₡{product.discount_price}
               </p>
             </>
           ) : (
-            <p className="font-bold text-main text-2xl">₡{product.price}</p>
+            <p className="text-xl font-bold text-contrast-main">
+              ₡{product.price}
+            </p>
           )}
         </div>
-        <div className="flex gap-2 text-main">
-          <IconHeart />
-          <IconTrash
-            className="cursor-pointer hover:text-contrast-secondary transition-colors"
+
+        {/* Acciones */}
+        <div className="flex gap-3 text-main">
+          <button className="p-2 rounded-full bg-gradient-to-br from-contrast-main to-contrast-secondary text-white hover:scale-110 shadow-md transition-transform duration-300">
+            <IconHeart size={18} />
+          </button>
+          <button
             onClick={handleDelete}
-          />
+            className="p-2 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
+          >
+            <IconTrash size={18} />
+          </button>
         </div>
       </div>
+
+      {/* Efecto de iluminación suave */}
+      <div className="absolute inset-0 rounded-2xl pointer-events-none bg-gradient-to-br from-contrast-main/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-700" />
     </figure>
   );
 }

@@ -67,6 +67,43 @@ export const SkeletonRatingSummary: React.FC<{ show?: boolean }> = ({
     </div>
   </FadeWrapper>
 );
+export const SkeletonStoreBanner = ({
+  count = 3,
+  show = true,
+}: {
+  count?: number;
+  show?: boolean;
+}) => (
+  <FadeWrapper show={show}>
+    <div className="flex flex-col gap-8">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="relative w-full h-56 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200/60 shadow-md animate-pulse"
+        >
+          {/* Fondo simulado */}
+          <Skeleton className="absolute inset-0 w-full h-full bg-gray-300/70" />
+
+          {/* Contenedor glass */}
+          <div className="relative z-10 flex items-center justify-center bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 px-10 py-6">
+            <div className="flex items-center gap-5">
+              {/* Imagen circular */}
+              <Skeleton className="w-[80px] h-[80px] rounded-full bg-gray-300/70" />
+              <div className="flex flex-col gap-2">
+                <Skeleton className="w-[140px] h-[20px] rounded-md bg-gray-300/70" />
+                <Skeleton className="w-[100px] h-[14px] rounded-md bg-gray-300/70" />
+              </div>
+            </div>
+            {/* Botón placeholder */}
+            <div className="absolute right-10">
+              <Skeleton className="w-[120px] h-[36px] rounded-full bg-gray-300/70" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </FadeWrapper>
+);
 export const SkeletonSellerReviews: React.FC<{ show?: boolean }> = ({
   show = true,
 }) => (
