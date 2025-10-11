@@ -87,7 +87,7 @@ export default function HomeSeller() {
       </section>
       {/*Productos destacados */}
       <section className="mx-10 my-5">
-        {!loading && offers.length > 0 && (
+        {!loading && featuredProducts.length > 0 && (
           <>
             <h2 className="text-2xl font-semibold font-quicksand">
               Productos destacados
