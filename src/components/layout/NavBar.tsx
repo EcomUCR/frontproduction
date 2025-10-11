@@ -46,7 +46,7 @@ export default function NavBar() {
       displayName =
         `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() || user.email;
     } else {
-      displayName = user.store?.name ;
+      displayName = user.store?.name;
     }
   }
 
@@ -115,10 +115,10 @@ export default function NavBar() {
                   </>
                 ) : (
                   <>
-                    <Link to="/profile">
+                    <Link className="flex items-center gap-1" to="/loginRegister">
                       <IconUser className="h-5 w-5" />
+                      Iniciar sesión
                     </Link>
-                    <Link to="/loginRegister">Iniciar sesión</Link>
                     <span>|</span>
                     <Link to="/loginRegister">Regístrate</Link>
                   </>
