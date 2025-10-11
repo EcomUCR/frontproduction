@@ -96,7 +96,7 @@ export default function SearchedProductPage() {
   // 🔹 Título dinámico
   const getTitle = () => {
     if (loading) return "Cargando productos...";
-    if (categoryId) return `Resultados de ${categories[categoryId]}`;
+    if (categoryId) return `Resultados de "${categories[categoryId]}"`;
     if (mode === "explore") return "Explorar productos";
     if (mode === "offers") return "Ofertas especiales";
     if (mode === "best-sellers") return "Lo más vendido";
