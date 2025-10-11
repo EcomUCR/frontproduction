@@ -3,6 +3,12 @@ import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../infrastructure/useAuth";
 
+
+
+
+
+
+
 export default function ResetPasswordPage() {
     const [searchParams] = useSearchParams();
     const [password, setPassword] = useState("");
