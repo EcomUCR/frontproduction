@@ -12,6 +12,7 @@ import ResetPasswordPage from "./modules/auth/ui/ResetPasswordPage";
 
 //Search product
 import SearchedProductPage from "./modules/search/ui/SearchedProductPage";
+import SearchedStores from "./modules/search/ui/SeachedStores";
 
 //home
 import HomePage from "./modules/home/ui/HomePage";
@@ -46,6 +47,7 @@ function App() {
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/search/:categoryId" element={<SearchedProductPage />} />
           <Route path="/search" element={<SearchedProductPage />} />
+          <Route path="/search/stores" element={<SearchedStores />} />
           
         </Routes>
       </Router>

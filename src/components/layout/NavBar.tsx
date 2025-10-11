@@ -189,7 +189,7 @@ export default function NavBar() {
           </li>
           <li
             className="hover:-translate-y-1 transform transition-all duration-300 hover:cursor-pointer"
-            onClick={() => navigate("/search?mode=stores")}
+            onClick={() => navigate("/search/stores")}
           >
             Tiendas
           </li>
