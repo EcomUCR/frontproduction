@@ -2,7 +2,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import {
   IconHeart,
-  IconMenu2,
   IconSearch,
   IconShoppingBag,
   IconUser,
@@ -12,6 +11,7 @@ import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useProducts } from "../../modules/seller/infrastructure/useProducts";
 import { useEffect, useState } from "react";
+import CategoryDropdown from "../data-display/CategoryDropdown";
 
 type Category = {
   id: number;
@@ -144,28 +144,8 @@ export default function NavBar() {
       {/*Parte inferior del navbar*/}
       <div>
         <ul className="flex justify-center gap-10 p-3 text-white text-sm font-light">
-          <li className="flex items-center hover:-translate-y-1 transform transition-all duration-300">
-            <IconMenu2 className="h-5 w-5" />
-            <select
-              defaultValue=""
-              className="bg-transparent border-white focus:outline-none hover:cursor-pointer"
-              onChange={(e) => {
-                if (e.target.value) navigate(`/search/${e.target.value}`);
-              }}
-            >
-              <option value="" disabled hidden>
-                Categorías
-              </option>
-              {categories?.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.id}
-                  className="text-black flex justify-center"
-                >
-                  {category.name}
-                </option>
-              ))}
-            </select>
+          <li className="flex relative z-20 items-center transform transition-all duration-300">
+            <CategoryDropdown categories={categories} navigate={navigate} />
           </li>
 
           {/* Enlaces inferiores */}
