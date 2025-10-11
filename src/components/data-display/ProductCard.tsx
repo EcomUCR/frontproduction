@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { IconEdit, IconHeart, IconShoppingBag } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
-import axios from "axios";
-import { useAuth } from "../../hooks/context/AuthContext"; // 👈 Importante
+import { useCart } from "../../hooks/context/CartContext"; // 👈 Importante
 
 interface ProductCardProps {
   id: number;
@@ -15,32 +14,15 @@ interface ProductCardProps {
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { token, setCart } = useAuth(); // 👈 traemos el carrito global y el token
+  const { addToCart } = useCart(); // 👈 traemos el carrito global y el token
 
   // 👇 Maneja añadir al carrito
   const handleAddToCart = async () => {
-    if (!token) {
-      alert("Debes iniciar sesión para agregar al carrito 🛒");
-      return;
-    }
-
     try {
-      const { data } = await axios.post(
-        "/cart/add",
-        { product_id: props.id, quantity: 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Actualiza el carrito global con la respuesta del backend
-      setCart(data.cart);
-      alert("Producto añadido al carrito ✅");
+      await addToCart(props.id, 1); // usa el método centralizado
     } catch (error) {
-      console.error(error);
-      alert("Error al añadir el producto al carrito ❌");
+      console.error("Error al añadir al carrito:", error);
+      alert("No se pudo añadir el producto ❌");
     }
   };
 

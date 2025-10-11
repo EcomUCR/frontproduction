@@ -3,10 +3,10 @@ import FormShopping from "../../../components/forms/FormShopping";
 import NavBar from "../../../components/layout/NavBar";
 import ProductCardShopping from "../../../components/data-display/ProductCardShopping";
 import banner2 from "../../../img/resources/SmallBanner2.png";
-import { useAuth } from "../../../hooks/context/AuthContext"; // 👈 importa el contexto
+import { useCart } from "../../../hooks/context/CartContext"; // 👈 importa el contexto
 
 export default function ShoppingCartPage() {
-  const { cart, loading } = useAuth();
+  const { cart, loading } = useCart();
 
   if (loading) return <p className="text-center py-10">Cargando carrito...</p>;
 

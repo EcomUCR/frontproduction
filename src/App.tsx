@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { AuthProvider } from "./hooks/context/AuthContext";
+import { CartProvider } from "./hooks/context/CartContext";
 
 //admin
 import AdminPage from "./modules/admin/ui/AdminPage";
@@ -31,26 +32,27 @@ import ShoppingCartPage from "./modules/users/ui/ShoppingCartPage";
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/loginRegister" element={<LoginRegisterPage />} />
-          <Route path="/registerSeller" element={<RegisterSellerPage />} />
-          <Route path="/beSellerPage" element={<BeSellerPage />} />
-          <Route path="/store/:id" element={<SellerPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/shoppingCart" element={<ShoppingCartPage />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/resetPassword" element={<ResetPasswordPage />} />
-          <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
-          <Route path="/crudProduct" element={<CrudProductPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/search/:categoryId" element={<SearchedProductPage />} />
-          <Route path="/search" element={<SearchedProductPage />} />
-          <Route path="/search/stores" element={<SearchedStores />} />
-          
-        </Routes>
-      </Router>
+      <CartProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/loginRegister" element={<LoginRegisterPage />} />
+            <Route path="/registerSeller" element={<RegisterSellerPage />} />
+            <Route path="/beSellerPage" element={<BeSellerPage />} />
+            <Route path="/store/:id" element={<SellerPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/shoppingCart" element={<ShoppingCartPage />} />
+            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/resetPassword" element={<ResetPasswordPage />} />
+            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+            <Route path="/crudProduct" element={<CrudProductPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/search/:categoryId" element={<SearchedProductPage />} />
+            <Route path="/search" element={<SearchedProductPage />} />
+            <Route path="/search/stores" element={<SearchedStores />} />
+          </Routes>
+        </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }

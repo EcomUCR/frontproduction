@@ -40,33 +40,10 @@ type UserType = {
   store?: StoreType | null;
 };
 
-export type CartItemType = {
-  id: number;
-  product_id: number;
-  quantity: number;
-  product: {
-    id: number;
-    name: string;
-    image_1_url: string;
-    price: number;
-    discount_price?: number | null;
-    stock: number;
-  };
-};
-
-type CartType = {
-  id: number;
-  user_id: number;
-  total?: number;
-  items: CartItemType[];
-};
-
 type AuthContextType = {
   user: UserType | null;
   token: string | null;
   loading: boolean;
-  cart: CartType | null;
-  setCart: React.Dispatch<React.SetStateAction<CartType | null>>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 };
@@ -83,15 +60,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.getItem("access_token")
   );
   const [loading, setLoading] = useState<boolean>(false);
-  const [cart, setCart] = useState<CartType | null>(null);
 
   // ============================
-  // 🔄 Cargar usuario y carrito
+  // 🔄 Cargar usuario autenticado
   // ============================
   useEffect(() => {
     if (!token) {
       setUser(null);
-      setCart(null);
       return;
     }
 
@@ -100,22 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     axios
       .get("/me")
-      .then(async (res) => {
+      .then((res) => {
         const data = res.data.user ?? res.data;
         setUser(data);
-
-        // Cargar carrito asociado al usuario
-        try {
-          const cartRes = await axios.get("/cart/me");
-          setCart(cartRes.data);
-        } catch {
-          setCart(null);
-        }
       })
-      .catch(() => {
-        setUser(null);
-        setCart(null);
-      })
+      .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, [token]);
 
@@ -129,27 +93,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const accessToken = data.token;
       if (!accessToken) throw new Error("Token no recibido");
 
-      // Guardar token
+      // Guardar token y usuario
       setToken(accessToken);
       localStorage.setItem("access_token", accessToken);
       axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
-      // Guardar usuario
       setUser(data.user);
-
-      // Cargar carrito (si el backend no lo devuelve, lo crea)
-      try {
-        const cartRes = await axios.get("/cart/me");
-        setCart(cartRes.data);
-      } catch {
-        setCart(null);
-      }
 
       setLoading(false);
       return true;
     } catch {
       setUser(null);
-      setCart(null);
       setToken(null);
       localStorage.removeItem("access_token");
       delete axios.defaults.headers.common["Authorization"];
@@ -166,7 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await axios.post("/logout");
     } catch {}
     setUser(null);
-    setCart(null);
     setToken(null);
     localStorage.removeItem("access_token");
     delete axios.defaults.headers.common["Authorization"];
@@ -176,9 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 🌎 Provider
   // ============================
   return (
-    <AuthContext.Provider
-      value={{ user, token, loading, cart, setCart, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -189,8 +139,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 // ============================
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) {
+    throw new Error("useAuth debe usarse dentro de un AuthProvider");
   }
   return context;
 }
