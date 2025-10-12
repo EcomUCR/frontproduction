@@ -57,7 +57,7 @@ export default function SellerContactComponent() {
         <div className="flex flex-col gap-2 w-2/3">
           <h3 className="text-2xl font-bold">Contacto:</h3>
           <p>{store.support_phone || "+506 0000-0000"}</p>
-          <p>{store.support_email || "correo@ejemplo.com"}</p>
+          <p>{store.support_email || "unstablegames@gmail.com"}</p>
         </div>
 
         {/* Dirección */}
