@@ -18,29 +18,29 @@ export default function Footer() {
           <div className="flex justify-center mx-10 pt-10 gap-10 text-sm font-light">
             <ul className="mr-10 space-y-4">
               <li>
-                <a href="">Ofertas</a>
+                <a href="/search?mode=offers">Ofertas</a>
               </li>
               <li>
-                <a href="">Tiendas</a>
+                <a href="/search/stores">Tiendas</a>
               </li>
               <li>
-                <a href="">Explorar</a>
-              </li>
-            </ul>
-            <ul className="space-y-4">
-              <li>
-                <a href="">Conócenos</a>
-              </li>
-              <li>
-                <a href="">Vender</a>
-              </li>
-              <li>
-                <a href="">Lo más vendido</a>
+                <a href="/search?mode=explore">Explorar</a>
               </li>
             </ul>
             <ul className="space-y-4">
               <li>
-                <a href="">Ayuda</a>
+                <a href="/about">Conócenos</a>
+              </li>
+              <li>
+                <a href="/beSellerPage">Vender</a>
+              </li>
+              <li>
+                <a href="/search?mode=best-sellers">Lo más vendido</a>
+              </li>
+            </ul>
+            <ul className="space-y-4">
+              <li>
+                <a href="/help">Ayuda</a>
               </li>
               <li>
                 <a href=""></a>
