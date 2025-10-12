@@ -1,82 +1,97 @@
 import { IconHeart, IconTrash } from "@tabler/icons-react";
 import StarRatingComponent from "../ui/StarRatingComponent";
-import { useCart, type CartItem } from "../../hooks/context/CartContext";
-import { Link } from "react-router-dom";
+import type { CartItemType } from "../../hooks/context/AuthContext";
+import { useAuth } from "../../hooks/context/AuthContext";
+import axios from "axios";
 
-interface ProductCardShoppingProps {
-  item: CartItem;
+interface Props {
+  item: CartItemType;
 }
 
-export default function ProductCardShopping({ item }: ProductCardShoppingProps) {
-  const { updateQuantity, removeItem } = useCart();
+export default function ProductCardShopping({ item }: Props) {
   const { product } = item;
+  const { token, setCart } = useAuth();
 
-  // 🔹 Disminuir cantidad
-  const handleDecrease = () => {
-    if (item.quantity > 1) updateQuantity(item.id, item.quantity - 1);
-  };
-
-  // 🔹 Aumentar cantidad
-  const handleIncrease = () => {
-    updateQuantity(item.id, item.quantity + 1);
+  // 🔹 Actualizar cantidad (+/-)
+  const updateQuantity = async (newQuantity: number) => {
+    if (newQuantity < 1) return;
+    try {
+      const { data } = await axios.patch(
+        `/cart/item/${item.id}`,
+        { quantity: newQuantity },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setCart(data.cart);
+    } catch (error) {
+      console.error("Error al actualizar cantidad:", error);
+      alert("No se pudo actualizar la cantidad ❌");
+    }
   };
 
   // 🔹 Eliminar producto
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const confirmed = window.confirm(
       `¿Seguro que deseas eliminar "${product.name}" del carrito?`
     );
-    if (confirmed) removeItem(item.id);
+    if (!confirmed) return;
+
+    try {
+      const { data } = await axios.delete(`/cart/item/${item.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCart(data.cart);
+      alert("Producto eliminado del carrito ✅");
+    } catch (error) {
+      console.error("Error al eliminar producto:", error);
+      alert("No se pudo eliminar el producto ❌");
+    }
   };
 
   return (
-    <figure className="relative flex items-center justify-between w-full rounded-2xl p-5 shadow-md border border-gray-100 hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden">
-      {/* 🖼️ Imagen */}
+    <figure
+      className="relative flex items-center justify-between w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-5 shadow-md border border-gray-100 
+                 hover:shadow-xl hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden hover:scale-[1.01]"
+    >
+      {/* Imagen */}
       <div className="flex-shrink-0 flex items-center justify-center w-32 h-32 rounded-2xl overflow-hidden bg-white shadow-inner">
-        <Link to={`/product/${product.id}`}>
-          <img
-            src={
-              product.image_1_url ||
-              "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"
-            }
-            alt={product.name}
-            className="object-contain w-full h-full transition-transform duration-500"
-          />
-        </Link>
+        <img
+          src={
+            product.image_1_url ||
+            "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"
+          }
+          alt={product.name}
+          className="object-contain w-full h-full transition-transform duration-500 hover:scale-110"
+        />
       </div>
 
-      {/* 🧾 Información principal */}
+      {/* Información principal */}
       <div className="flex flex-col justify-between flex-grow px-6 py-2 font-quicksand">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <Link to={`/product/${product.id}`}>
-              <h3 className="font-bold text-lg text-gray-800">{product.name}</h3>
-            </Link>
+            <h3 className="font-bold text-lg text-gray-800">{product.name}</h3>
             <span
-              className={`text-xs ${product.stock && product.stock > 0
+              className={`text-xs ${
+                product.stock > 0
                   ? "text-green-600"
                   : "text-red-500 font-semibold"
-                }`}
+              }`}
             >
-              {product.stock && product.stock > 0 ? "Disponible" : "Agotado"}
+              {product.stock > 0 ? "Disponible" : "Agotado"}
             </span>
           </div>
-
           <p className="text-xs text-gray-500">
-            Tienda:{" "}
-            <span className="font-medium">
-              {product.store?.name ?? "Desconocida"}
-            </span>
+            Tienda: <span className="font-medium">Desconocida</span>
           </p>
-
           <StarRatingComponent value={4} size={12} />
         </div>
 
-        {/* 🔢 Controles de cantidad */}
+        {/* Cantidad */}
         <div className="mt-3 flex items-center justify-start gap-3">
           <div className="flex items-center bg-white border border-contrast-secondary/60 rounded-full shadow-sm">
             <button
-              onClick={handleDecrease}
+              onClick={() => updateQuantity(item.quantity - 1)}
               className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary transition-colors"
             >
               −
@@ -85,7 +100,7 @@ export default function ProductCardShopping({ item }: ProductCardShoppingProps) 
               {item.quantity}
             </span>
             <button
-              onClick={handleIncrease}
+              onClick={() => updateQuantity(item.quantity + 1)}
               className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary transition-colors"
             >
               +
@@ -94,7 +109,7 @@ export default function ProductCardShopping({ item }: ProductCardShoppingProps) 
         </div>
       </div>
 
-      {/* 💰 Precio y acciones */}
+      {/* Precio y acciones */}
       <div className="flex flex-col items-end justify-between h-full gap-3 pr-2">
         <div className="text-right">
           {product.discount_price && product.discount_price > 0 ? (
@@ -113,12 +128,11 @@ export default function ProductCardShopping({ item }: ProductCardShoppingProps) 
           )}
         </div>
 
-        {/* ❤️🗑️ Botones */}
+        {/* Acciones */}
         <div className="flex gap-3 text-main">
           <button className="p-2 rounded-full bg-gradient-to-br from-contrast-main to-contrast-secondary text-white hover:scale-110 shadow-md transition-transform duration-300">
             <IconHeart size={18} />
           </button>
-
           <button
             onClick={handleDelete}
             className="p-2 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
@@ -128,7 +142,7 @@ export default function ProductCardShopping({ item }: ProductCardShoppingProps) 
         </div>
       </div>
 
-      {/* 💡 Efecto visual */}
+      {/* Efecto de iluminación suave */}
       <div className="absolute inset-0 rounded-2xl pointer-events-none bg-gradient-to-br from-contrast-main/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-700" />
     </figure>
   );
