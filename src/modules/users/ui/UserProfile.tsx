@@ -15,6 +15,7 @@ import {
   IconSquareRoundedPlus,
   IconX,
 } from "@tabler/icons-react";
+import AlertComponent from "../../../components/data-display/AlertComponent";
 
 // ========================
 // Interfaces y tipos
@@ -80,6 +81,14 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   const [newType, setNewType] = useState<SocialLink["type"]>("instagram");
   const [newText, setNewText] = useState("");
 
+  const [alert, setAlert] = useState({
+    show: false,
+    title: "",
+    message: "",
+    type: "info" as "info" | "success" | "warning" | "error",
+  });
+
+
   // ========================
   // Cargar datos de tienda
   // ========================
@@ -130,42 +139,56 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   };
 
   const handleSave = async () => {
-  if (!editableStore) return;
-  setSaving(true);
+    if (!editableStore) return;
+    setSaving(true);
 
-  try {
-    const updatedFields: Record<string, any> = {
-      name: editableStore.name ?? "",
-      description: editableStore.description ?? "",
-      registered_address: editableStore.registered_address ?? "",
-      support_phone: editableStore.support_phone ?? "",
-      support_email: editableStore.support_email ?? "",
-    };
+    try {
+  const updatedFields: Record<string, any> = {
+    name: editableStore.name ?? "",
+    description: editableStore.description ?? "",
+    registered_address: editableStore.registered_address ?? "",
+    support_phone: editableStore.support_phone ?? "",
+    support_email: editableStore.support_email ?? "",
+  };
 
-    Object.keys(updatedFields).forEach((key) => {
-      if (updatedFields[key] === "") delete updatedFields[key];
-    });
+  Object.keys(updatedFields).forEach((key) => {
+    if (updatedFields[key] === "") delete updatedFields[key];
+  });
 
-    if (newLogoFile) {
-      const logoUrl = await uploadImage(newLogoFile);
-      updatedFields.image = logoUrl;
-    }
-
-    if (newBannerFile) {
-      const bannerUrl = await uploadImage(newBannerFile);
-      updatedFields.banner = bannerUrl;
-    }
-
-    await updateStore(editableStore.id, updatedFields);
-    await refreshUser();
-    alert("Tienda actualizada correctamente");
-  } catch (err) {
-    console.error("Error al guardar la tienda:", err);
-    alert("Ocurrió un error al guardar la tienda");
-  } finally {
-    setSaving(false);
+  if (newLogoFile) {
+    const logoUrl = await uploadImage(newLogoFile);
+    updatedFields.image = logoUrl;
   }
-};
+
+  if (newBannerFile) {
+    const bannerUrl = await uploadImage(newBannerFile);
+    updatedFields.banner = bannerUrl;
+  }
+
+  await updateStore(editableStore.id, updatedFields);
+  await refreshUser();
+
+  // ✅ Mostrar alerta de éxito
+  setAlert({
+    show: true,
+    title: "Cambios guardados",
+    message: "La tienda se actualizó correctamente.",
+    type: "success",
+  });
+} catch (err) {
+  console.error("Error al guardar la tienda:", err);
+  // ❌ Mostrar alerta de error
+  setAlert({
+    show: true,
+    title: "Error al guardar",
+    message: "Ocurrió un problema al actualizar tu tienda.",
+    type: "error",
+  });
+} finally {
+  setSaving(false);
+}
+
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -194,6 +217,8 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   function handleEdit(): void {
     throw new Error("Function not implemented.");
   }
+
+  
 
   return (
     <div className="mx-10 border-l-2 border-main-dark/20 pl-4">
@@ -505,6 +530,17 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
           </div>
         </div>
       )}
+      <AlertComponent
+        show={alert.show}
+        title={alert.title}
+        message={alert.message}
+        type={alert.type}
+        confirmText="Aceptar"
+        cancelText="Cerrar"
+        onConfirm={() => setAlert((prev) => ({ ...prev, show: false }))}
+        onCancel={() => setAlert((prev) => ({ ...prev, show: false }))}
+      />
+
     </div>
   );
 }
