@@ -168,7 +168,7 @@ export default function ProductPage() {
                       <img
                         src={product.image_1_url}
                         alt={product.name}
-                        className="w-full h-full object-cover object-center rounded-2xl"
+                        className="w-full h-full object-contain object-center rounded-2xl"
                       />
                     </div>
 
