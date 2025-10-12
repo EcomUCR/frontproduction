@@ -122,7 +122,7 @@ export default function ProductCardShopping({ item }: Props) {
               </p>
             </>
           ) : (
-            <p className="text-xl font-bold text-contrast-main">
+            <p className="text-xl font-bold text-main">
               ₡{product.price}
             </p>
           )}
