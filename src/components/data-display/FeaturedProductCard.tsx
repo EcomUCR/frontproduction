@@ -47,7 +47,9 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
   };
 
   return (
-    <figure className="relative w-full max-w-lg p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden flex font-quicksand hover:scale-105 transition-all duration-300">
+    <figure  className={`relative w-full max-w-lg p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden flex font-quicksand transition-all duration-300 ${
+    props.edit ? "" : "hover:scale-105"
+  }`}>
       {props.edit && (
         <div className="absolute top-3 right-3 w-9 h-9 bg-contrast-main/70 rounded-full flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400">
           <IconEdit />
