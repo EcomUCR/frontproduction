@@ -38,7 +38,7 @@ export default function NavBarSeller({
   // 🦴 Skeleton de carga
   if (loading) {
     return (
-      <nav className="w-full bg-main-dark/10 text-main-dark px-10 py-4 flex justify-between items-center rounded-xl font-quicksand animate-pulse">
+      <nav className="w-full bg-main-dark/10 text-main-dark px-10 h-20 flex justify-between items-center rounded-xl font-quicksand animate-pulse">
         {/* Logo skeleton */}
         <div className="w-1/3">
           <Skeleton className="h-8 w-28 rounded-md" />
@@ -68,13 +68,13 @@ export default function NavBarSeller({
   }
 
   return (
-    <nav className="w-full bg-main-dark/10 text-main-dark px-10 py-4 flex justify-between items-center rounded-xl font-quicksand">
+    <nav className="w-full h-20 bg-main-dark/10 text-main-dark px-10 flex justify-between items-center rounded-xl font-quicksand">
       {/* Logo */}
       <div className="w-1/3">
         <img
           src={store.image || ""}
           alt={store.name}
-          className="h-8 w-auto object-contain"
+          className="h-14 w-auto object-contain"
         />
       </div>
 
