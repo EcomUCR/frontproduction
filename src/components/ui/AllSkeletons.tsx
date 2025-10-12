@@ -31,6 +31,61 @@ function FadeWrapper({
     </div>
   ) : null;
 }
+export const SkeletonSellerContact: React.FC<{ show?: boolean }> = ({
+  show = true,
+}) => (
+  <FadeWrapper show={show}>
+    <div className="flex flex-col mx-10 my-5 font-quicksand animate-pulse">
+      {/* 🔹 Logo + Descripción */}
+      <div className="flex items-center justify-center">
+        {/* Logo */}
+        <div className="flex items-center w-[40%] justify-center">
+          <Skeleton className="w-[180px] h-[180px] rounded-xl bg-gray-300/70" />
+        </div>
+
+        {/* Descripción */}
+        <div className="flex flex-col text-center w-[60%] gap-5">
+          <Skeleton className="w-1/2 h-[28px] mx-auto rounded-md bg-gray-300/70" />
+          <Skeleton className="w-3/4 h-[16px] mx-auto rounded-md bg-gray-300/70" />
+          <Skeleton className="w-2/3 h-[16px] mx-auto rounded-md bg-gray-300/70" />
+          <Skeleton className="w-1/2 h-[16px] mx-auto rounded-md bg-gray-300/70" />
+        </div>
+      </div>
+
+      {/* 🔹 Contacto / Dirección / Redes */}
+      <div className="grid grid-cols-3 justify-items-center mt-20">
+        {/* Contacto */}
+        <div className="flex flex-col gap-3 w-2/3 items-start">
+          <Skeleton className="w-[120px] h-[24px] rounded-md bg-gray-300/70" />
+          <Skeleton className="w-[160px] h-[14px] rounded-md bg-gray-300/70" />
+          <Skeleton className="w-[200px] h-[14px] rounded-md bg-gray-300/70" />
+        </div>
+
+        {/* Dirección */}
+        <div className="flex flex-col gap-3 w-2/3 items-start">
+          <Skeleton className="w-[120px] h-[24px] rounded-md bg-gray-300/70" />
+          <Skeleton className="w-[220px] h-[14px] rounded-md bg-gray-300/70" />
+          <Skeleton className="w-[180px] h-[14px] rounded-md bg-gray-300/70" />
+        </div>
+
+        {/* Redes sociales */}
+        <div className="flex flex-col gap-3 pb-10 w-2/3 items-start">
+          <Skeleton className="w-[160px] h-[24px] rounded-md bg-gray-300/70" />
+          <Skeleton className="w-[140px] h-[14px] rounded-md bg-gray-300/70" />
+          <div className="flex gap-5 mt-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton
+                key={i}
+                className="w-[30px] h-[30px] rounded-full bg-gray-300/70"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </FadeWrapper>
+);
+
 export const SkeletonRatingSummary: React.FC<{ show?: boolean }> = ({
   show = true,
 }) => (
