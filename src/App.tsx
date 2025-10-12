@@ -29,6 +29,8 @@ import SellerPage from "./modules/seller/ui/SellerPage";
 import ProfilePage from "./modules/users/ui/ProfilePage";
 import ShoppingCartPage from "./modules/users/ui/ShoppingCartPage";
 import { AlertProvider } from "./hooks/context/AlertContext";
+import AboutUsPage from "./modules/home/ui/AboutUsPage";
+import HelpPage from "./modules/home/ui/HelpPage";
 
 function App() {
   return (
@@ -52,6 +54,8 @@ function App() {
               <Route path="/search/:categoryId" element={<SearchedProductPage />} />
               <Route path="/search" element={<SearchedProductPage />} />
               <Route path="/search/stores" element={<SearchedStores />} />
+              <Route path="/aboutus" element={<AboutUsPage />} />
+              <Route path="/help" element={<HelpPage />} />
             </Routes>
           </Router>
         </CartProvider>
