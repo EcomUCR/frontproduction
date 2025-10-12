@@ -25,7 +25,13 @@ import {
     IconBrandStackshare,
 } from "@tabler/icons-react";
 
-export default function CategoryDropdown({categories,navigate,}: {categories: any[];navigate: any;}) {
+export default function CategoryDropdown({
+    categories,
+    navigate,
+}: {
+    categories: any[];
+    navigate: any;
+}) {
     const categoryIcons: Record<string, React.ElementType> = {
         Arte: IconBrush,
         Automotriz: IconCar,
@@ -51,7 +57,7 @@ export default function CategoryDropdown({categories,navigate,}: {categories: an
     };
 
     const [open, setOpen] = useState(false);
-    const dropdownRef = useRef<HTMLLIElement | null>(null);
+    const dropdownRef = useRef<HTMLDivElement | null>(null); // ✅ corregido tipo
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -64,7 +70,7 @@ export default function CategoryDropdown({categories,navigate,}: {categories: an
     }, []);
 
     return (
-        <li className="relative" ref={dropdownRef}>
+        <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setOpen((prev) => !prev)}
                 className="flex items-center gap-2 hover:-translate-y-1 text-white transform transition-all duration-300"
@@ -97,6 +103,6 @@ export default function CategoryDropdown({categories,navigate,}: {categories: an
                     })}
                 </div>
             )}
-        </li>
+        </div>
     );
 }
