@@ -15,6 +15,7 @@ import {
 export default function HomeSeller() {
   const { id } = useParams();
   const { getProductsByStore, getFeaturedProductsByStore } = useProducts();
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -57,7 +58,10 @@ export default function HomeSeller() {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold font-quicksand">Ofertas</h2>
               <div className="flex items-center">
-                <a href="#" className="font-semibold hover:text-contrast-main transition-colors">
+                <a
+                  href="#"
+                  className="font-semibold hover:text-contrast-main transition-colors"
+                >
                   Ver todo
                 </a>
                 <IconChevronRight className="inline ml-1" />
@@ -65,8 +69,9 @@ export default function HomeSeller() {
             </div>
 
             <div
-              className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${loading ? "opacity-0" : "opacity-100"
-                }`}
+              className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
+                loading ? "opacity-0" : "opacity-100"
+              }`}
             >
               {offers.slice(0, 5).map((prod) => (
                 <ProductCard
@@ -81,7 +86,6 @@ export default function HomeSeller() {
                 />
               ))}
             </div>
-
           </>
         )}
       </section>
@@ -99,8 +103,9 @@ export default function HomeSeller() {
               </div>
             ) : featuredProducts.length > 0 ? (
               <div
-                className={`transition-opacity duration-500 ${loading ? "opacity-0" : "opacity-100"
-                  }`}
+                className={`transition-opacity duration-500 ${
+                  loading ? "opacity-0" : "opacity-100"
+                }`}
               >
                 <FeaturedProductsSlider
                   products={featuredProducts.map((prod) => ({
@@ -134,34 +139,38 @@ export default function HomeSeller() {
             <SkeletonProduct count={10} />
           </div>
         ) : products.length > 0 ? (
-          <div
-            className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${loading ? "opacity-0" : "opacity-100"
+          <>
+            <div
+              className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
+                loading ? "opacity-0" : "opacity-100"
               }`}
-          >
-            {products.slice(0, 10).map((prod) => (
-              <ProductCard
-                key={prod.id}
-                id={prod.id!}
-                shop={prod.store?.name || "Tienda"}
-                title={prod.name}
-                price={prod.price.toLocaleString("es-CRC")}
-                discountPrice={prod.discount_price?.toLocaleString("es-CRC")}
-                img={prod.image_1_url || audifonos}
-                edit={false}
-              />
-            ))}
-          </div>
+            >
+              {products.slice(0, visibleCount).map((prod) => (
+                <ProductCard
+                  key={prod.id}
+                  id={prod.id!}
+                  shop={prod.store?.name || "Tienda"}
+                  title={prod.name}
+                  price={prod.price.toLocaleString("es-CRC")}
+                  discountPrice={prod.discount_price?.toLocaleString("es-CRC")}
+                  img={prod.image_1_url || audifonos}
+                  edit={false}
+                />
+              ))}
+            </div>
+
+            {visibleCount < products.length && (
+              <div className="flex flex-col justify-center items-center w-full">
+                <ButtonComponent
+                  text="Ver más"
+                  onClick={() => setVisibleCount((prev) => prev + 10)}
+                  style="bg-contrast-secondary text-white px-5 py-2 rounded-full hover:bg-contrast-main transition-all duration-300 ease-in-out cursor-pointer w-[30%]"
+                />
+              </div>
+            )}
+          </>
         ) : (
           <p className="text-gray-500">No hay productos disponibles.</p>
-        )}
-
-        {!loading && (
-          <div className="flex flex-col justify-center items-center w-full">
-            <ButtonComponent
-              text="Ver más"
-              style="bg-contrast-secondary text-white px-5 py-2 rounded-full hover:bg-contrast-main transition-all duration-300 ease-in-out cursor-pointer w-[30%]"
-            />
-          </div>
         )}
       </section>
     </div>
