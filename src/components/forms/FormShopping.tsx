@@ -14,7 +14,7 @@ export default function FormShopping() {
                         <p>Subtotal de la compra:</p>
                         <p className="text-main">₡13.000</p>
                     </div>
-                   {/* <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                         <p>Descuento de cupones</p>
                         <p className="text-main">-₡500 </p>
                     </div> */}
