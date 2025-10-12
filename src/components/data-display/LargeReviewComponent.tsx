@@ -24,7 +24,7 @@ export default function LargeReviewComponent({
         {/* ✅ Usa la imagen del usuario si existe, si no, muestra la predeterminada */}
         <img
           src={image}
-          className="w-10 h-10 rounded-full object-cover border border-main/30"
+          className="w-10 h-10 rounded-full object-contain border border-main/30"
           alt={`Foto de perfil de ${name}`}
         />
 
