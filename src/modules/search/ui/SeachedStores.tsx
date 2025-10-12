@@ -47,7 +47,7 @@ export default function SearchedStores() {
         <NavBar />
         <div className="max-w-6xl mx-auto my-10 px-6">
           <p className="text-center text-gray-500">
-            No hay tiendas disponibles 🏪
+            No hay tiendas disponibles
           </p>
         </div>
         <Footer />
