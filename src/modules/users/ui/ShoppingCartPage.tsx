@@ -4,7 +4,7 @@ import NavBar from "../../../components/layout/NavBar";
 import ProductCardShopping from "../../../components/data-display/ProductCardShopping";
 import banner2 from "../../../img/resources/SmallBanner2.png";
 import { useAuth } from "../../../hooks/context/AuthContext";
-import { IconBrandWhatsapp, IconMail } from "@tabler/icons-react";
+import { IconBrandWhatsapp,/* IconMail*/ } from "@tabler/icons-react";
 
 export default function ShoppingCartPage() {
   const { cart, loading } = useAuth();
