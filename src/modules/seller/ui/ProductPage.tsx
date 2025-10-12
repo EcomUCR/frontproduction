@@ -308,10 +308,10 @@ export default function ProductPage() {
                         <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">{product.description || "Sin descripción."}</p>
                       )}
                       {activeTab === "reviews" && (
-                        <p>Este producto aún no tiene calificaciones.</p>
+                        <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">Este producto aún no tiene calificaciones.</p>
                       )}
                       {activeTab === "details" && (
-                        <p>
+                        <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">
                           No se han agregado detalles adicionales para este
                           producto.
                         </p>
