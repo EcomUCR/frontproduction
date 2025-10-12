@@ -61,7 +61,8 @@ interface Store {
 // ========================
 
 export default function UserProfile({ type }: UserProfileProps): JSX.Element {
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
+
 
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
@@ -507,7 +508,3 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
     </div>
   );
 }
-function refreshUser() {
-  throw new Error("Function not implemented.");
-}
-
