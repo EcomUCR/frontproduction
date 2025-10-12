@@ -3,6 +3,7 @@ import StarRatingComponent from "../ui/StarRatingComponent";
 import type { CartItemType } from "../../hooks/context/AuthContext";
 import { useAuth } from "../../hooks/context/AuthContext";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 interface Props {
   item: CartItemType;
@@ -52,31 +53,30 @@ export default function ProductCardShopping({ item }: Props) {
   return (
     <figure
       className="relative flex items-center justify-between w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-5 shadow-md border border-gray-100 
-                 hover:shadow-xl hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden hover:scale-[1.01]"
+                hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden mb-5"
     >
       {/* Imagen */}
       <div className="flex-shrink-0 flex items-center justify-center w-32 h-32 rounded-2xl overflow-hidden bg-white shadow-inner">
-        <img
-          src={
-            product.image_1_url ||
-            "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"
-          }
-          alt={product.name}
-          className="object-contain w-full h-full transition-transform duration-500 hover:scale-110"
-        />
+        <Link to={`/product/${product.id}`}>
+          <img src={product.image_1_url || "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"}
+            alt={product.name}
+            className="object-contain w-full h-full transition-transform duration-500 cursor-pointer"
+          />
+        </Link>
       </div>
 
       {/* Información principal */}
       <div className="flex flex-col justify-between flex-grow px-6 py-2 font-quicksand">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-lg text-gray-800">{product.name}</h3>
+            <Link to={`/product/${product.id}`}>
+              <h3 className="font-bold text-lg text-gray-main cursor-pointer">{product.name}</h3>
+            </Link>
             <span
-              className={`text-xs ${
-                product.stock > 0
+              className={`text-xs ${product.stock > 0
                   ? "text-green-600"
                   : "text-red-500 font-semibold"
-              }`}
+                }`}
             >
               {product.stock > 0 ? "Disponible" : "Agotado"}
             </span>
@@ -117,7 +117,7 @@ export default function ProductCardShopping({ item }: Props) {
               <p className="text-xs line-through text-gray-400">
                 ₡{product.price}
               </p>
-              <p className="text-xl font-bold bg-gradient-to-r from-contrast-main to-contrast-secondary bg-clip-text text-transparent">
+              <p className="text-xl font-bold text-main bg-clip-text">
                 ₡{product.discount_price}
               </p>
             </>
@@ -141,9 +141,6 @@ export default function ProductCardShopping({ item }: Props) {
           </button>
         </div>
       </div>
-
-      {/* Efecto de iluminación suave */}
-      <div className="absolute inset-0 rounded-2xl pointer-events-none bg-gradient-to-br from-contrast-main/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-700" />
-    </figure>
+      </figure>
   );
 }

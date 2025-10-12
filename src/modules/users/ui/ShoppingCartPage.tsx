@@ -16,7 +16,7 @@ export default function ShoppingCartPage() {
       <div className="mx-auto max-w-[80rem]">
         <section className="mx-10 flex">
           {/* 🛒 Lista de productos */}
-          <div className="my-5 w-2/3 border-r-2 pr-5 border-main flex flex-col items-center justify-center">
+          <div className="my-5 w-2/3 border-r-2 pr-5 border-main flex flex-col">
             {cart && cart.items.length > 0 ? (
               cart.items.map((item) => (
                 <ProductCardShopping key={item.id} item={item} />
