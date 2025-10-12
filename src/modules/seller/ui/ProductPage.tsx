@@ -163,7 +163,6 @@ export default function ProductPage() {
             {product && (
               <>
                 <section className="flex px-10 pt-5 font-quicksand">
-                  {/* 🔹 Columna Izquierda - Imagen */}
                   <div className="w-3/12 pt-10">
                     <div className="flex items-center justify-center overflow-hidden rounded-2xl aspect-square mb-10">
                       <img
@@ -190,44 +189,25 @@ export default function ProductPage() {
                           iconStyle="text-contrast-secondary"
                           onClick={() => setIsModalOpen((prev) => !prev)}
                         />
-
-                        {/* 🔹 Menú desplegable de redes */}
+                        {/*Menú desplegable de redes */}
                         <div className="absolute left-15 top-30">
                           <ul className="flex gap-3">
-                            <li
-                              className={`relative bottom-10 left-27 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"
-                                }`}
-                            >
+                            <li className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"}`}>
                               <IconLink />
                             </li>
-                            <li
-                              className={`relative bottom-0 left-24 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-25 ${isModalOpen ? "scale-100" : "scale-0"
-                                }`}
-                            >
+                            <li className={`relative bottom-0 left-24 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"}`}>
                               <IconBrandWhatsapp />
                             </li>
-                            <li
-                              className={`relative -bottom-1 left-24 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"
-                                }`}
-                            >
+                            <li className={`relative -bottom-1 left-24 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"}`}>
                               <IconBrandFacebook />
                             </li>
-                            <li
-                              className={`relative bottom-5 left-23 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-75 ${isModalOpen ? "scale-100" : "scale-0"
-                                }`}
-                            >
+                            <li className={`relative bottom-5 left-23 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"}`}>
                               <IconBrandInstagram />
                             </li>
-                            <li
-                              className={`relative bottom-17 left-15 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"
-                                }`}
-                            >
+                            <li className={`relative bottom-17 left-15 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"}`}>
                               <IconBrandTiktok />
                             </li>
-                            <li
-                              className={`relative bottom-30 -left-1 bg-main hover:bg-contrast-secondary p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-125 ${isModalOpen ? "scale-100" : "scale-0"
-                                }`}
-                            >
+                            <li className={`relative bottom-30 -left-1 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"}`} >
                               <IconBrandX />
                             </li>
                           </ul>
