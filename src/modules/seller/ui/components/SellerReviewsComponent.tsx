@@ -13,6 +13,7 @@ interface Review {
   rating: number;
   comment: string;
   date: string;
+  image?: string;
 }
 
 export default function SellerReviewsComponent() {
@@ -81,10 +82,11 @@ export default function SellerReviewsComponent() {
 
         const formatted = data.map((r: any) => ({
           id: r.id,
-          name: r.user?.first_name || r.user?.username || "Usuario desconocido",
+          name: r.user?.username || "Usuario desconocido",
           rating: r.rating,
           comment: r.comment || "",
           date: new Date(r.created_at).toLocaleDateString(),
+          image: r.user?.image,
         }));
 
         setReviews(formatted);
@@ -127,6 +129,7 @@ export default function SellerReviewsComponent() {
                 rating={r.rating}
                 comment={r.comment}
                 date={r.date}
+                image={r.image}
               />
             ))
           ) : (

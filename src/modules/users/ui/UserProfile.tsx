@@ -1,4 +1,5 @@
 import { useEffect, useState, type JSX } from "react";
+import axios from "axios";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import foto from "../../../img/perfil.png";
@@ -41,7 +42,7 @@ interface Store {
   id: number;
   user_id?: number;
   name: string;
-  slug?: string; // opcional para evitar errores
+  slug?: string;
   description?: string | null;
   image?: string | null;
   banner?: string | null;
@@ -64,23 +65,8 @@ interface Store {
 export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   const { user, loading, refreshUser } = useAuth();
 
-
-  const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
-  const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
+  // Estados generales
   const [saving, setSaving] = useState(false);
-
-  const [store, setStore] = useState<Store | null>(null);
-  const [editableStore, setEditableStore] = useState<Store | null>(null);
-  const [cambiarPassword, setCambiarPassword] = useState(false);
-
-  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
-  const [originalSocialLinks, setOriginalSocialLinks] = useState<SocialLink[]>(
-    []
-  );
-  const [adding, setAdding] = useState(false);
-  const [newType, setNewType] = useState<SocialLink["type"]>("instagram");
-  const [newText, setNewText] = useState("");
-
   const [alert, setAlert] = useState({
     show: false,
     title: "",
@@ -88,6 +74,22 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
     type: "info" as "info" | "success" | "warning" | "error",
   });
 
+  // Estados para STORE
+  const [store, setStore] = useState<Store | null>(null);
+  const [editableStore, setEditableStore] = useState<Store | null>(null);
+  const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
+  const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
+
+  // Estados para CUSTOMER
+  const [newProfileFile, setNewProfileFile] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+
+  const [cambiarPassword, setCambiarPassword] = useState(false);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [originalSocialLinks, setOriginalSocialLinks] = useState<SocialLink[]>([]);
+  const [adding, setAdding] = useState(false);
+  const [newType, setNewType] = useState<SocialLink["type"]>("instagram");
+  const [newText, setNewText] = useState("");
 
   // ========================
   // Cargar datos de tienda
@@ -95,28 +97,29 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
 
   useEffect(() => {
     if (user?.store) {
-      const storeData: Store = {
-        ...user.store,
-        slug: user.store.slug || "", // evita error TS
-      };
+      const storeData: Store = { ...user.store, slug: user.store.slug || "" };
       setStore(storeData);
       setEditableStore(storeData);
     }
 
-    const linksFromApi: SocialLink[] = [];
-    setSocialLinks(linksFromApi);
-    setOriginalSocialLinks(linksFromApi);
+    setSocialLinks([]);
+    setOriginalSocialLinks([]);
   }, [user]);
 
   // ========================
   // Handlers
   // ========================
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditableStore((prev) => (prev ? { ...prev, [name]: value } : prev));
+  };
+
+  const handleProfileFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setNewProfileFile(file);
+    setProfilePreview(URL.createObjectURL(file)); // preview inmediato
   };
 
   const addSocialLink = () => {
@@ -136,58 +139,83 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
     setNewType("instagram");
     setNewLogoFile(null);
     setNewBannerFile(null);
+    setNewProfileFile(null);
+    setProfilePreview(null);
   };
+
+  // ========================
+  // Guardar cambios
+  // ========================
 
   const handleSave = async () => {
-    if (!editableStore) return;
     setSaving(true);
-
     try {
-  const updatedFields: Record<string, any> = {
-    name: editableStore.name ?? "",
-    description: editableStore.description ?? "",
-    registered_address: editableStore.registered_address ?? "",
-    support_phone: editableStore.support_phone ?? "",
-    support_email: editableStore.support_email ?? "",
-  };
+      // 🔹 Caso SELLER
+      if (type === "SELLER" && editableStore) {
+        const updatedFields: Record<string, any> = {
+          name: editableStore.name ?? "",
+          description: editableStore.description ?? "",
+          registered_address: editableStore.registered_address ?? "",
+          support_phone: editableStore.support_phone ?? "",
+          support_email: editableStore.support_email ?? "",
+        };
 
-  Object.keys(updatedFields).forEach((key) => {
-    if (updatedFields[key] === "") delete updatedFields[key];
-  });
+        Object.keys(updatedFields).forEach((key) => {
+          if (updatedFields[key] === "") delete updatedFields[key];
+        });
 
-  if (newLogoFile) {
-    const logoUrl = await uploadImage(newLogoFile);
-    updatedFields.image = logoUrl;
-  }
+        if (newLogoFile) {
+          const logoUrl = await uploadImage(newLogoFile);
+          updatedFields.image = logoUrl;
+        }
+        if (newBannerFile) {
+          const bannerUrl = await uploadImage(newBannerFile);
+          updatedFields.banner = bannerUrl;
+        }
 
-  if (newBannerFile) {
-    const bannerUrl = await uploadImage(newBannerFile);
-    updatedFields.banner = bannerUrl;
-  }
+        await updateStore(editableStore.id, updatedFields);
+        await refreshUser();
 
-  await updateStore(editableStore.id, updatedFields);
-  await refreshUser();
+        setAlert({
+          show: true,
+          title: "Cambios guardados",
+          message: "La tienda se actualizó correctamente.",
+          type: "success",
+        });
+      }
 
-  // ✅ Mostrar alerta de éxito
-  setAlert({
-    show: true,
-    title: "Cambios guardados",
-    message: "La tienda se actualizó correctamente.",
-    type: "success",
-  });
-} catch (err) {
-  console.error("Error al guardar la tienda:", err);
-  // ❌ Mostrar alerta de error
-  setAlert({
-    show: true,
-    title: "Error al guardar",
-    message: "Ocurrió un problema al actualizar tu tienda.",
-    type: "error",
-  });
-} finally {
-  setSaving(false);
-}
+      // 🔹 Caso CUSTOMER
+      if (type === "CUSTOMER" && user) {
+        const body: Record<string, any> = {};
 
+        if (newProfileFile) {
+          const imageUrl = await uploadImage(newProfileFile);
+          body.image = imageUrl;
+        }
+
+        if (Object.keys(body).length > 0) {
+          await axios.patch(`/users/${user.id}`, body);
+          await refreshUser();
+        }
+
+        setAlert({
+          show: true,
+          title: "Perfil actualizado",
+          message: "Tu foto de perfil se actualizó correctamente.",
+          type: "success",
+        });
+      }
+    } catch (err) {
+      console.error("Error al guardar:", err);
+      setAlert({
+        show: true,
+        title: "Error al guardar",
+        message: "Ocurrió un problema al actualizar los datos.",
+        type: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -214,12 +242,6 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER"))
     return <div>No autorizado</div>;
 
-  function handleEdit(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  
-
   return (
     <div className="mx-10 border-l-2 border-main-dark/20 pl-4">
       <div className="flex flex-col pl-10">
@@ -229,73 +251,24 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
       {/* ============ PERFIL CLIENTE ============ */}
       {type === "CUSTOMER" && (
         <div className="flex relative w-full flex-col justify-center gap-4 mt-10">
-          <div className="flex justify-center">
+          <div className="flex justify-center relative">
             <img
-              src={user.image || foto}
+              src={profilePreview || user.image || foto}
               alt="profile_image"
-              className="w-auto h-80 rounded-full"
+              className="w-48 h-48 rounded-full object-cover border-4 border-white shadow"
             />
-            <ButtonComponent
-              onClick={handleEdit}
-              style="cursor-pointer absolute top-70 right-55 bg-main-dark/20 hover:bg-main-dark/90 p-2 rounded-full"
-              icon={<IconEdit size={30} className="text-contrast-secondary" />}
-            />
+            <label className="absolute bottom-2 right-[calc(50%-5rem)] bg-main-dark/80 hover:bg-main-dark text-white p-2 rounded-full cursor-pointer">
+              <IconEdit size={22} />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleProfileFileChange}
+              />
+            </label>
           </div>
 
           <div className="w-[70%] mx-auto">
-            <form className="flex flex-col gap-5 pt-10">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder={user.first_name}
-                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
-                />
-                <input
-                  type="text"
-                  placeholder={user.email || "correo"}
-                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
-                  disabled
-                />
-              </div>
-
-              <input
-                type="text"
-                placeholder={user.username || "Nombre de usuario"}
-                className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
-              />
-
-              <label className="flex items-center gap-2 pt-5">
-                Cambiar contraseña
-                <input
-                  type="checkbox"
-                  checked={cambiarPassword}
-                  onChange={() => setCambiarPassword(!cambiarPassword)}
-                />
-              </label>
-
-              {cambiarPassword && (
-                <div className="flex flex-col gap-5">
-                  <input
-                    type="password"
-                    placeholder="Contraseña actual"
-                    className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="password"
-                      placeholder="Nueva contraseña"
-                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
-                    />
-                    <input
-                      type="password"
-                      placeholder="Confirmar contraseña"
-                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
-                    />
-                  </div>
-                </div>
-              )}
-            </form>
-
             <div className="flex justify-between gap-2">
               <ButtonComponent
                 text="Cancelar"
@@ -303,7 +276,7 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
                 style="w-full p-3 rounded-full text-white bg-main gap-2 flex items-center justify-center mt-10"
               />
               <ButtonComponent
-                text="Guardar cambios"
+                text={saving ? "Guardando..." : "Guardar cambios"}
                 onClick={handleSave}
                 style="w-full p-3 rounded-full text-white bg-contrast-secondary gap-2 flex items-center justify-center mt-10"
               />
@@ -368,7 +341,11 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
                   "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 alt="Banner"
-                className={editableStore.banner ? "w-auto h-auto rounded-xl object-cover" : "w-auto h-30 rounded-xl object-cover"}
+                className={
+                  editableStore.banner
+                    ? "w-auto h-auto rounded-xl object-cover"
+                    : "w-auto h-30 rounded-xl object-cover"
+                }
               />
             </figure>
           </form>
@@ -426,7 +403,6 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
                     />
                   </label>
                 </section>
-
 
                 {/* Redes sociales */}
                 <section>
@@ -540,7 +516,6 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
         onConfirm={() => setAlert((prev) => ({ ...prev, show: false }))}
         onCancel={() => setAlert((prev) => ({ ...prev, show: false }))}
       />
-
     </div>
   );
 }
