@@ -78,7 +78,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
       <Link
         to={`/product/${props.id}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="w-1/2 h-full flex items-center"
+        className="w-1/2 h-60 flex items-center justify-center"
       >
         <img
           className="flex items-center w-auto h-60 object-contain rounded-2xl"
