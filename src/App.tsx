@@ -28,11 +28,13 @@ import SellerPage from "./modules/seller/ui/SellerPage";
 //users
 import ProfilePage from "./modules/users/ui/ProfilePage";
 import ShoppingCartPage from "./modules/users/ui/ShoppingCartPage";
+import { AlertProvider } from "./hooks/context/AlertContext";
 
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
+        <AlertProvider>
         <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -52,6 +54,7 @@ function App() {
             <Route path="/search/stores" element={<SearchedStores />} />
           </Routes>
         </Router>
+        </AlertProvider>
       </CartProvider>
     </AuthProvider>
   );

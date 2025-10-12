@@ -1,11 +1,13 @@
-import { useState } from "react";
+// FeaturedProductCard.tsx
 import { IconEdit, IconHeart } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import RaitingComponent from "../ui/StarRatingComponent";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/context/AuthContext";
 import axios from "axios";
-import AlertComponent from "./AlertComponent";
+import { useAlert } from "../../hooks/context/AlertContext";
+import { useNavigate } from "react-router-dom";
+
 
 interface FeaturedProductCardProps {
   id: number;
@@ -20,23 +22,21 @@ interface FeaturedProductCardProps {
 
 export default function FeaturedProductCard(props: FeaturedProductCardProps) {
   const { token, setCart } = useAuth();
+  const { showAlert } = useAlert();
+  const navigate = useNavigate();
 
-  // 🧠 Estado del Alert
-  const [alert, setAlert] = useState({
-    show: false,
-    title: "",
-    message: "",
-    type: "info" as "info" | "success" | "warning" | "error",
-  });
 
-  // 🛒 Añadir al carrito
   const handleAddToCart = async () => {
     if (!token) {
-      setAlert({
-        show: true,
+      showAlert({
         title: "Inicia sesión",
-        message: "Debes iniciar sesión para agregar productos al carrito 🛒",
-        type: "warning",
+        message: "Debes iniciar sesión para agregar productos al carrito",
+        confirmText: "Ir al login",
+        cancelText: "Cancelar",
+        onConfirm: () => {
+          navigate("/loginRegister");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
       });
       return;
     }
@@ -45,22 +45,18 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
       const { data } = await axios.post(
         "/cart/add",
         { product_id: props.id, quantity: 1 },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setCart(data.cart);
-      setAlert({
-        show: true,
+      showAlert({
         title: "Producto añadido",
         message: "El producto fue añadido al carrito correctamente ✅",
         type: "success",
       });
     } catch (error) {
       console.error(error);
-      setAlert({
-        show: true,
+      showAlert({
         title: "Error al añadir",
         message: "Hubo un problema al añadir el producto al carrito ❌",
         type: "error",
@@ -70,9 +66,8 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
 
   return (
     <figure
-      className={`relative w-full max-w-lg p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden flex font-quicksand transition-all duration-300 ${
-        props.edit ? "" : "hover:scale-105"
-      }`}
+      className={`relative w-full max-w-lg p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden flex font-quicksand transition-all duration-300 ${props.edit ? "" : "hover:scale-105"
+        }`}
     >
       {props.edit && (
         <div className="absolute top-3 right-3 w-9 h-9 bg-contrast-main/70 rounded-full flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400">
@@ -106,9 +101,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
         <div>
           {Number(props.discountPrice) > 0 ? (
             <>
-              <p className="line-through font-comme text-xs text-black/30">
-                ₡ {props.price}
-              </p>
+              <p className="line-through font-comme text-xs text-black/30">₡ {props.price}</p>
               <p className="font-comme">₡ {props.discountPrice}</p>
             </>
           ) : (
@@ -130,18 +123,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
           </div>
         )}
       </div>
-
-      {/* 🧩 ALERT COMPONENT */}
-      <AlertComponent
-        show={alert.show}
-        title={alert.title}
-        message={alert.message}
-        type={alert.type}
-        confirmText="Aceptar"
-        cancelText="Cerrar"
-        onConfirm={() => setAlert((prev) => ({ ...prev, show: false }))}
-        onCancel={() => setAlert((prev) => ({ ...prev, show: false }))}
-      />
     </figure>
   );
 }
+
