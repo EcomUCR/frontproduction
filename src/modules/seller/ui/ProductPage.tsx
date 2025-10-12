@@ -164,14 +164,15 @@ export default function ProductPage() {
               <>
                 <section className="flex px-10 pt-10 font-quicksand">
                   {/* 🔹 Columna Izquierda - Imagen */}
-                  <div className="w-3/12">
-                    <div className="flex flex-col items-center">
+                  <div className="w-3/12 pt-10">
+                    <div className="flex items-center justify-center overflow-hidden rounded-2xl aspect-square mb-10">
                       <img
-                        className="rounded-2xl"
                         src={product.image_1_url}
                         alt={product.name}
+                        className="w-full h-full object-cover object-center rounded-2xl"
                       />
                     </div>
+
 
                     {/* 🔹 Botones de acción */}
                     <div className="border-t-2 border-main pt-10">
@@ -305,7 +306,7 @@ export default function ProductPage() {
                     {/* 🔹 Contenido Tabs */}
                     <div>
                       {activeTab === "description" && (
-                        <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">{product.description || "Sin descripción."}</p>
+                        <p className="whitespace-pre-line overflow-y-auto p-5 relative h-80">{product.description || "Sin descripción."}</p>
                       )}
                       {activeTab === "reviews" && (
                         <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">Este producto aún no tiene calificaciones.</p>
