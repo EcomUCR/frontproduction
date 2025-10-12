@@ -129,45 +129,42 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   };
 
   const handleSave = async () => {
-    if (!editableStore) return;
-    setSaving(true);
+  if (!editableStore) return;
+  setSaving(true);
 
-    try {
-      const updatedFields: Record<string, any> = {
-        name: editableStore.name ?? "",
-        description: editableStore.description ?? "",
-        registered_address: editableStore.registered_address ?? "",
-        support_phone: editableStore.support_phone ?? "",
-      };
+  try {
+    const updatedFields: Record<string, any> = {
+      name: editableStore.name ?? "",
+      description: editableStore.description ?? "",
+      registered_address: editableStore.registered_address ?? "",
+      support_phone: editableStore.support_phone ?? "",
+      support_email: editableStore.support_email ?? "",
+    };
 
-      // eliminar valores vacíos
-      Object.keys(updatedFields).forEach((key) => {
-        if (updatedFields[key] === "") delete updatedFields[key];
-      });
+    Object.keys(updatedFields).forEach((key) => {
+      if (updatedFields[key] === "") delete updatedFields[key];
+    });
 
-      if (newLogoFile) {
-        const logoUrl = await uploadImage(newLogoFile);
-        updatedFields.image = logoUrl;
-      }
-
-      if (newBannerFile) {
-        const bannerUrl = await uploadImage(newBannerFile);
-        updatedFields.banner = bannerUrl;
-      }
-
-      const updated = await updateStore(editableStore.id, updatedFields);
-      setStore(updated);
-      setEditableStore(updated);
-      setOriginalSocialLinks(socialLinks);
-      setNewLogoFile(null);
-      setNewBannerFile(null);
-    } catch (err) {
-      console.error("Error al guardar la tienda:", err);
-      alert("Ocurrió un error al guardar la tienda");
-    } finally {
-      setSaving(false);
+    if (newLogoFile) {
+      const logoUrl = await uploadImage(newLogoFile);
+      updatedFields.image = logoUrl;
     }
-  };
+
+    if (newBannerFile) {
+      const bannerUrl = await uploadImage(newBannerFile);
+      updatedFields.banner = bannerUrl;
+    }
+
+    await updateStore(editableStore.id, updatedFields);
+    await refreshUser();
+    alert("Tienda actualizada correctamente");
+  } catch (err) {
+    console.error("Error al guardar la tienda:", err);
+    alert("Ocurrió un error al guardar la tienda");
+  } finally {
+    setSaving(false);
+  }
+};
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -375,6 +372,96 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
                     />
                   </label>
                 </div>
+                {/* Teléfono */}
+                <section className="flex gap-10 ">
+                  <div className="w-full">
+                    Número telefónico
+                    <label className="bg-main-dark/10 rounded-xl px-3 flex items-center gap-2 w-full">
+                      <IconPhone className="text-contrast-secondary" />
+                      <input
+                        name="support_phone"
+                        type="text"
+                        value={editableStore.support_phone || ""}
+                        onChange={handleChange}
+                        placeholder="Número telefónico"
+                        className="w-full py-2 focus:outline-none"
+                      />
+                    </label>
+                  </div>
+                  <label className="flex flex-col w-full">
+                    Correo de la tienda
+                    <input
+                      type="email"
+                      placeholder={"Correo de la tienda"}
+                      className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
+                      name="support_email"
+                      onChange={handleChange}
+                      value={editableStore.support_email || ""}
+                    />
+                  </label>
+                </section>
+
+
+                {/* Redes sociales */}
+                <section>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2 items-center">
+                      <h2>Links/Redes sociales</h2>
+                      {!adding ? (
+                        <button type="button" onClick={() => setAdding(true)}>
+                          <IconSquareRoundedPlus className="text-contrast-secondary" />
+                        </button>
+                      ) : (
+                        <button type="button" onClick={() => setAdding(false)}>
+                          <IconX className="text-contrast-secondary size-4" />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-x-10 gap-y-5">
+                      {socialLinks.map((link, index) => (
+                        <ButtonComponent
+                          key={index}
+                          text={link.text}
+                          icon={iconMap[link.type]}
+                          style="text-main-dark flex gap-2 bg-main-dark/10 py-3 px-2 rounded-xl font-semibold"
+                          iconStyle="text-contrast-secondary"
+                        />
+                      ))}
+
+                      {adding && (
+                        <div className="flex gap-2 items-center bg-main-dark/10 py-3 px-2 rounded-xl">
+                          <select
+                            value={newType}
+                            onChange={(e) =>
+                              setNewType(e.target.value as SocialLink["type"])
+                            }
+                            className="bg-transparent outline-none"
+                          >
+                            <option value="instagram">Instagram</option>
+                            <option value="x">X</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="link">Link</option>
+                          </select>
+                          <input
+                            type="text"
+                            placeholder="Usuario o link"
+                            value={newText}
+                            onChange={(e) => setNewText(e.target.value)}
+                            className="bg-transparent outline-none flex-1"
+                          />
+                          <button
+                            type="button"
+                            onClick={addSocialLink}
+                            className="text-contrast-secondary font-semibold"
+                          >
+                            Guardar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </section>
 
                 <div className="flex gap-10">
                   <label className="flex flex-col w-full">
@@ -395,85 +482,6 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
                       onChange={handleChange}
                       rows={4}
                       className="bg-main-dark/10 rounded-xl px-3 py-2"
-                    />
-                  </label>
-                </div>
-              </section>
-
-              {/* Redes sociales */}
-              <section>
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2 items-center">
-                    <h2>Links/Redes sociales</h2>
-                    {!adding ? (
-                      <button type="button" onClick={() => setAdding(true)}>
-                        <IconSquareRoundedPlus className="text-contrast-secondary" />
-                      </button>
-                    ) : (
-                      <button type="button" onClick={() => setAdding(false)}>
-                        <IconX className="text-contrast-secondary size-4" />
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-x-10 gap-y-5">
-                    {socialLinks.map((link, index) => (
-                      <ButtonComponent
-                        key={index}
-                        text={link.text}
-                        icon={iconMap[link.type]}
-                        style="text-main-dark flex gap-2 bg-main-dark/10 py-3 px-2 rounded-xl font-semibold"
-                        iconStyle="text-contrast-secondary"
-                      />
-                    ))}
-
-                    {adding && (
-                      <div className="flex gap-2 items-center bg-main-dark/10 py-3 px-2 rounded-xl">
-                        <select
-                          value={newType}
-                          onChange={(e) =>
-                            setNewType(e.target.value as SocialLink["type"])
-                          }
-                          className="bg-transparent outline-none"
-                        >
-                          <option value="instagram">Instagram</option>
-                          <option value="x">X</option>
-                          <option value="facebook">Facebook</option>
-                          <option value="link">Link</option>
-                        </select>
-                        <input
-                          type="text"
-                          placeholder="Usuario o link"
-                          value={newText}
-                          onChange={(e) => setNewText(e.target.value)}
-                          className="bg-transparent outline-none flex-1"
-                        />
-                        <button
-                          type="button"
-                          onClick={addSocialLink}
-                          className="text-contrast-secondary font-semibold"
-                        >
-                          Guardar
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </section>
-
-              {/* Teléfono */}
-              <section>
-                <div className="w-1/2">
-                  Número telefónico
-                  <label className="bg-main-dark/10 rounded-xl px-3 flex items-center gap-2">
-                    <IconPhone className="text-contrast-secondary" />
-                    <input
-                      name="support_phone"
-                      type="text"
-                      value={editableStore.support_phone || ""}
-                      onChange={handleChange}
-                      placeholder="Número telefónico"
-                      className="w-full h-full py-2 focus:outline-none"
                     />
                   </label>
                 </div>
@@ -499,3 +507,7 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
     </div>
   );
 }
+function refreshUser() {
+  throw new Error("Function not implemented.");
+}
+

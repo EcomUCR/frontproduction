@@ -69,6 +69,7 @@ type AuthContextType = {
   setCart: React.Dispatch<React.SetStateAction<CartType | null>>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 };
 
 // ============================
@@ -118,6 +119,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       .finally(() => setLoading(false));
   }, [token]);
+
+  const refreshUser = async () => {
+  if (!token) return;
+  try {
+    const res = await axios.get("/me");
+    const data = res.data.user ?? res.data;
+    setUser(data);
+  } catch (error) {
+    console.error("Error al refrescar usuario:", error);
+  }
+};
+
 
   // ============================
   // 🔐 Login
@@ -177,7 +190,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, cart, setCart, login, logout }}
+      value={{ user, token, loading, cart, setCart, login, logout, refreshUser }}
     >
       {children}
     </AuthContext.Provider>
