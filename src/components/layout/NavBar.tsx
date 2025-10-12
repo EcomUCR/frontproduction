@@ -177,7 +177,7 @@ export default function NavBar() {
             <Link to="/beSellerPage">Vender</Link>
           </li>
           <li className="hover:-translate-y-1 transform transition-all duration-300">
-            <a href="#">Conócenos</a>
+            <a href="/about">Conócenos</a>
           </li>
         </ul>
       </div>

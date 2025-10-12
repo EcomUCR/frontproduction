@@ -6,25 +6,25 @@ import Footer from "../../../components/layout/Footer";
 export default function AboutUs() {
   const teamMember = [
     { name: "Raul", role: "ROL" },
-    { name: "Kristen", role: "ROL" },
-    { name: "Alejandro", role: "ROL" },
-    { name: "Andres", role: "ROL" },
     { name: "John", role: "ROL" },
+    { name: "Alejandro", role: "ROL" },
+    { name: "Kristen", role: "ROL" },
+    { name: "Andres", role: "ROL" },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-light-gray to-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-light-gray to-white ">
       <NavBar />
 
       {/* Hero Section */}
-      <section className="text-center py-20 bg-gradient-to-br from-contrast-main via-contrast-secondary to-main text-white">
+      <section className="text-center py-20 bg-gradient-to-br from-contrast-main via-contrast-secondary to-main text-white font-quicksand ">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-4xl md:text-5xl font-bold mb-4"
         >
-          Conoce a TukiShop
+          Conoce a <span className="font-fugaz">TukiShop </span>
         </motion.h1>
         <p className="max-w-2xl mx-auto text-lg text-white/90">
           Somos un equipo apasionado por la tecnología, el diseño y la
@@ -33,7 +33,7 @@ export default function AboutUs() {
         </p>
       </section>
 
-      <section className="py-16 px-6 md:px-16 grid md:grid-cols-3 gap-10 text-center">
+      <section className="py-16 px-6 md:px-16 grid md:grid-cols-3 gap-10 text-center font-quicksand mx-auto max-w-[80rem]">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -84,7 +84,7 @@ export default function AboutUs() {
       </section>
 
       {/* Team Section */}
-      <section className="bg-light-gray py-20 px-6 md:px-16">
+      <section className="bg-light-gray py-20 px-6 md:px-16 font-quicksand">
         <motion.h2
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -103,7 +103,7 @@ export default function AboutUs() {
               transition={{ delay: i * 0.1 }}
               className="bg-white shadow-md rounded-xl p-6 flex flex-col items-center border border-gray-100 hover:shadow-lg transition-all duration-300"
             >
-              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-main/30 to-contrast-main/30 flex items-center justify-center text-3xl font-bold text-main mb-4">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-contrast-main to-contrast-secondary flex items-center justify-center text-3xl font-bold text-white mb-4">
                 {teamMember.name[0]}
               </div>
               <h4 className="text-lg font-semibold text-gray-800">

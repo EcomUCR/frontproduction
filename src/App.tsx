@@ -54,7 +54,7 @@ function App() {
               <Route path="/search/:categoryId" element={<SearchedProductPage />} />
               <Route path="/search" element={<SearchedProductPage />} />
               <Route path="/search/stores" element={<SearchedStores />} />
-              <Route path="/aboutus" element={<AboutUsPage />} />
+              <Route path="/about" element={<AboutUsPage />} />
               <Route path="/help" element={<HelpPage />} />
             </Routes>
           </Router>
