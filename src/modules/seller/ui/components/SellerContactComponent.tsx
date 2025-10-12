@@ -4,6 +4,7 @@ import { IconBrandFacebook, IconBrandInstagram, IconBrandX } from "@tabler/icons
 import { getStore } from "../../infrastructure/storeService";
 import type { Store } from "../../../users/infrastructure/useUser";
 import logoFallback from "../../../../img/resources/Group 50.png";
+import { SkeletonSellerContact } from "../../../../components/ui/AllSkeletons";
 
 export default function SellerContactComponent() {
   const { id } = useParams();
@@ -20,13 +21,13 @@ export default function SellerContactComponent() {
     fetchStore();
   }, [id]);
 
-  if (loading || !store) {
-    return (
-      <div className="flex justify-center items-center py-20 text-gray-400 font-quicksand">
-        Cargando información de la tienda...
-      </div>
-    );
-  }
+  if (loading) return <SkeletonSellerContact show />;
+if (!store)
+  return (
+    <div className="flex justify-center items-center py-20 text-gray-400 font-quicksand">
+      No se encontró la tienda.
+    </div>
+  );
 
   return (
     <div className="flex flex-col mx-10 my-5 font-quicksand">
