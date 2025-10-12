@@ -36,19 +36,22 @@ export default function ShoppingCartPage() {
                 Sábado de 8am a 3pm.
               </p>
               <div className="flex gap-4 mt-6">
-                  <a
-                    href="https://wa.me/50687355629"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-2 border border-[#ff7e47] rounded-full text-[#ff7e47] hover:bg-[#ff7e47] hover:text-white transition-all duration-300"
-                  >
+                <a
+                  href="https://wa.me/50687355629"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-2 border border-[#ff7e47] rounded-full text-[#ff7e47] hover:bg-[#ff7e47] hover:text-white transition-all duration-300"
+                >
                   <IconBrandWhatsapp size={20} />
                   WhatsApp
-                  </a>
-                <button className="flex items-center gap-2 px-6 py-2 border border-[#ff7e47] rounded-full text-[#ff7e47] hover:bg-[#ff7e47] hover:text-white transition-all duration-300">
+                </a>
+                <a
+                  href="mailto:ecomucr2025@gmail.com"
+                  className="flex items-center gap-2 px-6 py-2 border border-[#ff7e47] rounded-full text-[#ff7e47] hover:bg-[#ff7e47] hover:text-white transition-all duration-300"
+                >
                   <IconMail size={20} />
                   Email
-                </button>
+                </a>
               </div>
             </section>
           </div>
