@@ -127,11 +127,11 @@ export default function ProductPage() {
 
       <div className="mx-auto max-w-[80rem] w-full">
         {/* 🔹 Botón volver */}
-        <section className="flex px-10 pt-5 font-quicksand">
+        <section className="flex px-10 pt-10 font-quicksand">
           <ButtonComponent
             icon={<IconArrowBackUp />}
             text="Volver"
-            style="flex text-sm px-2 items-center gap-2 rounded-full"
+            style="flex text-sm px-2 items-center gap-2 rounded-full cursor-pointer hover:scale-105 transition-all duration-300"
             onClick={() => window.history.back()}
           />
         </section>
@@ -162,7 +162,7 @@ export default function ProductPage() {
                ============================== */}
             {product && (
               <>
-                <section className="flex px-10 pt-10 font-quicksand">
+                <section className="flex px-10 pt-5 font-quicksand">
                   {/* 🔹 Columna Izquierda - Imagen */}
                   <div className="w-3/12 pt-10">
                     <div className="flex items-center justify-center overflow-hidden rounded-2xl aspect-square mb-10">
