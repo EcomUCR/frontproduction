@@ -86,7 +86,9 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
 
   const [cambiarPassword, setCambiarPassword] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
-  const [originalSocialLinks, setOriginalSocialLinks] = useState<SocialLink[]>([]);
+  const [originalSocialLinks, setOriginalSocialLinks] = useState<SocialLink[]>(
+    []
+  );
   const [adding, setAdding] = useState(false);
   const [newType, setNewType] = useState<SocialLink["type"]>("instagram");
   const [newText, setNewText] = useState("");
@@ -110,7 +112,9 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   // Handlers
   // ========================
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setEditableStore((prev) => (prev ? { ...prev, [name]: value } : prev));
   };
@@ -375,6 +379,7 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
                     />
                   </label>
                 </div>
+
                 {/* Teléfono */}
                 <section className="flex gap-10 ">
                   <div className="w-full">
@@ -499,13 +504,71 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
               />
               <ButtonComponent
                 text={saving ? "Guardando..." : "Guardar cambios"}
-                onClick={handleSave}
+                onClick={async () => {
+                  setSaving(true);
+                  try {
+                    const updatedFields: Record<string, any> = {
+                      name: editableStore.name ?? "",
+                      description: editableStore.description ?? "",
+                      registered_address:
+                        editableStore.registered_address ?? "",
+                      support_phone: editableStore.support_phone ?? "",
+                      support_email: editableStore.support_email ?? "",
+                    };
+
+                    Object.keys(updatedFields).forEach((key) => {
+                      if (updatedFields[key] === "") delete updatedFields[key];
+                    });
+
+                    // 🔹 Subir y actualizar logo
+                    if (newLogoFile) {
+                      const logoUrl = await uploadImage(newLogoFile);
+                      updatedFields.image = logoUrl;
+
+                      // 🧩 También actualizar el usuario con la misma imagen
+                      if (user) {
+                        await axios.patch(`/users/${user.id}`, {
+                          image: logoUrl,
+                        });
+                      }
+                    }
+
+                    // 🔹 Subir y actualizar banner
+                    if (newBannerFile) {
+                      const bannerUrl = await uploadImage(newBannerFile);
+                      updatedFields.banner = bannerUrl;
+                    }
+
+                    // 🔹 Actualizar tienda
+                    await updateStore(editableStore.id, updatedFields);
+                    await refreshUser();
+
+                    setAlert({
+                      show: true,
+                      title: "Cambios guardados",
+                      message:
+                        "La tienda y la foto de perfil se actualizaron correctamente.",
+                      type: "success",
+                    });
+                  } catch (err) {
+                    console.error("Error al guardar:", err);
+                    setAlert({
+                      show: true,
+                      title: "Error al guardar",
+                      message: "Ocurrió un problema al actualizar los datos.",
+                      type: "error",
+                    });
+                  } finally {
+                    setSaving(false);
+                  }
+                }}
                 style="w-full p-3 rounded-full text-white bg-contrast-secondary gap-2 flex items-center justify-center mt-10"
               />
             </div>
           </div>
         </div>
       )}
+
       <AlertComponent
         show={alert.show}
         title={alert.title}
