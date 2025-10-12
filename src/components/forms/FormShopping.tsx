@@ -5,10 +5,12 @@ import paypal from "../../img/resources/logo_paypal.png";
 import american_express from "../../img/resources/american_express_logo.png";
 import { IconMapPin } from "@tabler/icons-react";
 import { useVisa } from "../../modules/payments/useVisa";
+import { useCheckout } from "../../modules/payments/useCheckout"; // 👈 importar aquí
 import CreditCardForm from "../../components/ui/CreditCardFields";
 
 export default function FormShopping() {
   const { getForexRate, rate, loading, error } = useVisa();
+  const { processCheckout } = useCheckout(); // 👈 usar el hook
 
   const [fromCurrency] = useState("CRC");
   const [toCurrency] = useState("USD");
@@ -18,9 +20,13 @@ export default function FormShopping() {
   // 🚀 Cuando el usuario envía el formulario de tarjeta
   const handleCardSubmit = async (formData: any) => {
     console.log("💳 Datos de tarjeta:", formData);
-    await getForexRate(fromCurrency, toCurrency);
-  };
 
+    // 1️⃣ Simular tipo de cambio (opcional)
+    await getForexRate(fromCurrency, toCurrency);
+
+    // 2️⃣ Enviar pago al backend
+    await processCheckout(formData);
+  };
   return (
     <div className="font-quicksand">
       <h2 className="text-xl font-bold">Detalles de la compra</h2>
@@ -59,7 +65,11 @@ export default function FormShopping() {
           <img className="h-10 w-auto" src={visa} alt="Visa" />
           <img className="h-10 w-auto" src={mastercard} alt="Mastercard" />
           <img className="h-10 w-auto" src={paypal} alt="PayPal" />
-          <img className="h-10 w-auto" src={american_express} alt="American Express" />
+          <img
+            className="h-10 w-auto"
+            src={american_express}
+            alt="American Express"
+          />
         </div>
       </div>
 
@@ -74,9 +84,7 @@ export default function FormShopping() {
         </div>
       )}
 
-      {error && (
-        <p className="text-red-500 text-sm mt-4">{error}</p>
-      )}
+      {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
     </div>
   );
 }
