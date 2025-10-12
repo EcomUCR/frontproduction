@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 
 interface CategoryCardProps{
     title: string;
@@ -9,11 +8,11 @@ interface CategoryCardProps{
 
 export default function CategoryCard(props: CategoryCardProps) {
     return(
-        <Link to={props.url} className="w-55 h-22 flex flex-col relative text-white rounded-2xl items-center justify-center hover:scale-110 hover:cursor-pointer transition-all duration-300">
+        <div className="w-55 h-22 flex flex-col relative text-white rounded-2xl items-center justify-center hover:scale-110 hover:cursor-pointer transition-all duration-300">
             <div className="w-full h-full bg-main/70 absolute z-1 rounded-2xl"></div>
             <img src={props.img} alt="" className="w-full h-full object-cover rounded-2xl absolute z-0"/>
             <props.icon className="z-1 stroke-2"/>
             <p className="z-1 font-quicksand font-bold">{props.title}</p>
-        </Link>
+        </div>
     );
 }
