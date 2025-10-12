@@ -4,6 +4,7 @@ import NavBar from "../../../components/layout/NavBar";
 import ProductCardShopping from "../../../components/data-display/ProductCardShopping";
 import banner2 from "../../../img/resources/SmallBanner2.png";
 import { useAuth } from "../../../hooks/context/AuthContext";
+import { IconBrandWhatsapp, IconMail } from "@tabler/icons-react";
 
 export default function ShoppingCartPage() {
   const { cart, loading } = useAuth();
@@ -26,6 +27,26 @@ export default function ShoppingCartPage() {
                 No hay productos que mostrar
               </p>
             )}
+
+            <section className="flex flex-col items-center justify-center text-center py-10 font-quicksand">
+              <h2 className="text-lg font-semibold mb-2">¿Necesitas ayuda?</h2>
+              <p className="text-sm text-gray-700">
+                Contáctanos de Lunes a Viernes de 8am a 6pm.
+                <br />
+                Sábado de 8am a 3pm.
+              </p>
+              <div className="flex gap-4 mt-6">
+                <button className="flex items-center gap-2 px-6 py-2 border border-[#ff7e47] rounded-full text-[#ff7e47] hover:bg-[#ff7e47] hover:text-white transition-all duration-300">
+                  <IconBrandWhatsapp size={20} />
+                  WhatsApp
+                </button>
+
+                <button className="flex items-center gap-2 px-6 py-2 border border-[#ff7e47] rounded-full text-[#ff7e47] hover:bg-[#ff7e47] hover:text-white transition-all duration-300">
+                  <IconMail size={20} />
+                  Email
+                </button>
+              </div>
+            </section>
           </div>
 
           {/* Formulario de pago */}
