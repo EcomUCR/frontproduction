@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useRatings } from "../../modules/seller/infrastructure/useRatings"; // ⬅️ usa el hook
 import { SkeletonRatingSummary } from "../../components/ui/AllSkeletons";
+import { useAlert } from "../../hooks/context/AlertContext"; // 👈 agregado
+import { useNavigate } from "react-router-dom"; // 👈 agregado
 
 interface InteractiveRatingSummaryProps {
   onSaveReview: (review: {
@@ -28,17 +30,30 @@ export default function InteractiveRatingSummary({
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
 
+  const { showAlert } = useAlert(); // 👈 añadido
+  const navigate = useNavigate(); // 👈 añadido
+
   const handleSave = async () => {
     if (!user) {
-      window.location.href = "/loginRegister";
-      return;
-    }
-    if (user?.role === "SELLER") {
-      alert("Para enviar una review debe ser un comprador.");
+      showAlert({
+        title: "Inicia sesión",
+        message: "Debes iniciar sesión para dejar una reseña",
+        confirmText: "Ir al login",
+        cancelText: "Cancelar",
+        onConfirm: () => {
+          navigate("/loginRegister");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+      });
       return;
     }
     if (rating === 0 || !comment.trim()) {
-      alert("Por favor selecciona una calificación y escribe un comentario.");
+      showAlert({
+        title: "Campos incompletos",
+        message: "Por favor selecciona una calificación y escribe un comentario.",
+        confirmText: "Ok",
+        type: "warning",
+      });
       return;
     }
 
@@ -53,13 +68,14 @@ export default function InteractiveRatingSummary({
       });
 
       onSaveReview({
-        name: `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim(),
-        comment: comment.trim(),
-        rating,
-      });
-
-      alert("¡Reseña enviada con éxito!");
-      await refreshSummary(); // ⬅️ recarga promedio/barras
+  name:
+    user.first_name || user.last_name
+      ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim()
+      : user.name || user.username || "Usuario",
+  comment: comment.trim(),
+  rating,
+});
+      await refreshSummary();
       setMode("view");
       setComment("");
       setRating(0);
@@ -69,7 +85,12 @@ export default function InteractiveRatingSummary({
         "Error al guardar la reseña:",
         err?.response?.data || err?.message
       );
-      alert("Ocurrió un error al enviar la reseña.");
+      showAlert({
+        title: "Error inesperado",
+        message: "Ocurrió un error al enviar la reseña.",
+        confirmText: "Ok",
+        type: "error",
+      });
     }
   };
 
@@ -99,9 +120,8 @@ export default function InteractiveRatingSummary({
           return (
             <div
               key={i}
-              className={`relative ${
-                interactive ? "cursor-pointer" : "cursor-default"
-              }`}
+              className={`relative ${interactive ? "cursor-pointer" : "cursor-default"
+                }`}
               role={interactive ? "button" : undefined}
               aria-label={interactive ? `${index} estrellas` : undefined}
               tabIndex={interactive ? 0 : -1}
@@ -139,7 +159,7 @@ export default function InteractiveRatingSummary({
     );
   };
 
-if (loading) return <SkeletonRatingSummary show />;
+  if (loading) return <SkeletonRatingSummary show />;
   return (
     <div className="p-4 w-full font-quicksand transition-all duration-300">
       {mode === "view" ? (
@@ -182,12 +202,29 @@ if (loading) return <SkeletonRatingSummary show />;
           </div>
 
           <button
-            onClick={() => setMode("write")}
+            onClick={() => {
+              if (!user) {
+                showAlert({
+                  title: "Inicia sesión",
+                  message: "Debes iniciar sesión para dejar una reseña",
+                  confirmText: "Ir al login",
+                  cancelText: "Cancelar",
+                  onConfirm: () => {
+                    navigate("/loginRegister");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  },
+                });
+                return;
+              }
+
+              setMode("write");
+            }}
             className="w-full py-3 text-white font-semibold rounded-lg transition duration-200"
             style={{ backgroundColor: barColor }}
           >
             Escribir opinión
           </button>
+
         </>
       ) : (
         <>
@@ -200,18 +237,6 @@ if (loading) return <SkeletonRatingSummary show />;
           </div>
 
           <div className="mt-4 border border-main/40 rounded-lg p-3 bg-white shadow-sm">
-            <label className="block mb-2 text-sm font-semibold">Nombre</label>
-            <input
-              type="text"
-              value={
-                user
-                  ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim()
-                  : ""
-              }
-              readOnly
-              className="w-full border rounded p-2 mb-3 text-sm bg-gray-100 cursor-not-allowed"
-            />
-
             <label className="block mb-2 text-sm font-semibold">
               Comentario
             </label>

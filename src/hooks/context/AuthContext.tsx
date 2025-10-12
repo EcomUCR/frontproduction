@@ -29,6 +29,7 @@ type StoreType = {
 };
 
 type UserType = {
+  name: string;
   image: string;
   id: number;
   username: string;

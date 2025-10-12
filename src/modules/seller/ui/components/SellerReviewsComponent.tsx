@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import InteractiveRatingSummary from "../../../../components/ui/InteractiveRatingSummary";
 import LargeReviewComponent from "../../../../components/data-display/LargeReviewComponent";
-import { useRatings } from "../../infrastructure/useRatings"; // ⬅️ usamos el hook
+import { useRatings } from "../../infrastructure/useRatings";
 import { SkeletonSellerReviews } from "../../../../components/ui/AllSkeletons";
+import { useAuth } from "../../../../hooks/context/AuthContext";
+import { useAlert } from "../../../../hooks/context/AlertContext";
 
 interface Review {
   id?: number;
@@ -16,23 +18,60 @@ interface Review {
 export default function SellerReviewsComponent() {
   const { id: storeId } = useParams();
   const [reviews, setReviews] = useState<Review[]>([]);
-
-  // ✅ Hook centralizado para ratings
+  const { token } = useAuth();
+  const { showAlert } = useAlert();
+  const navigate = useNavigate();
   const { loading, refreshSummary } = useRatings(Number(storeId));
 
-  // 🧩 Cargar reseñas desde el backend
+  // ✅ Manejar guardar reseña
+  const handleSaveReview = async (newReview: Omit<Review, "date">) => {
+    if (!token) {
+      showAlert({
+        title: "Inicia sesión",
+        message: "Debes iniciar sesión para dejar una reseña 📝",
+        confirmText: "Ir al login",
+        cancelText: "Cancelar",
+        onConfirm: () => {
+          navigate("/loginRegister");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+      });
+      return;
+    }
+
+    try {
+      const reviewWithDate: Review = {
+        ...newReview,
+        date: new Date().toLocaleDateString(),
+      };
+
+      setReviews((prev) => [reviewWithDate, ...prev]);
+      await refreshSummary();
+      showAlert({
+        title: "Gracias por tu reseña",
+        message: "Tu opinión ha sido guardada correctamente",
+        type: "success",
+      });
+    } catch (error) {
+      console.error(error);
+      showAlert({
+        title: "Error inesperado",
+        message: "Hubo un problema al guardar la reseña",
+        confirmText: "Ok",
+        type: "error",
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchReviews = async () => {
       if (!storeId) return;
-
       try {
         const token = localStorage.getItem("access_token");
         const res = await fetch(
           `https://ecomapi-kruj.onrender.com/api/stores/${storeId}/reviews`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
@@ -57,21 +96,8 @@ export default function SellerReviewsComponent() {
     fetchReviews();
   }, [storeId]);
 
-  // ⭐ Guardar reseña nueva y refrescar el resumen
-  const handleSaveReview = async (newReview: Omit<Review, "date">) => {
-    const reviewWithDate: Review = {
-      ...newReview,
-      date: new Date().toLocaleDateString(),
-    };
-
-    // 🧠 Añadir reseña nueva al listado
-    setReviews((prev) => [reviewWithDate, ...prev]);
-
-    // 🔁 Refrescar el resumen de estrellas
-    await refreshSummary();
-  };
-
   if (loading) return <SkeletonSellerReviews show />;
+
   return (
     <section className="mx-10 my-5">
       <div className="flex w-full items-start">
