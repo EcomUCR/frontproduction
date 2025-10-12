@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 import { IconEdit, IconHeart, IconShoppingBag } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import axios from "axios";
-import { useAuth } from "../../hooks/context/AuthContext"; // 👈 Importante
+import { useAuth } from "../../hooks/context/AuthContext";
+import { useAlert } from "../../hooks/context/AlertContext";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   id: number;
@@ -15,32 +17,46 @@ interface ProductCardProps {
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { token, setCart } = useAuth(); // 👈 traemos el carrito global y el token
+  const { token, setCart } = useAuth(); 
+    const { showAlert } = useAlert();
+  const navigate = useNavigate();
 
   // 👇 Maneja añadir al carrito
   const handleAddToCart = async () => {
     if (!token) {
-      alert("Debes iniciar sesión para agregar al carrito 🛒");
+      showAlert({
+        title: "Inicia sesión",
+        message: "Debes iniciar sesión para agregar productos al carrito",
+        confirmText: "Ir al login",
+        cancelText: "Cancelar",
+        onConfirm: () => {
+          navigate("/loginRegister");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+      });
       return;
     }
-
     try {
       const { data } = await axios.post(
         "/cart/add",
-        { product_id: props.id, quantity: 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {product_id: props.id, quantity: 1 },
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       // Actualiza el carrito global con la respuesta del backend
       setCart(data.cart);
-      alert("Producto añadido al carrito ✅");
+      showAlert({
+        title: "Producto añadido",
+        message: "El producto fue añadido al carrito correctamente ",
+        type: "success",
+      });
     } catch (error) {
       console.error(error);
-      alert("Error al añadir el producto al carrito ❌");
+      showAlert({
+        title: "Error al añadir",
+        message: "Hubo un problema al añadir el producto al carrito ",
+        type: "error",
+      });
     }
   };
 

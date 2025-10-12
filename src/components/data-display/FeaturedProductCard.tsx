@@ -51,14 +51,14 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
       setCart(data.cart);
       showAlert({
         title: "Producto añadido",
-        message: "El producto fue añadido al carrito correctamente ✅",
+        message: "El producto fue añadido al carrito correctamente ",
         type: "success",
       });
     } catch (error) {
       console.error(error);
       showAlert({
         title: "Error al añadir",
-        message: "Hubo un problema al añadir el producto al carrito ❌",
+        message: "Hubo un problema al añadir el producto al carrito ",
         type: "error",
       });
     }
