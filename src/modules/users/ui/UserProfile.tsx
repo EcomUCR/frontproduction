@@ -84,7 +84,6 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   const [newProfileFile, setNewProfileFile] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
 
-  const [cambiarPassword, setCambiarPassword] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [originalSocialLinks, setOriginalSocialLinks] = useState<SocialLink[]>(
     []
@@ -137,7 +136,6 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
   const handleCancel = () => {
     setEditableStore(store);
     setSocialLinks(originalSocialLinks);
-    setCambiarPassword(false);
     setAdding(false);
     setNewText("");
     setNewType("instagram");
