@@ -45,13 +45,16 @@ export default function ShoppingCartPage() {
                   <IconBrandWhatsapp size={20} />
                   WhatsApp
                 </a>
-                <a
-                  href="mailto:ecomucr2025@gmail.com"
+                {/*<a
+                 href="mailto:soporte@tukishop.com?subject=Soporte%20TukiShop&body=Hola%20equipo%20de%20TukiShop,%0A%0ANecesito%20ayuda%20con..."
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 px-6 py-2 border border-[#ff7e47] rounded-full text-[#ff7e47] hover:bg-[#ff7e47] hover:text-white transition-all duration-300"
                 >
                   <IconMail size={20} />
                   Email
                 </a>
+*/}
               </div>
             </section>
           </div>
