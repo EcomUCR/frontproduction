@@ -109,7 +109,7 @@ export default function AboutUs() {
               <h4 className="text-lg font-semibold text-gray-800">
                 {teamMember.name}
               </h4>
-              <p className="text-gray-500 text-sm">{teamMember.role}</p>
+              <p className="text-gray-500 text-sm text-center">{teamMember.role}</p>
             </motion.div>
           ))}
         </div>
