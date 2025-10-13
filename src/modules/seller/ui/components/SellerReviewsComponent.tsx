@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import InteractiveRatingSummary from "../../../../components/ui/InteractiveRatingSummary";
 import LargeReviewComponent from "../../../../components/data-display/LargeReviewComponent";
@@ -24,7 +24,41 @@ export default function SellerReviewsComponent() {
   const navigate = useNavigate();
   const { loading, refreshSummary } = useRatings(Number(storeId));
 
-  // ✅ Manejar guardar reseña
+  // 🔁 Reutilizable para recargar reseñas desde el backend
+  const fetchReviews = useCallback(async () => {
+    if (!storeId) return;
+    try {
+      const res = await fetch(
+        `https://ecomapi-kruj.onrender.com/api/stores/${storeId}/reviews`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) throw new Error("Error al obtener reseñas");
+
+      const data = await res.json();
+
+      const formatted = data.map((r: any) => ({
+        id: r.id,
+        name: r.user?.username || r.user?.name || "Usuario desconocido",
+        rating: r.rating,
+        comment: r.comment || "",
+        date: new Date(r.created_at).toLocaleDateString(),
+        image: r.user?.image,
+      }));
+
+      setReviews(formatted);
+    } catch (err) {
+      console.error("Error al obtener reseñas:", err);
+    }
+  }, [storeId, token]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  // ✅ Guardar reseña y recargar lista real desde el backend
   const handleSaveReview = async (newReview: Omit<Review, "date">) => {
     if (!token) {
       showAlert({
@@ -41,13 +75,11 @@ export default function SellerReviewsComponent() {
     }
 
     try {
-      const reviewWithDate: Review = {
-        ...newReview,
-        date: new Date().toLocaleDateString(),
-      };
-
-      setReviews((prev) => [reviewWithDate, ...prev]);
+      // Esperar el guardado en el backend
       await refreshSummary();
+      // Luego recargar todas las reseñas reales
+      await fetchReviews();
+
       showAlert({
         title: "Gracias por tu reseña",
         message: "Tu opinión ha sido guardada correctamente",
@@ -63,40 +95,6 @@ export default function SellerReviewsComponent() {
       });
     }
   };
-
-  useEffect(() => {
-    const fetchReviews = async () => {
-      if (!storeId) return;
-      try {
-        const token = localStorage.getItem("access_token");
-        const res = await fetch(
-          `https://ecomapi-kruj.onrender.com/api/stores/${storeId}/reviews`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        if (!res.ok) throw new Error("Error al obtener reseñas");
-
-        const data = await res.json();
-
-        const formatted = data.map((r: any) => ({
-          id: r.id,
-          name: r.user?.username || "Usuario desconocido",
-          rating: r.rating,
-          comment: r.comment || "",
-          date: new Date(r.created_at).toLocaleDateString(),
-          image: r.user?.image,
-        }));
-
-        setReviews(formatted);
-      } catch (err) {
-        console.error("Error al obtener reseñas:", err);
-      }
-    };
-
-    fetchReviews();
-  }, [storeId]);
 
   if (loading) return <SkeletonSellerReviews show />;
 
