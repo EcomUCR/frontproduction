@@ -59,7 +59,7 @@ export default function SellerReviewsComponent() {
   }, [fetchReviews]);
 
   // ✅ Guardar reseña y recargar lista real desde el backend
-  const handleSaveReview = async (newReview: Omit<Review, "date">) => {
+  const handleSaveReview = async () => {
     if (!token) {
       showAlert({
         title: "Inicia sesión",
