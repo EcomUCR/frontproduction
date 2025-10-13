@@ -35,7 +35,7 @@ export default function UserPage() {
           />
         </aside>
 
-        {/* 📱 Menú móvil (tabs arriba) */}
+        {/* 📱 Menú móvil (tabs arribaAAAA) */}
         <div className="md:hidden mb-6 flex justify-around bg-main/10 rounded-full p-2 backdrop-blur-md">
           <button
             onClick={() => setSelected("profile")}
