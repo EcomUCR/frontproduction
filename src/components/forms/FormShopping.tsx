@@ -50,7 +50,7 @@ export default function FormShopping() {
       {/* 📍 Dirección */}
       <div className="pt-10 flex gap-2 text-contrast-main">
         <IconMapPin />
-        <p>Enviar a Andrés Sequeira</p>
+        <p>Enviar a Usuario</p>
       </div>
 
       {/* 💳 Formulario de tarjeta */}
