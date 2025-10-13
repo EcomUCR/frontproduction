@@ -24,7 +24,6 @@ export default function SellerReviewsComponent() {
   const navigate = useNavigate();
   const { loading, refreshSummary } = useRatings(Number(storeId));
 
-  // 🔁 Reutilizable para recargar reseñas desde el backend
   const fetchReviews = useCallback(async () => {
     if (!storeId) return;
     try {
@@ -58,7 +57,6 @@ export default function SellerReviewsComponent() {
     fetchReviews();
   }, [fetchReviews]);
 
-  // ✅ Guardar reseña y recargar lista real desde el backend
   const handleSaveReview = async () => {
     if (!token) {
       showAlert({
@@ -75,9 +73,7 @@ export default function SellerReviewsComponent() {
     }
 
     try {
-      // Esperar el guardado en el backend
       await refreshSummary();
-      // Luego recargar todas las reseñas reales
       await fetchReviews();
 
       showAlert({
@@ -99,10 +95,10 @@ export default function SellerReviewsComponent() {
   if (loading) return <SkeletonSellerReviews show />;
 
   return (
-    <section className="mx-10 my-5">
-      <div className="flex w-full items-start">
-        {/* Columna izquierda: resumen y formulario */}
-        <div className="w-[35%] border border-main rounded-2xl p-4 h-fit self-start">
+    <section className="mx-4 sm:mx-10 my-5 font-quicksand">
+      <div className="flex flex-col sm:flex-row w-full items-start gap-6">
+        {/* 🟢 Resumen y formulario */}
+        <div className="w-full sm:w-[35%] border border-main rounded-2xl p-4 h-fit self-start">
           <InteractiveRatingSummary
             onSaveReview={handleSaveReview}
             storeId={Number(storeId)}
@@ -110,10 +106,10 @@ export default function SellerReviewsComponent() {
           />
         </div>
 
-        {/* Columna derecha: lista de reseñas */}
-        <div className="flex flex-col w-[65%] pl-20">
-          <div className="flex items-center gap-2">
-            <h3>Opiniones</h3>
+        {/* 🟣 Lista de reseñas */}
+        <div className="flex flex-col w-full sm:w-[65%] sm:pl-10 pt-5 sm:pt-0">
+          <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
+            <h3 className="text-xl sm:text-2xl font-semibold">Opiniones</h3>
             <p className="bg-main-dark/20 py-1 px-2 rounded-full text-xs">
               {reviews.length}
             </p>
@@ -131,7 +127,7 @@ export default function SellerReviewsComponent() {
               />
             ))
           ) : (
-            <p className="text-sm text-gray-500 mt-5">
+            <p className="text-sm text-gray-500 mt-5 text-center sm:text-left">
               No hay opiniones aún. ¡Sé el primero en dejar una!
             </p>
           )}

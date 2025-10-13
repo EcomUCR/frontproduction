@@ -110,7 +110,7 @@ export default function HomePage() {
           {loadingOffers ? (
             <SkeletonProduct count={5} />
           ) : (
-            <div className="grid grid-cols-5 my-10 gap-5">
+<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-10 gap-5">
               {offerProducts.map((prod) => (
                 <ProductCard
                   key={prod.id}
@@ -131,47 +131,62 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* 🔹 BANNERS */}
-        <section className="flex justify-center gap-10 items-end mx-10 my-10">
-          <img className="w-full h-full" src={smallBanner1} alt="Banner 1" />
-          <img className="w-full h-full" src={smallBanner2} alt="Banner 2" />
-        </section>
+       {/* 🔹 BANNERS (solo se muestra el primero en móvil) */}
+<section className="flex justify-center gap-10 items-end mx-10 my-10">
+  {/* 🟢 Banner 1 siempre visible */}
+  <img
+    className="w-full h-full rounded-2xl object-cover"
+    src={smallBanner1}
+    alt="Banner principal"
+  />
+  
+  {/* 🔴 Banner 2: oculto en móvil */}
+  <img
+    className="w-full h-full rounded-2xl object-cover hidden sm:block"
+    src={smallBanner2}
+    alt="Banner secundario"
+  />
+</section>
 
-        {/* 🔹 EXPLORAR */}
-        <section className="mx-10 my-10">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold font-quicksand">Explorar</h2>
-            <div>
-              <a href="/search?mode=explore" className="font-semibold cursor-pointer">
-                Ver todo
-              </a>
-              <IconChevronRight className="inline" />
-            </div>
-          </div>
+{/* 🔹 EXPLORAR */}
+<section className="mx-10 my-10">
+  <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
+    <h2 className="text-2xl sm:text-3xl font-bold font-quicksand text-main-dark">
+      Explorar
+    </h2>
+    <a
+      href="/search?mode=explore"
+      className="flex items-center gap-1 text-sm sm:text-base font-semibold text-main-dark hover:text-contrast-main transition-colors"
+    >
+      Ver todo
+      <IconChevronRight className="inline w-5 h-5" />
+    </a>
+  </div>
 
-          {loadingExplore ? (
-            <SkeletonProduct count={10} />
-          ) : (
-            <div className="grid grid-cols-5 my-10 gap-5">
-              {exploreProducts.map((prod) => (
-                <ProductCard
-                  key={prod.id}
-                  id={prod.id!}
-                  shop={prod.store?.name || "No hay tienda"}
-                  title={prod.name}
-                  price={prod.price.toLocaleString("es-CRC")}
-                  discountPrice={
-                    prod.discount_price != null && prod.discount_price !== 0
-                      ? prod.discount_price.toLocaleString("es-CRC")
-                      : undefined
-                  }
-                  img={prod.image_1_url ? prod.image_1_url : audifonos}
-                  edit={false}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+  {loadingExplore ? (
+    <SkeletonProduct count={10} />
+  ) : (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-6 gap-5">
+      {exploreProducts.map((prod) => (
+        <ProductCard
+          key={prod.id}
+          id={prod.id!}
+          shop={prod.store?.name || "No hay tienda"}
+          title={prod.name}
+          price={prod.price.toLocaleString("es-CRC")}
+          discountPrice={
+            prod.discount_price != null && prod.discount_price !== 0
+              ? prod.discount_price.toLocaleString("es-CRC")
+              : undefined
+          }
+          img={prod.image_1_url ? prod.image_1_url : audifonos}
+          edit={false}
+        />
+      ))}
+    </div>
+  )}
+</section>
+
       </div>
 
       <Footer />

@@ -1,18 +1,39 @@
-
-interface CategoryCardProps{
-    title: string;
-    img: string;
-    icon: React.ElementType;
-    url: string;
+interface CategoryCardProps {
+  title: string;
+  img: string;
+  icon: React.ElementType;
+  url: string;
 }
 
 export default function CategoryCard(props: CategoryCardProps) {
-    return(
-        <div className="w-55 h-22 flex flex-col relative text-white rounded-2xl items-center justify-center hover:scale-110 hover:cursor-pointer transition-all duration-300">
-            <div className="w-full h-full bg-main/70 absolute z-1 rounded-2xl"></div>
-            <img src={props.img} alt="" className="w-full h-full object-cover rounded-2xl absolute z-0"/>
-            <props.icon className="z-1 stroke-2"/>
-            <p className="z-1 font-quicksand font-bold">{props.title}</p>
-        </div>
-    );
+  const Icon = props.icon;
+
+  return (
+    <div
+      className="
+        relative flex flex-col items-center justify-center text-white rounded-2xl
+        overflow-hidden font-quicksand
+        w-full h-full sm:w-55 sm:h-22
+        transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer
+      "
+    >
+      {/* Capa oscura */}
+      <div className="absolute inset-0 bg-main/70 z-[1] rounded-2xl"></div>
+
+      {/* Imagen */}
+      <img
+        src={props.img}
+        alt={props.title}
+        className="absolute inset-0 w-full h-full object-cover rounded-2xl z-0"
+      />
+
+      {/* Contenido */}
+      <div className="relative z-[2] flex flex-col items-center justify-center">
+        <Icon className="stroke-2 w-8 h-8 sm:w-10 sm:h-10" />
+        <p className="hidden sm:block font-bold text-sm sm:text-base">
+          {props.title}
+        </p>
+      </div>
+    </div>
+  );
 }

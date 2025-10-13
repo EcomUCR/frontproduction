@@ -2,7 +2,7 @@ import { IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import type { Store } from "../../../users/infrastructure/useUser";
 import { getStore } from "../../infrastructure/storeService";
-import { Skeleton } from "../../../../components/ui/skeleton"; // 👈 asegúrate de tener este import disponible
+import { Skeleton } from "../../../../components/ui/skeleton";
 
 interface NavBarSellerProps {
   setView: (view: "home" | "offers" | "contact" | "reviews") => void;
@@ -28,49 +28,52 @@ export default function NavBarSeller({
       } catch (err) {
         console.error("Error al cargar la tienda:", err);
       } finally {
-        setTimeout(() => setLoading(false), 400); // 👈 pequeño delay para suavizar el cambio
+        setTimeout(() => setLoading(false), 400);
       }
     };
 
     fetchStore();
   }, [id]);
 
-  // 🦴 Skeleton de carga
+  // 🦴 Skeleton
   if (loading) {
     return (
-      <nav className="w-full bg-main-dark/10 text-main-dark px-10 h-20 flex justify-between items-center rounded-xl font-quicksand animate-pulse">
-        {/* Logo skeleton */}
+      <nav className="w-full bg-main-dark/10 text-main-dark px-5 sm:px-10 h-20 flex justify-between items-center rounded-xl font-quicksand animate-pulse">
         <div className="w-1/3">
           <Skeleton className="h-8 w-28 rounded-md" />
         </div>
-
-        {/* Tabs skeleton */}
-        <div className="flex justify-center items-center w-1/3">
+        <div className="hidden sm:flex justify-center items-center w-1/3">
           <ul className="flex gap-10 p-3">
-            <li><Skeleton className="h-4 w-12 rounded-full" /></li>
-            <li><Skeleton className="h-4 w-12 rounded-full" /></li>
-            <li><Skeleton className="h-4 w-12 rounded-full" /></li>
-            <li><Skeleton className="h-4 w-12 rounded-full" /></li>
+            {Array(4)
+              .fill(0)
+              .map((_, i) => (
+                <li key={i}>
+                  <Skeleton className="h-4 w-12 rounded-full" />
+                </li>
+              ))}
           </ul>
         </div>
-
-        {/* Search bar skeleton */}
-        <div className="flex items-center bg-white/50 rounded-full h-10 px-0.5 w-1/3 ml-15">
+        <div className="flex items-center bg-white/50 rounded-full h-10 px-0.5 w-1/2 sm:w-1/3 ml-0 sm:ml-15">
           <Skeleton className="h-6 w-full rounded-full" />
         </div>
       </nav>
     );
   }
 
-  // 🌟 NavBar con datos reales
-  if (!store) {
-    return null;
-  }
+  if (!store) return null;
 
   return (
-    <nav className="w-full h-20 bg-main-dark/10 text-main-dark px-10 flex justify-between items-center rounded-xl font-quicksand">
-      {/* Logo */}
-      <div className="w-1/3">
+    <nav
+      className="
+        w-full h-auto sm:h-20 bg-main-dark/10 text-main-dark
+        px-5 sm:px-10 py-3 sm:py-0
+        flex flex-col sm:flex-row sm:justify-between sm:items-center
+        gap-3 sm:gap-0
+        rounded-xl font-quicksand
+      "
+    >
+      {/* 🏪 Logo */}
+      <div className="flex justify-center sm:justify-start w-full sm:w-1/3">
         <img
           src={store.image || ""}
           alt={store.name}
@@ -78,62 +81,41 @@ export default function NavBarSeller({
         />
       </div>
 
-      {/* Tabs */}
-      <div className="flex justify-center items-center w-1/3">
-        <ul className="flex gap-10 p-3 text-white text-sm font-medium">
-          <li>
-            <button
-              onClick={() => setView("home")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
-                currentView === "home" ? "font-bold" : ""
-              }`}
-            >
-              Tienda
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setView("offers")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
-                currentView === "offers" ? "font-bold" : ""
-              }`}
-            >
-              Ofertas
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setView("contact")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
-                currentView === "contact" ? "font-bold" : ""
-              }`}
-            >
-              Contacto
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setView("reviews")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
-                currentView === "reviews" ? "font-bold" : ""
-              }`}
-            >
-              Opiniones
-            </button>
-          </li>
+      {/* 📂 Tabs */}
+      <div className="flex justify-center items-center w-full sm:w-1/3 order-3 sm:order-none">
+        <ul className="flex flex-wrap sm:flex-nowrap justify-center gap-5 sm:gap-10 p-2 text-white text-sm font-medium">
+          {[
+            { key: "home", label: "Tienda" },
+            { key: "offers", label: "Ofertas" },
+            { key: "contact", label: "Contacto" },
+            { key: "reviews", label: "Opiniones" },
+          ].map((tab) => (
+            <li key={tab.key}>
+              <button
+                onClick={() => setView(tab.key as any)}
+                className={`text-main-dark transition-all duration-300 hover:text-contrast-secondary ${
+                  currentView === tab.key ? "font-bold" : ""
+                }`}
+              >
+                {tab.label}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
 
-      {/* Search bar */}
-      <div className="flex items-center bg-white rounded-full h-10 px-0.5 w-1/3 ml-15">
-        <input
-          type="text"
-          className="w-full h-6 p-4 text-sm focus:outline-none"
-          placeholder={`Buscar en ${store.name || "la tienda"}`}
-        />
-        <button className="bg-gradient-to-br from-contrast-main to-contrast-secondary rounded-full w-15 h-9 flex items-center justify-center">
-          <IconSearch className="text-white h-6 w-auto stroke-3" />
-        </button>
+      {/* 🔍 Search bar */}
+      <div className="flex justify-center sm:justify-end w-full sm:w-1/3">
+        <div className="flex items-center bg-white rounded-full h-9 sm:h-10 px-1 w-full sm:w-4/5 max-w-[20rem]">
+          <input
+            type="text"
+            className="w-full text-sm px-3 py-1 focus:outline-none"
+            placeholder={`Buscar en ${store.name || "la tienda"}`}
+          />
+          <button className="bg-gradient-to-br from-contrast-main to-contrast-secondary rounded-full w-10 h-8 sm:w-15 sm:h-9 flex items-center justify-center">
+            <IconSearch className="text-white h-5 w-5 sm:h-6 sm:w-6 stroke-3" />
+          </button>
+        </div>
       </div>
     </nav>
   );

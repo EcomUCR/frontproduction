@@ -17,11 +17,10 @@ interface ProductCardProps {
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { token, setCart } = useAuth(); 
-    const { showAlert } = useAlert();
+  const { token, setCart } = useAuth();
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
 
-  // 👇 Maneja añadir al carrito
   const handleAddToCart = async () => {
     if (!token) {
       showAlert({
@@ -39,11 +38,10 @@ export default function ProductCard(props: ProductCardProps) {
     try {
       const { data } = await axios.post(
         "/cart/add",
-        {product_id: props.id, quantity: 1 },
-        {headers: {Authorization: `Bearer ${token}`}}
+        { product_id: props.id, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Actualiza el carrito global con la respuesta del backend
       setCart(data.cart);
       showAlert({
         title: "Producto añadido",
@@ -61,7 +59,16 @@ export default function ProductCard(props: ProductCardProps) {
   };
 
   return (
-    <figure className="relative flex flex-col h-90 w-55 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group">
+    <figure
+      className="
+        relative flex flex-col 
+        h-90 w-55 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group
+        transition-all duration-300 ease-in-out
+        sm:w-55 sm:h-90   /* 💻 PC: igual que siempre */
+        w-full h-auto     /* 📱 móvil: ocupa todo el ancho */
+      "
+    >
+      {/* 🛠️ Botón editar */}
       {props.edit && (
         <Link to="/crudProduct">
           <ButtonComponent
@@ -71,6 +78,7 @@ export default function ProductCard(props: ProductCardProps) {
         </Link>
       )}
 
+      {/* ❤️ Favorito */}
       {!props.edit && (
         <div className="group-hover:opacity-100 opacity-0 transition-all duration-300 ease-in-out">
           <ButtonComponent
@@ -81,10 +89,11 @@ export default function ProductCard(props: ProductCardProps) {
         </div>
       )}
 
+      {/* 🖼️ Imagen */}
       <Link
         to={`/product/${props.id}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="w-full h-[55%] mb-2"
+        className="w-full h-[55%] sm:h-[55%] xs:h-[65vw] mb-2" // 📱 solo móvil más alto
       >
         <img
           className="w-full h-full object-cover rounded-2xl"
@@ -93,17 +102,21 @@ export default function ProductCard(props: ProductCardProps) {
         />
       </Link>
 
+      {/* 📦 Info producto */}
       <div className="flex flex-col justify-center items-center gap-3 h-auto pt-5">
         <Link
           to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
-          <p className="font-semibold text-center text-sm">{props.title}</p>
+          <p className="font-semibold text-center text-sm sm:text-base line-clamp-2">
+            {props.title}
+          </p>
         </Link>
 
         {!props.edit && (
-          <div className="relative w-full flex">
-            <div className="text-center flex flex-col relative w-full gap-3 group-hover:transition-all group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
+          <div className="relative w-full flex flex-col items-center">
+            {/* 💻 Animación original (no tocamos en PC) */}
+            <div className="text-center flex flex-col relative w-full gap-3 sm:group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
               <p className="font-poiret text-sm">{props.shop}</p>
               <div className="flex flex-col">
                 {Number(props.discountPrice) > 0 ? (
@@ -119,10 +132,17 @@ export default function ProductCard(props: ProductCardProps) {
               </div>
             </div>
 
-            {/* 🛒 Botón añadir al carrito */}
+            {/* 🛒 Botón carrito */}
             <div
-              className="absolute flex flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 bg-contrast-main text-white font-semibold p-2 rounded-xl hover:bg-gradient-to-br from-contrast-main to-contrast-secondary items-center transition-all duration-300 cursor-pointer"
-              onClick={handleAddToCart} // 👈 evento
+              className="
+                sm:absolute sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-23 
+                flex flex-col justify-between items-center 
+                bg-contrast-main text-white font-semibold p-2 rounded-xl
+                hover:bg-gradient-to-br from-contrast-main to-contrast-secondary 
+                transition-all duration-300 cursor-pointer 
+                mt-2 sm:mt-0 w-full sm:w-auto
+              "
+              onClick={handleAddToCart}
             >
               <IconShoppingBag />
               <ButtonComponent style="w-full text-xs" text="Añadir al carrito" />
