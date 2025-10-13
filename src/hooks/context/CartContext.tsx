@@ -91,7 +91,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // ============================
   const addToCart = async (productId: number, quantity: number = 1) => {
     if (!token) {
-      alert("Debes iniciar sesión para agregar al carrito 🛒");
+       console.log("Debes iniciar sesión para agregar productos al carrito. ¿Ir al login?");
       return;
     }
 
@@ -103,10 +103,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       );
 
       setCart(data.cart ?? data);
-      alert("Producto añadido al carrito ✅");
+
     } catch (err) {
       console.error("Error al añadir producto al carrito:", err);
-      alert("No se pudo añadir el producto ❌");
+
     }
   };
 
@@ -123,7 +123,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setCart(data.cart ?? data);
     } catch (err) {
       console.error("Error al actualizar cantidad:", err);
-      alert("No se pudo actualizar la cantidad ❌");
     }
   };
 
@@ -136,10 +135,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart(data.cart ?? data);
-      alert("Producto eliminado del carrito ✅");
     } catch (err) {
       console.error("Error al eliminar producto:", err);
-      alert("No se pudo eliminar el producto ❌");
     }
   };
 
@@ -152,10 +149,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart({ id: 0, items: [], total: 0 });
-      alert("Carrito vaciado 🧹");
+      console.log("Carrito vaciado 🧹");
     } catch (err) {
       console.error("Error al vaciar carrito:", err);
-      alert("No se pudo vaciar el carrito ❌");
+      console.log("No se pudo vaciar el carrito ❌");
     }
   };
 
