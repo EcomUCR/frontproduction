@@ -4,6 +4,7 @@ import type { CartItemType } from "../../hooks/context/AuthContext";
 import { useAuth } from "../../hooks/context/AuthContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useAlert } from "../../hooks/context/AlertContext";
 
 interface Props {
   item: CartItemType;
@@ -12,6 +13,7 @@ interface Props {
 export default function ProductCardShopping({ item }: Props) {
   const { product } = item;
   const { token, setCart } = useAuth();
+    const { showAlert } = useAlert();
 
   // 🔹 Actualizar cantidad (+/-)
   const updateQuantity = async (newQuantity: number) => {
@@ -27,7 +29,12 @@ export default function ProductCardShopping({ item }: Props) {
       setCart(data.cart);
     } catch (error) {
       console.error("Error al actualizar cantidad:", error);
-      alert("No se pudo actualizar la cantidad ❌");
+      showAlert({
+        title: "Ups!!",
+        message: "Ha ocurrido un error para actualizar la cantidad, intentalo mas tarde",
+        confirmText: "Ok",
+      });
+      console.log("No se pudo actualizar la cantidad ❌");
     }
   };
 
@@ -43,10 +50,18 @@ export default function ProductCardShopping({ item }: Props) {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart(data.cart);
-      alert("Producto eliminado del carrito ✅");
+      showAlert({
+        title: "Yeii!!",
+        message: "Producto eliminado del carrito",
+        confirmText: "Ok",
+      });
     } catch (error) {
       console.error("Error al eliminar producto:", error);
-      alert("No se pudo eliminar el producto ❌");
+      showAlert({
+        title: "Ups!!",
+        message: "Ha ocurrido un error al eliminar el producto, intentalo mas tarde",
+        confirmText: "Ok",
+      });
     }
   };
 

@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useAuth } from "../../hooks/context/AuthContext";
+import { useAlert } from "../../hooks/context/AlertContext";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 export function useCheckout() {
     const { token } = useAuth();
-
+    const { showAlert } = useAlert();
     // 🧾 Llamado al endpoint /api/checkout
     const processCheckout = async (formData: any) => {
         if (!token) {
@@ -37,13 +38,23 @@ export function useCheckout() {
             });
 
             console.log("✅ Checkout exitoso:", data);
-            alert("Pago realizado con éxito ✅");
+            showAlert({
+                title: "Pago exitoso",
+                message: "El pago se realizo correctamente",
+                type: "success",
+            });
             return data;
         } catch (err: any) {
             console.error("❌ Error en checkout:", err.response?.data || err);
-            alert(
-                JSON.stringify(err.response?.data?.errors || err.response?.data?.message || "Error en la validación del pago ❌")
-            );
+            showAlert({
+                title: "Error en el pago",
+                message: JSON.stringify( "Error en la validación del pago "),
+                type: "error",
+            });
+            console.log("No se pudo procesar el pago ❌" + err.response?.data || err);
+            // throw new Error(
+            //     err.response?.data?.errors || err.response?.data?.message || "Error en la validación del pago ❌"
+            // );
             throw err;
         }
     };
