@@ -70,10 +70,10 @@ export default function CategoryDropdown({
     }, []);
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative " ref={dropdownRef}>
             <button
                 onClick={() => setOpen((prev) => !prev)}
-                className="flex items-center gap-2 hover:-translate-y-1 text-white transform transition-all duration-300"
+                className="flex items-center gap-2 hover:-translate-y-1 text-white transform transition-all duration-300 hover:cursor-pointer"
             >
                 <IconMenu2 className="h-5 w-5" />
                 <span className="font-light">Categorías</span>

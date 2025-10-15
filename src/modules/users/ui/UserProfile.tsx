@@ -261,7 +261,7 @@ const [cambiarPassword, setCambiarPassword] = useState(false);
               alt="profile_image"
               className="w-48 h-48 rounded-full object-cover border-4 border-white shadow"
             />
-            <label className="absolute bottom-2 right-[calc(50%-5rem)] bg-main-dark/80 hover:bg-main-dark text-white p-2 rounded-full cursor-pointer">
+            <label className="absolute bottom-2 right-[calc(50%-5rem)] bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer">
               <IconEdit size={22} />
               <input
                 type="file"
