@@ -47,7 +47,7 @@ export default function CreditCardForm({ onSubmit, loading }: CreditCardFormProp
               <FieldLabel>Nombre en la tarjeta</FieldLabel>
               <Input
                 name="name"
-                placeholder="Andrés Sequeira"
+                placeholder="Nombre completo"
                 value={form.name}
                 onChange={handleChange}
                 required

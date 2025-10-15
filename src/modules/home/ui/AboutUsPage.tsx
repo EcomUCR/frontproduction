@@ -5,11 +5,11 @@ import Footer from "../../../components/layout/Footer";
 
 export default function AboutUs() {
   const teamMember = [
-    { name: "Raul", role: "ROL" },
-    { name: "John", role: "ROL" },
-    { name: "Alejandro", role: "ROL" },
-    { name: "Kristen", role: "ROL" },
-    { name: "Andres", role: "ROL" },
+    { name: "Raul", role: "Designer & FullStack Developer" },
+    { name: "John", role: "FullStack Developer" },
+    { name: "Alejandro", role: "CEO" },
+    { name: "Kristen", role: "Designer & FrontEnd Developer" },
+    { name: "Andres", role: "QA & Backend Developer" },
   ];
 
   return (
@@ -109,7 +109,7 @@ export default function AboutUs() {
               <h4 className="text-lg font-semibold text-gray-800">
                 {teamMember.name}
               </h4>
-              <p className="text-gray-500 text-sm">{teamMember.role}</p>
+              <p className="text-gray-500 text-sm text-center">{teamMember.role}</p>
             </motion.div>
           ))}
         </div>
