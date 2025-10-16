@@ -14,7 +14,12 @@ export default function SearchedStores() {
     const fetchStores = async () => {
       try {
         const { data } = await axios.get("/stores");
-        setStores(data);
+        
+        const verifiedStores = data.filter(
+          (store: any) => store.is_verified === true
+        );
+
+        setStores(verifiedStores);
       } catch (error) {
         console.error("Error al obtener tiendas:", error);
         setStores([]); // asegúrate de que haya algo para renderizar
