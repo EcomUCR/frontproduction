@@ -17,8 +17,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { token, setCart } = useAuth(); 
-    const { showAlert } = useAlert();
+  const { token, setCart } = useAuth();
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   // 👇 Maneja añadir al carrito
@@ -39,8 +39,8 @@ export default function ProductCard(props: ProductCardProps) {
     try {
       const { data } = await axios.post(
         "/cart/add",
-        {product_id: props.id, quantity: 1 },
-        {headers: {Authorization: `Bearer ${token}`}}
+        { product_id: props.id, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Actualiza el carrito global con la respuesta del backend
@@ -63,7 +63,10 @@ export default function ProductCard(props: ProductCardProps) {
   return (
     <figure className="relative flex flex-col h-90 w-55 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group">
       {props.edit && (
-        <Link to="/crudProduct">
+        <Link
+          to={`/editProduct/${props.id}`}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
           <ButtonComponent
             style="absolute top-4 right-4 w-9 h-9 bg-contrast-main rounded-xl flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400"
             icon={<IconEdit />}
@@ -125,7 +128,10 @@ export default function ProductCard(props: ProductCardProps) {
               onClick={handleAddToCart} // 👈 evento
             >
               <IconShoppingBag />
-              <ButtonComponent style="w-full text-xs" text="Añadir al carrito" />
+              <ButtonComponent
+                style="w-full text-xs"
+                text="Añadir al carrito"
+              />
             </div>
           </div>
         )}

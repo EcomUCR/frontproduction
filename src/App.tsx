@@ -55,7 +55,7 @@ function App() {
               <Route path="/search/stores" element={<SearchedStores />} />
               <Route path="/about" element={<AboutUsPage />} />
               <Route path="/help" element={<HelpPage />} />
-              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/editProduct/:id" element={<CrudProductPage />} />
             </Routes>
           </Router>
         </CartProvider>

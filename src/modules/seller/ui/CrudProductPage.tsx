@@ -10,6 +10,8 @@ import { IconArrowBackUp, IconWand } from "@tabler/icons-react";
 import FeaturedProductCard from "../../../components/data-display/FeaturedProductCard";
 import CategorySelector from "../../../components/ui/CategorySelector";
 import { useAuth } from "../../../hooks/context/AuthContext";
+import { useParams } from "react-router-dom";
+
 type ProductForm = Omit<Product, "price" | "discount_price"> & {
   price: string | number;
   discount_price: string | number;
@@ -20,10 +22,13 @@ export default function CrudProductPage() {
     createProduct,
     updateProduct,
     getCategories,
+    getProductById,
     loading,
     error,
     success,
   } = useProducts();
+
+  const { id } = useParams();
   const { user } = useAuth();
   const {
     getDescription,
@@ -48,42 +53,56 @@ export default function CrudProductPage() {
   const [errorPrice, setErrorPrice] = useState<string | null>(null);
   const [errorDiscount, setErrorDiscount] = useState<string | null>(null);
 
+  // 🔹 Cargar categorías
   useEffect(() => {
-    const fetchCategories = async () => {
+    (async () => {
       const result = await getCategories();
       setCategories(result);
-    };
-    fetchCategories();
+    })();
   }, []);
+
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      const product = await getProductById(Number(id));
+      if (product) {
+        setForm({
+          ...product,
+          price: product.price.toString(),
+          discount_price: product.discount_price?.toString() || "0",
+        });
+        setPreview(typeof product.image === "string" ? product.image : null);
+      }
+    })();
+  }, [id]);
 
   const handleGenerateDescription = async () => {
     const description = await getDescription(form.name);
-    if (description) {
-      setForm({ ...form, description: description });
-    }
+    if (description) setForm({ ...form, description });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Usa el store_id del usuario logueado
-    const storeId = user?.store?.id; // (<-- revisa que sea así en tu estructura)
+
+    const storeId = user?.store?.id;
     if (!storeId) {
       alert("No se encontró la tienda asociada al usuario");
       return;
     }
+
     const dataToSend = {
       ...form,
-      store_id: storeId, // <- Aquí se agrega
+      store_id: storeId,
       price: Number(form.price),
       discount_price: Number(form.discount_price),
     };
+
     try {
-      if (form.id) {
-        await updateProduct(form.id, dataToSend);
+      if (id) {
+        await updateProduct(Number(id), dataToSend);
       } else {
         await createProduct(dataToSend);
         setForm({
-          store_id: undefined, // limpia, por si acaso
           name: "",
           description: "",
           price: 0,
@@ -96,7 +115,7 @@ export default function CrudProductPage() {
         });
         setPreview(null);
       }
-    } catch (err) { }
+    } catch (err) {}
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +138,7 @@ export default function CrudProductPage() {
             onClick={() => window.history.back()}
           />
           <h1 className="text-3xl font-bold border-b-3 border-main">
-            Nuevo Producto
+            {id ? "Editar Producto" : "Nuevo Producto"}
           </h1>
         </div>
         <form onSubmit={handleSubmit}>
@@ -163,8 +182,9 @@ export default function CrudProductPage() {
                       setForm({ ...form, price: Number(form.price) || 0 });
                     }}
                     placeholder="Precio"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorPrice ? "border border-red-500" : ""
-                      }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${
+                      errorPrice ? "border border-red-500" : ""
+                    }`}
                   />
                   {errorPrice && (
                     <p className="text-red-500 text-sm">{errorPrice}</p>
@@ -194,8 +214,9 @@ export default function CrudProductPage() {
                       });
                     }}
                     placeholder="Precio de oferta"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorDiscount ? "border border-red-500" : ""
-                      }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${
+                      errorDiscount ? "border border-red-500" : ""
+                    }`}
                   />
                   {errorDiscount && (
                     <p className="text-red-500 text-sm">{errorDiscount}</p>
@@ -203,6 +224,7 @@ export default function CrudProductPage() {
                 </label>
               </div>
             </div>
+
             <div className="w-full flex gap-5">
               <div className="flex flex-col w-6/12 gap-2">
                 <p className="font-semibold">
@@ -247,6 +269,7 @@ export default function CrudProductPage() {
               </div>
             </div>
           </div>
+
           <div className="flex gap-2 w-full justify-between px-30">
             <div className="flex flex-col w-5/12 gap-6">
               <label className="flex flex-col w-full gap-2">
@@ -282,6 +305,7 @@ export default function CrudProductPage() {
                   </div>
                 </div>
               </label>
+
               <label className="flex flex-col gap-2">
                 <p className="font-semibold">Agregar imágenes</p>
                 <input
@@ -292,6 +316,7 @@ export default function CrudProductPage() {
                 />
               </label>
             </div>
+
             <div className="flex flex-col items-center justify-center w-6/12 gap-2">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
@@ -304,14 +329,17 @@ export default function CrudProductPage() {
                   className="cursor-pointer"
                 />
               </label>
+
               {form.is_featured ? (
                 <FeaturedProductCard
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
-                  discountPrice={form.discount_price
-                    ? form.discount_price.toString()
-                    : undefined}
+                  discountPrice={
+                    form.discount_price
+                      ? form.discount_price.toString()
+                      : undefined
+                  }
                   img={preview || undefined}
                   rating={0}
                   edit={false}
@@ -322,14 +350,23 @@ export default function CrudProductPage() {
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={form.price ? form.price.toString() : "0"}
-                  discountPrice={form.discount_price
-                    ? form.discount_price.toString()
-                    : undefined}
-                  img={preview || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
+                  discountPrice={
+                    form.discount_price
+                      ? form.discount_price.toString()
+                      : undefined
+                  }
+                  img={
+                    preview
+                      ? preview
+                      : typeof form.image === "string"
+                      ? form.image
+                      : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  }
                   edit={false}
                   id={0}
                 />
               )}
+
               <div className="flex flex-col items-center gap-5 py-10 w-full">
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
@@ -344,6 +381,7 @@ export default function CrudProductPage() {
               </div>
             </div>
           </div>
+
           {error && <p className="text-red-500 mt-4">{error}</p>}
           {success && <p className="text-green-500 mt-4">{success}</p>}
         </form>
