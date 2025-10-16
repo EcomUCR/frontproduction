@@ -3,8 +3,10 @@ import axios from "axios";
 import { getStoreByUser } from "./storeService";
 import { useAuth } from "../../../hooks/context/AuthContext";
 
+// ⚠️ Usamos el proxy de Vite en dev: en producción se debe usar VITE_API_URL
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
+// src/infrastructure/useProducts.ts
 export type Category = {
   id: number;
   name: string;
@@ -36,20 +38,34 @@ export function useProducts() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Obtener categorías
   const getCategories = async (): Promise<Category[]> => {
     setLoading(true);
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/categories`);
       return res.data;
-    } catch {
+    } catch (e: any) {
       setError("No se pudieron cargar las categorías");
       return [];
     } finally {
       setLoading(false);
     }
   };
-
+  const getFeaturedProducts = async (): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/products/featured`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos destacados");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+  // Subir imagen y obtener URL de cloudinary
   const uploadImage = async (imageFile: File): Promise<string> => {
     const formData = new FormData();
     formData.append("image", imageFile);
@@ -59,7 +75,7 @@ export function useProducts() {
     return res.data.url as string;
   };
 
-  // ✅ Crear producto
+  // Crear producto
   const createProduct = async (product: Product) => {
     setLoading(true);
     setError(null);
@@ -67,19 +83,29 @@ export function useProducts() {
 
     try {
       const store = await getStoreByUser(user?.id ?? 0);
-      if (!store || !store.id) throw new Error("No se encontró la tienda del usuario");
 
+      if (!store || !store.id) {
+        throw new Error("No se encontró la tienda asociada al usuario");
+      }
+
+      const store_id = store.id;
+
+
+      // ⚠️ Validar si se subió imagen antes de continuar
       if (!product.image || !(product.image instanceof File)) {
         setError("Debes subir una imagen antes de crear el producto");
         setLoading(false);
         return;
       }
 
+      // Subir la imagen
       const imageUrl = await uploadImage(product.image);
 
-      const payload = {
-        store_id: store.id,
-        sku: `SKU-${Date.now()}`,
+      // Payload del producto
+      // Payload del producto
+      const payload: any = {
+        store_id: store_id,
+        sku: `SKU-${Date.now()}`, // ⚙️ genera uno temporal
         name: product.name,
         description: product.description || "",
         price: product.price,
@@ -89,26 +115,52 @@ export function useProducts() {
           product.status === "INACTIVE"
             ? "INACTIVE"
             : product.status === "ARCHIVED"
-            ? "ARCHIVED"
-            : "ACTIVE", // ✅ texto válido
+              ? "ARCHIVED"
+              : "ACTIVE",
         is_featured: product.is_featured,
         image_1_url: imageUrl,
-        category_ids: product.categories,
+        category_ids: product.categories, // ✅ enviar categorías seleccionadas
       };
 
+
+      // Enviar producto al backend
       await axios.post(`${BASE_URL}/products`, payload);
       setSuccess("¡Producto creado con éxito!");
     } catch (e: any) {
-      setError(
-        "Error al crear el producto: " +
-          (e.response?.data?.message || e.message)
-      );
+      setError("Error al crear el producto: " + (e.response?.data?.message || e.message));
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Editar producto
+  const getProductsByCategory = async (categoryId: number): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/categories/${categoryId}/products`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos de esta categoría");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getFeaturedProductsByStore = async (store_id: number): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/stores/${store_id}/featured`);
+      return res.data;
+    } catch (e: any) {
+      setError("No se pudieron cargar los productos destacados de la tienda");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Editar producto
   const updateProduct = async (id: number, product: Product) => {
     setLoading(true);
     setError(null);
@@ -117,10 +169,12 @@ export function useProducts() {
     try {
       let imageUrl = typeof product.image === "string" ? product.image : undefined;
 
+      // 🔹 Si el usuario subió una nueva imagen, súbela a Cloudinary
       if (product.image && product.image instanceof File) {
         imageUrl = await uploadImage(product.image);
       }
 
+      // 🔹 Construimos el payload con soporte de estados tipo string
       const payload: any = {
         name: product.name,
         description: product.description,
@@ -129,15 +183,14 @@ export function useProducts() {
         stock: product.stock,
         is_featured: product.is_featured ?? false,
         image_1_url: imageUrl,
-        // ✅ status siempre en texto válido
-        status:
-          product.status === "INACTIVE"
-            ? "INACTIVE"
-            : product.status === "ARCHIVED"
-            ? "ARCHIVED"
-            : "ACTIVE",
       };
 
+      // ✅ Solo agregamos status si existe y es string (ACTIVE, INACTIVE, ARCHIVED)
+      if (typeof product.status === "string") {
+        payload.status = product.status;
+      }
+
+      // ✅ Si las categorías existen, se incluyen también
       if (Array.isArray(product.categories) && product.categories.length > 0) {
         payload.category_ids = product.categories;
       }
@@ -147,7 +200,7 @@ export function useProducts() {
     } catch (e: any) {
       setError(
         "Error al editar el producto: " +
-          (e.response?.data?.message || e.message)
+        (e.response?.data?.message || e.message)
       );
     } finally {
       setLoading(false);
@@ -159,8 +212,8 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/products`);
-      return res.data;
-    } catch {
+      return res.data; // Ajusta esto según el formato de tu backend
+    } catch (e: any) {
       setError("No se pudieron cargar los productos");
       return [];
     } finally {
@@ -174,7 +227,7 @@ export function useProducts() {
     try {
       const res = await axios.get(`${BASE_URL}/products/${id}`);
       return res.data;
-    } catch {
+    } catch (e: any) {
       setError("No se pudo cargar el producto");
       return null;
     } finally {
@@ -182,13 +235,14 @@ export function useProducts() {
     }
   };
 
+
   const getProductsByStore = async (store_id: number): Promise<Product[]> => {
     setLoading(true);
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/stores/${store_id}/products`);
       return res.data;
-    } catch {
+    } catch (e: any) {
       setError("No se pudieron cargar los productos");
       return [];
     } finally {
@@ -196,15 +250,20 @@ export function useProducts() {
     }
   };
 
+
   return {
     getProductById,
     getProductsByStore,
+    getFeaturedProductsByStore,
     getProducts,
+    getFeaturedProducts,
     getCategories,
+    getProductsByCategory,
     createProduct,
     updateProduct,
     loading,
     error,
     success,
   };
+
 }
