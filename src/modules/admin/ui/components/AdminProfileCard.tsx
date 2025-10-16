@@ -3,6 +3,7 @@ import { Switch } from "../../../../components/ui/switch";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 
 export default function AdminProfileCard() {
+    
     return (
         <div className="flex justify-between w-full items-center bg-main-dark/20 rounded-full px-5 py-3 hover:bg-main-dark/30 transition-all duration-200">
             <p>1.1</p>
