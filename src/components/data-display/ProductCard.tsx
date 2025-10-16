@@ -96,16 +96,17 @@ export default function ProductCard(props: ProductCardProps) {
         />
       </Link>
 
-      <div className="flex flex-col justify-center items-center gap-3 h-auto pt-5">
+      <div className="flex flex-col gap-3 h-[45%]">
         <Link
           to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="h-10"
         >
           <p className="font-semibold text-center text-sm">{props.title}</p>
         </Link>
 
         {!props.edit && (
-          <div className="relative w-full flex">
+          <div className="relative w-full flex pt-2">
             <div className="text-center flex flex-col relative w-full gap-3 group-hover:transition-all group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
               <p className="font-poiret text-sm">{props.shop}</p>
               <div className="flex flex-col">
@@ -117,7 +118,7 @@ export default function ProductCard(props: ProductCardProps) {
                     <p className="font-comme">₡ {props.discountPrice}</p>
                   </>
                 ) : (
-                  <p className="font-comme">₡ {props.price}</p>
+                  <p className="font-comme pt-4">₡ {props.price}</p>
                 )}
               </div>
             </div>
