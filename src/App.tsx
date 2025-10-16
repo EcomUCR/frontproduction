@@ -50,12 +50,12 @@ function App() {
               <Route path="/resetPassword" element={<ResetPasswordPage />} />
               <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
               <Route path="/crudProduct" element={<CrudProductPage />} />
-              <Route path="/admin" element={<AdminPage />} />
               <Route path="/search/:categoryId" element={<SearchedProductPage />} />
               <Route path="/search" element={<SearchedProductPage />} />
               <Route path="/search/stores" element={<SearchedStores />} />
               <Route path="/about" element={<AboutUsPage />} />
               <Route path="/help" element={<HelpPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </Router>
         </CartProvider>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import SellerProductsList from "../../seller/ui/components/SellerProductsList";
@@ -8,16 +8,25 @@ import UserProfile from "./UserProfile";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import OrderStatus from "./OrderStatus";
 import { AnimatePresence, motion } from "framer-motion";
+import AdminUsersTable from "../../admin/ui/components/AdminUsersTable";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
   const { user, loading } = useAuth();
 
+  useEffect(() => {
+    if (user?.role === "ADMIN") {
+      setSelected("users");
+    } else {
+      setSelected("profile");
+    }
+  }, [user]);
+
   // Si está cargando, muestra loader
   if (loading) return <div>Cargando...</div>;
 
   // Si no hay usuario autenticado o su rol no es válido
-  if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER")) {
+  if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER" && user.role !== "ADMIN")) {
     return <div>No autorizado</div>;
   }
 
@@ -46,6 +55,7 @@ export default function UserPage() {
               {selected === "transactions" && <TransactionHistory />}
               {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
               {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
+              {selected === "users" && user.role === "ADMIN" && (<AdminUsersTable />)}
             </motion.div>
           </AnimatePresence>
       </section>
