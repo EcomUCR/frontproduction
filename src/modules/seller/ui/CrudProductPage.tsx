@@ -42,7 +42,7 @@ export default function CrudProductPage() {
     price: 0,
     discount_price: 0,
     stock: 0,
-    status: true,
+    status: "ACTIVE", // ✅ texto correcto
     categories: [],
     image: null,
     is_featured: false,
@@ -61,6 +61,7 @@ export default function CrudProductPage() {
     })();
   }, []);
 
+  // 🔹 Cargar producto existente (modo edición)
   useEffect(() => {
     if (!id) return;
     (async () => {
@@ -68,11 +69,15 @@ export default function CrudProductPage() {
       if (product) {
         setForm({
           ...product,
-          image: product.image_1_url || null, // ✅ Asignar correctamente
+          image: product.image_1_url || null,
           price: product.price.toString(),
           discount_price: product.discount_price?.toString() || "0",
+          categories: Array.isArray(product.categories)
+            ? product.categories.map((cat: any) => cat.id)
+            : [],
+          status: product.status || "ACTIVE", // ✅ asegurar texto válido
         });
-        setPreview(product.image_1_url || null); // ✅ Mostrar imagen actual
+        setPreview(product.image_1_url || null);
       }
     })();
   }, [id]);
@@ -109,14 +114,16 @@ export default function CrudProductPage() {
           price: 0,
           discount_price: 0,
           stock: 0,
-          status: true,
+          status: "ACTIVE", // ✅ mantener coherencia
           categories: [],
           image: null,
           is_featured: false,
         });
         setPreview(null);
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,6 +166,8 @@ export default function CrudProductPage() {
                   className="bg-main-dark/20 rounded-2xl p-2 w-auto"
                 />
               </label>
+
+              {/* 🔹 Campos de precios */}
               <div className="flex w-6/12 gap-5">
                 <label className="flex flex-col w-full gap-2">
                   <p className="font-semibold">
@@ -170,9 +179,8 @@ export default function CrudProductPage() {
                     onChange={(e) => {
                       let value = e.target.value;
                       if (/^\d*\.?\d*$/.test(value) || value === "") {
-                        if (/^0+\d/.test(value)) {
+                        if (/^0+\d/.test(value))
                           value = value.replace(/^0+/, "");
-                        }
                         setForm({ ...form, price: value });
                         setErrorPrice(null);
                       } else {
@@ -191,6 +199,7 @@ export default function CrudProductPage() {
                     <p className="text-red-500 text-sm">{errorPrice}</p>
                   )}
                 </label>
+
                 <label className="flex flex-col w-full gap-2">
                   <p className="font-semibold">Precio de oferta</p>
                   <input
@@ -199,9 +208,8 @@ export default function CrudProductPage() {
                     onChange={(e) => {
                       let value = e.target.value;
                       if (/^\d*\.?\d*$/.test(value) || value === "") {
-                        if (/^0+\d/.test(value)) {
+                        if (/^0+\d/.test(value))
                           value = value.replace(/^0+/, "");
-                        }
                         setForm({ ...form, discount_price: value });
                         setErrorDiscount(null);
                       } else {
@@ -226,6 +234,7 @@ export default function CrudProductPage() {
               </div>
             </div>
 
+            {/* 🔹 Categorías y estado */}
             <div className="w-full flex gap-5">
               <div className="flex flex-col w-6/12 gap-2">
                 <p className="font-semibold">
@@ -237,6 +246,7 @@ export default function CrudProductPage() {
                   setSelected={(ids) => setForm({ ...form, categories: ids })}
                 />
               </div>
+
               <div className="flex w-6/12 gap-5">
                 <label className="flex flex-col w-full gap-2">
                   <p className="font-semibold">
@@ -252,25 +262,34 @@ export default function CrudProductPage() {
                     className="bg-main-dark/20 rounded-2xl p-2 w-full"
                   />
                 </label>
+
                 <label className="flex flex-col w-full gap-2">
                   <p className="font-semibold">
                     Estado <span className="text-red-500">*</span>
                   </p>
                   <select
-                    value={form.status ? "1" : "0"}
+                    value={form.status}
                     onChange={(e) =>
-                      setForm({ ...form, status: e.target.value === "1" })
+                      setForm({
+                        ...form,
+                        status: e.target.value as
+                          | "ACTIVE"
+                          | "INACTIVE"
+                          | "ARCHIVED",
+                      })
                     }
                     className="bg-main-dark/20 rounded-2xl p-2 w-full"
                   >
-                    <option value="1">Activo</option>
-                    <option value="0">Inactivo</option>
+                    <option value="ACTIVE">Activo</option>
+                    <option value="INACTIVE">Inactivo</option>
+                    <option value="ARCHIVED">Archivado</option>
                   </select>
                 </label>
               </div>
             </div>
           </div>
 
+          {/* 🔹 Sección inferior */}
           <div className="flex gap-2 w-full justify-between px-30">
             <div className="flex flex-col w-5/12 gap-6">
               <label className="flex flex-col w-full gap-2">
@@ -318,6 +337,7 @@ export default function CrudProductPage() {
               </label>
             </div>
 
+            {/* 🔹 Vista previa y botones */}
             <div className="flex flex-col items-center justify-center w-6/12 gap-2">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
@@ -388,13 +408,12 @@ export default function CrudProductPage() {
                       "¿Estás seguro de archivar este producto? Podrás restaurarlo más tarde."
                     );
                     if (!confirm) return;
-
                     try {
                       await updateProduct(Number(id), {
                         ...form,
                         price: Number(form.price),
                         discount_price: Number(form.discount_price),
-                        status: "ARCHIVED" as any, // ✅ sin error de tipo
+                        status: "ARCHIVED" as any, // ✅ texto válido
                       });
                       alert("Producto archivado correctamente");
                       window.history.back();
