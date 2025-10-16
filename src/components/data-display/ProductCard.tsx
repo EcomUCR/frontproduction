@@ -100,13 +100,13 @@ export default function ProductCard(props: ProductCardProps) {
         <Link
           to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="h-10"
+          className="h-[33%]"
         >
           <p className="font-semibold text-center text-sm">{props.title}</p>
         </Link>
 
         {!props.edit && (
-          <div className="relative w-full flex pt-2">
+          <div className="relative w-full flex pt-2 h-[66%]">
             <div className="text-center flex flex-col relative w-full gap-3 group-hover:transition-all group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
               <p className="font-poiret text-sm">{props.shop}</p>
               <div className="flex flex-col">
