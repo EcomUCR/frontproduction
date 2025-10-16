@@ -68,10 +68,11 @@ export default function CrudProductPage() {
       if (product) {
         setForm({
           ...product,
+          image: product.image_1_url || null, // ✅ Asignar correctamente
           price: product.price.toString(),
           discount_price: product.discount_price?.toString() || "0",
         });
-        setPreview(typeof product.image === "string" ? product.image : null);
+        setPreview(product.image_1_url || null); // ✅ Mostrar imagen actual
       }
     })();
   }, [id]);
@@ -377,6 +378,31 @@ export default function CrudProductPage() {
                   text="Cancelar"
                   style="text-white text-lg p-2 items-center rounded-full bg-main-dark w-2/3 hover:bg-main transition-all duration-400 cursor-pointer"
                   onClick={() => window.history.back()}
+                />
+                <ButtonComponent
+                  text="Archivar producto"
+                  style="text-white text-lg p-2 items-center rounded-full bg-red-600 w-2/3 hover:bg-red-700 transition-all duration-400 cursor-pointer"
+                  onClick={async () => {
+                    if (!id) return;
+                    const confirm = window.confirm(
+                      "¿Estás seguro de archivar este producto? Podrás restaurarlo más tarde."
+                    );
+                    if (!confirm) return;
+
+                    try {
+                      await updateProduct(Number(id), {
+                        ...form,
+                        price: Number(form.price),
+                        discount_price: Number(form.discount_price),
+                        status: "ARCHIVED" as any, // ✅ sin error de tipo
+                      });
+                      alert("Producto archivado correctamente");
+                      window.history.back();
+                    } catch (err) {
+                      console.error(err);
+                      alert("No se pudo archivar el producto");
+                    }
+                  }}
                 />
               </div>
             </div>
