@@ -7,6 +7,7 @@ import TransactionHistory from "./TransactionHistory";
 import UserProfile from "./UserProfile";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import OrderStatus from "./OrderStatus";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
@@ -32,12 +33,21 @@ export default function UserPage() {
             selected={selected}
           />
         </div>
-        <div className="w-[75%]">
-          {selected === "profile" && (<UserProfile type={user.role}/>)}
-          {selected === "transactions" && <TransactionHistory />}
-          {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
-          {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
-        </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selected}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="w-[75%]"
+            >
+              {selected === "profile" && (<UserProfile type={user.role} />)}
+              {selected === "transactions" && <TransactionHistory />}
+              {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
+              {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
+            </motion.div>
+          </AnimatePresence>
       </section>
       <Footer />
     </div>

@@ -10,6 +10,8 @@ import {
   IconBrandInstagram,
   IconBrandX as IconTwitter,
   IconLink,
+  IconBrandWhatsapp,
+  IconExclamationCircle,
 } from "@tabler/icons-react";
 import { uploadImage } from "../../infrastructure/imageService";
 import { updateStore } from "../../../seller/infrastructure/storeService";
@@ -29,6 +31,7 @@ interface Store {
   support_phone?: string | null;
   support_email?: string | null;
   registered_address?: string | null;
+  is_verified?: boolean | string | null;
 }
 
 
@@ -44,7 +47,7 @@ const iconMap = {
   link: <IconLink />,
 };
 
-export default function SellerProfile({setAlert }: SellerProfileProps) {
+export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const { user, refreshUser } = useAuth();
   const [editableStore, setEditableStore] = useState<Store | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
@@ -60,6 +63,30 @@ export default function SellerProfile({setAlert }: SellerProfileProps) {
       setEditableStore({ ...user.store });
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user?.store) {
+      const storeData = {
+        ...user.store,
+        is_verified:
+          user.store.is_verified === true ||
+            user.store.is_verified === "true"
+            ? true
+            : false,
+      };
+      setEditableStore(storeData);
+
+      console.log(
+        "%c[TukiShop Debug]",
+        "color:#ff7e47; font-weight:bold;",
+        "Valor de is_verified:",
+        storeData.is_verified,
+        "| Tipo de dato:",
+        typeof storeData.is_verified
+      );
+    }
+  }, [user]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -143,199 +170,228 @@ export default function SellerProfile({setAlert }: SellerProfileProps) {
 
   if (!editableStore) return null;
 
+
+
   return (
     <div className="flex flex-col justify-center gap-4 mt-10 font-quicksand">
-      {/* Logo / Banner */}
-      <form onSubmit={(e) => e.preventDefault()} className="flex justify-center gap-10 px-10">
-        <figure className="flex flex-col gap-10 w-1/3">
-          <div className="flex items-center gap-2">
-            <p>Logo de tienda</p>
-            <label className="cursor-pointer">
-              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-              <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
-            </label>
+      {editableStore.is_verified === false && (
+        <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-12 ml-10 shadow-lg border border-main/20">
+          <div className="flex items-center justify-center w-14 h-14 bg-contrast-secondary/20 rounded-full">
+            <IconExclamationCircle size={30} className="text-contrast-secondary" />
           </div>
-          <img
-            src={
-              editableStore.image ||
-              "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-            }
-            alt="Logo"
-            className="w-2/3 h-auto rounded-xl object-cover"
-          />
-        </figure>
 
-        <figure className="flex flex-col gap-10 w-2/3">
-          <div className="flex items-center gap-2">
-            <p>Banner de la tienda</p>
-            <label className="cursor-pointer">
-              <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
-              <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
-            </label>
-          </div>
-          <img
-            src={
-              editableStore.banner ||
-              "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-            }
-            alt="Banner"
-            className="rounded-xl object-cover"
-          />
-        </figure>
-      </form>
-
-      {/* Formulario principal */}
-      <div className="w-full px-10">
-        <form className="flex flex-col gap-8 pt-10">
-          <section className="flex flex-col gap-10">
-            <div className="flex gap-10">
-              <label className="flex flex-col w-full">
-                Nombre de la tienda
-                <textarea
-                  name="name"
-                  value={editableStore.name || ""}
-                  onChange={handleChange}
-                  rows={2}
-                  className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
-                />
-              </label>
-              <label className="flex flex-col w-full">
-                Correo electrónico
-                <input
-                  type="text"
-                  placeholder={user?.email || "Correo de la tienda"}
-                  className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
-                  disabled
-                />
-              </label>
-            </div>
-
-            <section className="flex gap-10">
-              <div className="w-full">
-                Número telefónico
-                <label className="bg-main-dark/10 rounded-xl px-3 flex items-center gap-2 w-full">
-                  <IconPhone className="text-contrast-secondary" />
-                  <input
-                    name="support_phone"
-                    type="text"
-                    value={editableStore.support_phone || ""}
-                    onChange={handleChange}
-                    placeholder="Número telefónico"
-                    className="w-full py-2 focus:outline-none"
-                  />
+          <p className="text-xl font-semibold text-main">
+            Tu tienda está en verificación
+            </p>
+          <p className="text-center text-main-dark/70 max-w-md">
+            El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda. Si tienes dudas, contacta con soporte.
+          </p>
+          <a
+            href="https://wa.me/50687355629"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-6 py-2 bg-contrast-secondary text-white rounded-full hover:scale-105 transition-all duration-300 shadow-sm"
+          >
+            <IconBrandWhatsapp size={20} />
+            Contactar soporte
+          </a>
+        </div>
+      )}
+      {editableStore.is_verified === true && (
+        <>
+          {/* Logo / Banner */}
+          <form onSubmit={(e) => e.preventDefault()} className="flex justify-center gap-10 px-10">
+            <figure className="flex flex-col gap-10 w-1/3">
+              <div className="flex items-center gap-2">
+                <p>Logo de tienda</p>
+                <label className="cursor-pointer">
+                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                  <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
                 </label>
               </div>
-              <label className="flex flex-col w-full">
-                Correo de la tienda
-                <input
-                  type="email"
-                  name="support_email"
-                  value={editableStore.support_email || ""}
-                  onChange={handleChange}
-                  className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
-                />
-              </label>
-            </section>
+              <img
+                src={
+                  editableStore.image ||
+                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                }
+                alt="Logo"
+                className="w-2/3 h-auto rounded-xl object-cover"
+              />
+            </figure>
 
-            {/* Redes */}
-            <section>
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 items-center">
-                  <h2>Links/Redes sociales</h2>
-                  {!adding ? (
-                    <button type="button" onClick={() => setAdding(true)}>
-                      <IconSquareRoundedPlus className="text-contrast-secondary" />
-                    </button>
-                  ) : (
-                    <button type="button" onClick={() => setAdding(false)}>
-                      <IconX className="text-contrast-secondary size-4" />
-                    </button>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-x-10 gap-y-5">
-                  {socialLinks.map((link, index) => (
-                    <ButtonComponent
-                      key={index}
-                      text={link.text}
-                      icon={iconMap[link.type]}
-                      style="text-main-dark flex gap-2 bg-main-dark/10 py-3 px-2 rounded-xl font-semibold"
-                      iconStyle="text-contrast-secondary"
-                    />
-                  ))}
-
-                  {adding && (
-                    <div className="flex gap-2 items-center bg-main-dark/10 py-3 px-2 rounded-xl">
-                      <select
-                        value={newType}
-                        onChange={(e) =>
-                          setNewType(e.target.value as SocialLink["type"])
-                        }
-                        className="bg-transparent outline-none"
-                      >
-                        <option value="instagram">Instagram</option>
-                        <option value="x">X</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="link">Link</option>
-                      </select>
-                      <input
-                        type="text"
-                        placeholder="Usuario o link"
-                        value={newText}
-                        onChange={(e) => setNewText(e.target.value)}
-                        className="bg-transparent outline-none flex-1"
-                      />
-                      <button
-                        type="button"
-                        onClick={addSocialLink}
-                        className="text-contrast-secondary font-semibold"
-                      >
-                        Guardar
-                      </button>
-                    </div>
-                  )}
-                </div>
+            <figure className="flex flex-col gap-10 w-2/3">
+              <div className="flex items-center gap-2">
+                <p>Banner de la tienda</p>
+                <label className="cursor-pointer">
+                  <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
+                  <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
+                </label>
               </div>
-            </section>
+              <img
+                src={
+                  editableStore.banner ||
+                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                }
+                alt="Banner"
+                className="rounded-xl object-cover"
+              />
+            </figure>
+          </form>
 
-            <div className="flex gap-10">
-              <label className="flex flex-col w-full">
-                Descripción de la tienda
-                <textarea
-                  name="description"
-                  value={editableStore.description || ""}
-                  onChange={handleChange}
-                  rows={4}
-                  className="bg-main-dark/10 rounded-xl px-3 py-2"
-                />
-              </label>
-              <label className="flex flex-col w-full">
-                Dirección de la tienda
-                <textarea
-                  name="registered_address"
-                  value={editableStore.registered_address || ""}
-                  onChange={handleChange}
-                  rows={4}
-                  className="bg-main-dark/10 rounded-xl px-3 py-2"
-                />
-              </label>
+          {/* Formulario principal */}
+          <div className="w-full px-10">
+            <form className="flex flex-col gap-8 pt-10">
+              <section className="flex flex-col gap-10">
+                <div className="flex gap-10">
+                  <label className="flex flex-col w-full">
+                    Nombre de la tienda
+                    <textarea
+                      name="name"
+                      value={editableStore.name || ""}
+                      onChange={handleChange}
+                      rows={2}
+                      className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
+                    />
+                  </label>
+                  <label className="flex flex-col w-full">
+                    Correo electrónico
+                    <input
+                      type="text"
+                      placeholder={user?.email || "Correo de la tienda"}
+                      className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
+                      disabled
+                    />
+                  </label>
+                </div>
+
+                <section className="flex gap-10">
+                  <div className="w-full">
+                    Número telefónico
+                    <label className="bg-main-dark/10 rounded-xl px-3 flex items-center gap-2 w-full">
+                      <IconPhone className="text-contrast-secondary" />
+                      <input
+                        name="support_phone"
+                        type="text"
+                        value={editableStore.support_phone || ""}
+                        onChange={handleChange}
+                        placeholder="Número telefónico"
+                        className="w-full py-2 focus:outline-none"
+                      />
+                    </label>
+                  </div>
+                  <label className="flex flex-col w-full">
+                    Correo de la tienda
+                    <input
+                      type="email"
+                      name="support_email"
+                      value={editableStore.support_email || ""}
+                      onChange={handleChange}
+                      className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
+                    />
+                  </label>
+                </section>
+
+                {/* Redes */}
+                <section>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2 items-center">
+                      <h2>Links/Redes sociales</h2>
+                      {!adding ? (
+                        <button type="button" onClick={() => setAdding(true)}>
+                          <IconSquareRoundedPlus className="text-contrast-secondary" />
+                        </button>
+                      ) : (
+                        <button type="button" onClick={() => setAdding(false)}>
+                          <IconX className="text-contrast-secondary size-4" />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-x-10 gap-y-5">
+                      {socialLinks.map((link, index) => (
+                        <ButtonComponent
+                          key={index}
+                          text={link.text}
+                          icon={iconMap[link.type]}
+                          style="text-main-dark flex gap-2 bg-main-dark/10 py-3 px-2 rounded-xl font-semibold"
+                          iconStyle="text-contrast-secondary"
+                        />
+                      ))}
+
+                      {adding && (
+                        <div className="flex gap-2 items-center bg-main-dark/10 py-3 px-2 rounded-xl">
+                          <select
+                            value={newType}
+                            onChange={(e) =>
+                              setNewType(e.target.value as SocialLink["type"])
+                            }
+                            className="bg-transparent outline-none"
+                          >
+                            <option value="instagram">Instagram</option>
+                            <option value="x">X</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="link">Link</option>
+                          </select>
+                          <input
+                            type="text"
+                            placeholder="Usuario o link"
+                            value={newText}
+                            onChange={(e) => setNewText(e.target.value)}
+                            className="bg-transparent outline-none flex-1"
+                          />
+                          <button
+                            type="button"
+                            onClick={addSocialLink}
+                            className="text-contrast-secondary font-semibold"
+                          >
+                            Guardar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </section>
+
+                <div className="flex gap-10">
+                  <label className="flex flex-col w-full">
+                    Descripción de la tienda
+                    <textarea
+                      name="description"
+                      value={editableStore.description || ""}
+                      onChange={handleChange}
+                      rows={4}
+                      className="bg-main-dark/10 rounded-xl px-3 py-2"
+                    />
+                  </label>
+                  <label className="flex flex-col w-full">
+                    Dirección de la tienda
+                    <textarea
+                      name="registered_address"
+                      value={editableStore.registered_address || ""}
+                      onChange={handleChange}
+                      rows={4}
+                      className="bg-main-dark/10 rounded-xl px-3 py-2"
+                    />
+                  </label>
+                </div>
+              </section>
+            </form>
+
+            <div className="flex justify-between gap-2">
+              <ButtonComponent
+                text="Cancelar"
+                onClick={handleCancel}
+                style="w-full p-3 rounded-full text-white bg-main mt-10"
+              />
+              <ButtonComponent
+                text={saving ? "Guardando..." : "Guardar cambios"}
+                onClick={handleSave}
+                style="w-full p-3 rounded-full text-white bg-contrast-secondary mt-10"
+              />
             </div>
-          </section>
-        </form>
-
-        <div className="flex justify-between gap-2">
-          <ButtonComponent
-            text="Cancelar"
-            onClick={handleCancel}
-            style="w-full p-3 rounded-full text-white bg-main mt-10"
-          />
-          <ButtonComponent
-            text={saving ? "Guardando..." : "Guardar cambios"}
-            onClick={handleSave}
-            style="w-full p-3 rounded-full text-white bg-contrast-secondary mt-10"
-          />
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

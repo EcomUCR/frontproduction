@@ -23,7 +23,7 @@ type StoreType = {
   registered_address?: string | null;
   support_email?: string | null;
   support_phone?: string | null;
-  is_verified?: boolean | null;
+  is_verified?: boolean | string | null;
   verification_date?: string | null;
   status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
 };
