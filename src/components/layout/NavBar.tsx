@@ -19,7 +19,7 @@ type Category = {
 };
 
 export default function NavBar() {
-  const { user, logout } = useAuth();
+  const { user} = useAuth();
   const { getCategories } = useProducts();
   const navigate = useNavigate();
 
@@ -50,11 +50,6 @@ export default function NavBar() {
     }
   }
 
-  //Función para manejar el logout y navegar al homepage
-  const handleLogout = async () => {
-    await logout();
-    navigate("/loginRegister", { replace: true });
-  };
 
   //Función para realizar búsqueda
   const handleSearch = () => {
@@ -100,19 +95,10 @@ export default function NavBar() {
             <div className="flex space-x-2 ">
               <li className="flex items-center gap-1">
                 {user ? (
-                  <>
                     <Link to="/profile" className="flex items-center gap-1">
                       <IconUser className="h-5 w-5" />
                       <span>{displayName}</span>
                     </Link>
-                    <span>|</span>
-                    <button
-                      onClick={handleLogout}
-                      className="text-white hover:underline ml-2"
-                    >
-                      Salir
-                    </button>
-                  </>
                 ) : (
                   <>
                     <Link className="flex items-center gap-1" to="/loginRegister">
