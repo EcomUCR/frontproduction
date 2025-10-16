@@ -13,9 +13,9 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-    await logout();
-    navigate("/loginRegister", { replace: true });
-  };
+        await logout();
+        navigate("/loginRegister", { replace: true });
+    };
     return (
         <div className="flex flex-col items-start p-4 font-quicksand h-full">
             <h2 className="text-2xl font-semibold mb-4">Mi Cuenta</h2>
