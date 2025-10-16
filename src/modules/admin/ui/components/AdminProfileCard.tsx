@@ -1,26 +1,26 @@
-import { IconSettings } from "@tabler/icons-react";
+import { IconSettings, /*IconUser,*/ IconBuildingStore } from "@tabler/icons-react";
 import { Switch } from "../../../../components/ui/switch";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 
-/*interface ProfileCardProps{
-    uuid:string;
-    username:string;
-    email:string;
-    type:string;
-    lastConnection:string;
-    state:boolean;
-}*/
-{/*Hay que implementar las props con props:ProfileCardProps para que se lleven por default*/}
-export default function AdminProfileCard(){
-    return(
-        <div className="flex w-full py-3 px-10 bg-main-dark/20 rounded-full hover:bg-main-dark/30 items-center">
-            <p className="w-1/12">1.1</p>
-            <p className="w-2/12">@example_1</p>
-            <p className="w-3/12">example@gmail.com</p>
-            <p className="w-2/12">Seller</p>{/*Recordar que hay que poner el icono de si es tienda o user, es con <IconBuildingStore /> o <IconUser /> */}
-            <p className="w-2/12">12/10/2025 12:51:00</p>
-            <div className="w-1/12"><Switch /></div>{/*Hay que crear un state para el switch y así sacar el valor de si está enable o no */}
-            <ButtonComponent style="w-1/12 text-center flex justify-center" icon={<IconSettings />}/>
+export default function AdminProfileCard() {
+    return (
+        <div className="flex justify-between w-full items-center bg-main-dark/20 rounded-full px-5 py-3 hover:bg-main-dark/30 transition-all duration-200">
+            <p>1.1</p>
+            <p>@example_1</p>
+            <p>example@gmail.com</p>
+            <div className="flex items-center gap-2">
+                <IconBuildingStore size={18} />
+                <p>Seller</p>
+            </div>
+            <div className="flex justify-center">
+                <Switch />
+            </div>
+            <div className="flex justify-center">
+                <ButtonComponent
+                    style="flex justify-center text-center"
+                    icon={<IconSettings />}
+                />
+            </div>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { IconSearch } from "@tabler/icons-react";
+/*import { IconSearch } from "@tabler/icons-react";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import NavBar from "../../../components/layout/NavBar";
 import AdminProfileCard from "./components/AdminProfileCard";
@@ -15,7 +15,7 @@ export default function AdminPage() {
                 <div className="w-9/12 bg-amber-800 h-screen">
                 
                 </div>
-                {/*
+                
                     <>
                         <h1 className="text-2xl font-semibold pl-10">Lista de usuarios</h1>
                         <div className="flex justify-between px-20 pt-10">
@@ -50,8 +50,9 @@ export default function AdminPage() {
                     implementado aún 
                         </div>
                     </>
-                */}
+                }
             </section>
         </div>
     );
 } 
+*/

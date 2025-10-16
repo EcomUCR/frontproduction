@@ -4,7 +4,7 @@ import { AuthProvider } from "./hooks/context/AuthContext";
 import { CartProvider } from "./hooks/context/CartContext";
 
 //admin
-import AdminPage from "./modules/admin/ui/AdminPage";
+//import AdminPage from "./modules/admin/ui/AdminPage";
 
 //auth
 import ForgotPasswordPage from "./modules/auth/ui/ForgotPasswordPage";
@@ -56,7 +56,7 @@ function App() {
               <Route path="/about" element={<AboutUsPage />} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/editProduct/:id" element={<CrudProductPage />} />
-              <Route path="/admin" element={<AdminPage />} />
+             {/* <Route path="/admin" element={<AdminPage />} />*/}
             </Routes>
           </Router>
         </CartProvider>

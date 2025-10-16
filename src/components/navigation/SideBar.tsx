@@ -69,10 +69,10 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
             )}
             {type === "ADMIN" && (
                 <div className="space-y-10">
-                    <h1 className="text-center pt-5 text-3xl font-fugaz">TukiShop</h1>
-                    <div className="px-10">
-                        <ul className="space-y-10 flex flex-col h-full w-full">
-                            <div>
+                    <h1 className="text-center pt-5 text-3xl">Administración</h1>
+                    <div className="">
+                        <ul className="space-y-15 flex flex-col h-full w-full">
+                            <div className="space-y-3">
                                 <li
                                     className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
                                     ${selected === "users" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
