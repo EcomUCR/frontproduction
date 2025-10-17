@@ -9,6 +9,7 @@ interface AdminProfileCardProps {
     role: "CUSTOMER" | "SELLER" | "ADMIN";
     status: boolean;
     onStatusChange?: (newStatus: boolean) => void;
+    onEdit?: () => void; // 👈 nuevo
 }
 
 export default function AdminProfileCard({
@@ -18,6 +19,7 @@ export default function AdminProfileCard({
     role,
     status,
     onStatusChange,
+    onEdit,
 }: AdminProfileCardProps) {
     const getRoleIcon = () => {
         switch (role) {
@@ -53,7 +55,9 @@ export default function AdminProfileCard({
                 <ButtonComponent
                     style="flex justify-center text-center"
                     icon={<IconSettings />}
+                    onClick={onEdit}
                 />
+
             </div>
         </div>
     );

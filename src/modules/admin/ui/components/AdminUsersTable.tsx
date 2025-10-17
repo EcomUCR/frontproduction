@@ -3,12 +3,17 @@ import { IconSearch } from "@tabler/icons-react";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import AdminProfileCard from "./AdminProfileCard";
 import useAdmin from "../../../admin/infrastructure/useAdmin";
+import AdminUserEditModal from "../components/UserEditModal";
 
 export default function AdminUsersTable() {
-    const { getUsers, updateUserStatus, loading, error } = useAdmin();
+    const { getUsers, updateUserStatus, updateUserData, loading, error } = useAdmin();
     const [users, setUsers] = useState<any[]>([]);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"ALL" | "CUSTOMER" | "SELLER" | "ADMIN">("ALL");
+
+    // 🧩 Estados para el modal de edición
+    const [selectedUser, setSelectedUser] = useState<any | null>(null);
+    const [showModal, setShowModal] = useState(false);
 
     // 🔹 Cargar usuarios una sola vez al montar
     useEffect(() => {
@@ -22,7 +27,36 @@ export default function AdminUsersTable() {
         return () => {
             isMounted = false;
         };
-    }, []); // 👈 solo una vez👈 solo una vez
+    }, []); // 👈 solo una vez
+
+    // 🧩 Abrir modal para editar
+    const handleEditUser = (user: any) => {
+        setSelectedUser(user);
+        setShowModal(true);
+    };
+
+    // 🧩 Guardar cambios del usuario (PUT)
+    const handleSaveUser = async (updatedData: any) => {
+        // 🧹 Limpiar campos innecesarios o vacíos
+        const cleanedData = { ...updatedData };
+        delete cleanedData.id;
+        delete cleanedData.total_spent;
+        delete cleanedData.total_items;
+        delete cleanedData.last_connection;
+        if (!cleanedData.password) delete cleanedData.password;
+
+        console.log("📤 Enviando datos limpios:", cleanedData);
+
+        const updatedUser = await updateUserData(selectedUser.id, cleanedData);
+        if (updatedUser) {
+            setUsers((prev) =>
+                prev.map((u) => (u.id === selectedUser.id ? { ...u, ...updatedUser } : u))
+            );
+            setShowModal(false);
+        }
+    };
+
+
 
     // 🔍 Filtros y búsqueda
     const filteredUsers = users.filter((user) => {
@@ -117,7 +151,7 @@ export default function AdminUsersTable() {
                                 }
                                 email={user.email}
                                 role={user.role}
-                                status={user.status} // 👈 ESTA línea era la que faltaba
+                                status={user.status}
                                 onStatusChange={async (newStatus) => {
                                     const success = await updateUserStatus(user.id, newStatus);
                                     if (success) {
@@ -128,6 +162,7 @@ export default function AdminUsersTable() {
                                         );
                                     }
                                 }}
+                                onEdit={() => handleEditUser(user)} // 🧩 botón ⚙️ abre modal
                             />
                         ))
                     ) : (
@@ -135,6 +170,15 @@ export default function AdminUsersTable() {
                     )}
                 </div>
             </div>
+
+            {/* 🧩 Modal de edición */}
+            {showModal && selectedUser && (
+                <AdminUserEditModal
+                    user={selectedUser}
+                    onClose={() => setShowModal(false)}
+                    onSave={handleSaveUser}
+                />
+            )}
         </div>
     );
 }
