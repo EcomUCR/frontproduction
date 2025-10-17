@@ -15,7 +15,7 @@ export default function BeSellerPage() {
                 <Link to="/registerSeller">
                     <ButtonComponent
                         text="Registrarse"
-                        style="bg-contrast-secondary text-white rounded-full py-4 px-4 w-[30%] left-25 bottom-15 font-quicksand absolute hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400"
+                        style="bg-contrast-secondary cursor-pointer text-white rounded-full py-4 px-4 w-[30%] left-25 bottom-15 font-quicksand absolute hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400"
                         />
                 </Link>
             </section>

@@ -40,7 +40,7 @@ export default function StoreInfoCard({ store }: StoreProps) {
             <Link to={`/store/${store.id}`}>
               <ButtonComponent
                 text="Visitar Tienda"
-                style="font-quicksand bg-gradient-to-br from-contrast-main to-contrast-secondary text-white font-medium px-6 py-2.5 rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
+                style="font-quicksand cursor-pointer bg-gradient-to-br from-contrast-main to-contrast-secondary text-white font-medium px-6 py-2.5 rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>

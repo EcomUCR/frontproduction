@@ -298,7 +298,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       <h2>Links/Redes sociales</h2>
                       {!adding ? (
                         <button type="button" onClick={() => setAdding(true)}>
-                          <IconSquareRoundedPlus className="text-contrast-secondary" />
+                          <IconSquareRoundedPlus className="text-contrast-secondary cursor-pointer" />
                         </button>
                       ) : (
                         <button type="button" onClick={() => setAdding(false)}>
@@ -381,12 +381,12 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
               <ButtonComponent
                 text="Cancelar"
                 onClick={handleCancel}
-                style="w-full p-3 rounded-full text-white bg-main mt-10"
+                style="w-full p-3 rounded-full text-white bg-main mt-10 cursor-pointer"
               />
               <ButtonComponent
                 text={saving ? "Guardando..." : "Guardar cambios"}
                 onClick={handleSave}
-                style="w-full p-3 rounded-full text-white bg-contrast-secondary mt-10"
+                style="w-full p-3 rounded-full text-white bg-contrast-secondary mt-10 cursor-pointer"
               />
             </div>
           </div>

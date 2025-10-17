@@ -150,7 +150,7 @@ export default function Footer() {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-contrast-secondary p-2 rounded-full hover:bg-contrast-main transition-all duration-300 ${
+              className={`bg-contrast-secondary cursor-pointer p-2 rounded-full hover:bg-contrast-main transition-all duration-300 ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >

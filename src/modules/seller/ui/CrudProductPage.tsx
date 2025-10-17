@@ -142,7 +142,7 @@ export default function CrudProductPage() {
           <ButtonComponent
             icon={<IconArrowBackUp />}
             text="Volver"
-            style="flex text-sm ml-5 px-2 items-center gap-2 rounded-full"
+            style="flex text-sm ml-5 px-2 items-center gap-2 rounded-full cursor-pointer"
             onClick={() => window.history.back()}
           />
           <h1 className="text-3xl font-bold border-b-3 border-main">

@@ -70,7 +70,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
         }`}
     >
       {props.edit && (
-        <div className="absolute top-3 right-3 w-9 h-9 bg-contrast-main/70 rounded-full flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400">
+        <div className="absolute top-3 right-3 w-9 h-9  bg-contrast-main/70 rounded-full flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400">
           <IconEdit />
         </div>
       )}
@@ -112,12 +112,12 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
         {!props.edit && (
           <div className="flex gap-2 w-full text-white">
             <ButtonComponent
-              style="bg-contrast-secondary w-full rounded-full text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 shadow-md"
+              style="bg-contrast-secondary cursor-pointer w-full rounded-full text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 shadow-md"
               text={"Añadir al carrito"}
               onClick={handleAddToCart}
             />
             <ButtonComponent
-              style="bg-contrast-main rounded-full h-auto w-auto p-2 flex items-center justify-center hover:bg-contrast-secondary transition-all duration-400 shadow-md"
+              style="bg-contrast-main cursor-pointer rounded-full h-auto w-auto p-2 flex items-center justify-center hover:bg-contrast-secondary transition-all duration-400 shadow-md"
               icon={<IconHeart />}
             />
           </div>

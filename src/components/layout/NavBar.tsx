@@ -83,7 +83,7 @@ export default function NavBar() {
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
           <ButtonComponent
-            style="bg-gradient-to-br from-contrast-main to-contrast-secondary rounded-full w-15 h-9 flex items-center justify-center"
+            style="bg-gradient-to-br cursor-pointer from-contrast-main to-contrast-secondary rounded-full w-15 h-9 flex items-center justify-center"
             icon={<IconSearch className="text-white h-6 w-auto stroke-3" />}
             onClick={handleSearch}
           />

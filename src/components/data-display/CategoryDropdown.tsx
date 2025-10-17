@@ -57,7 +57,7 @@ export default function CategoryDropdown({
     };
 
     const [open, setOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement | null>(null); // ✅ corregido tipo
+    const dropdownRef = useRef<HTMLDivElement | null>(null); 
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -94,7 +94,7 @@ export default function CategoryDropdown({
                                     navigate(`/search/${category.id}`);
                                     setOpen(false);
                                 }}
-                                className="flex items-center w-full text-left px-4 py-2 hover:font-semibold text-gray-800 hover:translate-x-2 transition-all duration-200"
+                                className="flex items-center cursor-pointer w-full text-left px-4 py-2 hover:font-semibold text-gray-800 hover:translate-x-2 transition-all duration-200"
                             >
                                 <IconComponent className="inline-block h-5 w-5 mr-2 text-contrast-secondary" />
                                 {category.name}
