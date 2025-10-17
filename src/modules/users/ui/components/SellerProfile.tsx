@@ -182,7 +182,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
 
           <p className="text-xl font-semibold text-main">
             Tu tienda está en verificación
-            </p>
+          </p>
           <p className="text-center text-main-dark/70 max-w-md">
             El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda. Si tienes dudas, contacta con soporte.
           </p>
@@ -204,9 +204,9 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             <figure className="flex flex-col gap-10 w-1/3">
               <div className="flex items-center gap-2">
                 <p>Logo de tienda</p>
-                <label className="cursor-pointer">
+                <label className="bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center">
                   <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                  <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
+                  <IconEdit size={22} />
                 </label>
               </div>
               <img
@@ -222,10 +222,16 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             <figure className="flex flex-col gap-10 w-2/3">
               <div className="flex items-center gap-2">
                 <p>Banner de la tienda</p>
-                <label className="cursor-pointer">
-                  <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
-                  <ButtonComponent icon={<IconEdit />} iconStyle="text-contrast-secondary" />
+                <label className="bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBannerChange}
+                    className="hidden"
+                  />
+                  <IconEdit size={22} />
                 </label>
+
               </div>
               <img
                 src={
