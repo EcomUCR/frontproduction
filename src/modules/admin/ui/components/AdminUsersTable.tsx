@@ -4,6 +4,7 @@ import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import AdminProfileCard from "./AdminProfileCard";
 import useAdmin from "../../../admin/infrastructure/useAdmin";
 import AdminUserEditModal from "../components/UserEditModal";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function AdminUsersTable() {
     const { getUsers, updateUserStatus, updateUserData, loading, error } = useAdmin();
@@ -172,13 +173,44 @@ export default function AdminUsersTable() {
             </div>
 
             {/*  Modal de edición */}
-            {showModal && selectedUser && (
-                <AdminUserEditModal
-                    user={selectedUser}
-                    onClose={() => setShowModal(false)}
-                    onSave={handleSaveUser}
-                />
-            )}
+            {/* 🧩 Modal de edición con animaciones */}
+            <AnimatePresence>
+                {showModal && selectedUser && (
+                    <>
+                        {/* Fondo oscuro */}
+                        <motion.div
+                            key="overlay"
+                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            onClick={() => setShowModal(false)} // cerrar al clickear fuera
+                        />
+
+                        {/* Contenedor del modal */}
+                        <motion.div
+                            key="modal"
+                            className="fixed inset-0 z-50 flex items-center justify-center"
+                            initial={{ opacity: 0, scale: 0.85, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 250,
+                                damping: 20,
+                                duration: 0.35,
+                            }}
+                        >
+                            <AdminUserEditModal
+                                user={selectedUser}
+                                onClose={() => setShowModal(false)}
+                                onSave={handleSaveUser}
+                            />
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

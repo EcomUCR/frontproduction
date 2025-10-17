@@ -55,17 +55,35 @@ export default function UserEditModal({ user, onClose, onSave }: UserEditModalPr
 
     // Bloquea scroll del body
     useEffect(() => {
-        document.body.style.overflow = "hidden";
+        // Guardar posición actual del scroll
+        const scrollY = window.scrollY;
+
+        // Fijar el body sin quitar el scroll
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.overflowY = "scroll"; // mantiene la barra visible
+
         return () => {
-            document.body.style.overflow = "auto";
+            // Restaurar posición y estilos al cerrar el modal
+            document.body.style.position = "";
+            document.body.style.top = "";
+            document.body.style.left = "";
+            document.body.style.right = "";
+            document.body.style.overflowY = "";
+
+            // Volver al mismo punto del scroll
+            window.scrollTo(0, scrollY);
         };
     }, []);
 
+
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn font-quicksand"
-        onClick={onClose}>
+        <div className="fixed inset-0 flex justify-center items-center z-50 animate-fadeIn font-quicksand"
+            onClick={onClose}>
             <div className="bg-white w-[920px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-10 relative border border-main/10 animate-slideUp flex flex-col gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
-            onClick={(e) => e.stopPropagation()}>
+                onClick={(e) => e.stopPropagation()}>
                 {/* 🔹 Header */}
                 <div className="flex flex-col justify-between items-center border-b border-gray-200 pb-4">
                     <div className="flex w-full items-center pb-10">
@@ -222,26 +240,40 @@ export default function UserEditModal({ user, onClose, onSave }: UserEditModalPr
                             </div>
                         </div>
                         {/* Columna derecha */}
-                        <div className="bg-gray-50 rounded-2xl p-6 shadow-inner flex flex-col justify-between">
-                            <div className="space-y-3">
-                                <h3 className="text-lg font-semibold text-gray-700 mb-3">
-                                    Actividad del usuario
-                                </h3>
-                                <p className="text-gray-700">
-                                    <strong>Artículos comprados:</strong>{" "}
-                                    {user.total_items ?? 0}
-                                </p>
-                                <p className="text-gray-700">
-                                    <strong>Total gastado:</strong>{" "}
-                                    ₡{user.total_spent?.toLocaleString("es-CR") ?? "0"}
-                                </p>
+                        {user.role === "CUSTOMER" && (
+                            <div className="bg-gray-50 rounded-2xl p-6 shadow-inner flex flex-col justify-between">
+                                <div className="space-y-3">
+                                    <h3 className="text-lg font-semibold text-gray-700 mb-3">
+                                        Actividad del usuario
+                                    </h3>
+                                    <p className="text-gray-700">
+                                        <strong>Artículos comprados:</strong>{" "}
+                                        {user.total_items ?? 0}
+                                    </p>
+                                    <p className="text-gray-700">
+                                        <strong>Total gastado:</strong>{" "}
+                                        ₡{user.total_spent?.toLocaleString("es-CR") ?? "0"}
+                                    </p>
 
+                                    <ButtonComponent
+                                        text="Ver historial de compras"
+                                        style="bg-contrast-secondary text-white rounded-full px-6 py-2 mt-4"
+                                    />
+                                </div>
+                            </div>
+                        )
+                        }
+                        {user.role === "SELLER" && (
+                            <div className="bg-gray-50 rounded-2xl p-6 shadow-inner flex flex-col gap-4">
+                                <h2 className="text-center text-lg">Tienda de <span className="font-semibold">{user.username} </span></h2>
                                 <ButtonComponent
-                                    text="Ver historial de compras"
-                                    style="bg-contrast-secondary text-white rounded-full px-6 py-2 mt-4"
+                                    text="Ver tienda"
+                                    style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition"
                                 />
                             </div>
-                        </div>
+                        )
+
+                        }
                     </div>
                     <div className="flex flex-col justify-center items-center border-t border-gray-200 pt-4">
                         <p className="text-xs text-gray-500 mb-3">
