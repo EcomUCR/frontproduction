@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../../hooks/context/AuthContext"; // 👈 importamos el contexto
 
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
@@ -13,9 +14,10 @@ export interface User {
     image: string;
     status: boolean;
     phone_number: string;
-    role: 'ADMIN' | 'SELLER' | 'CUSTOMER';
+    role: "ADMIN" | "SELLER" | "CUSTOMER";
     store?: Store | null;
-};
+}
+
 export interface Store {
     store_socials: any;
     registered_address: any;
@@ -58,22 +60,23 @@ export type Product = {
 export default function useAdmin() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { token } = useAuth(); // 👈 usamos el token directamente del contexto
 
     const getUsers = async (): Promise<User[]> => {
         setLoading(true);
         setError(null);
-        const token = localStorage.getItem("token");
-        console.log("🔑 Token actual:", token); // 👈 esto
+
+        if (!token) {
+            console.warn("⚠️ No hay token disponible (usuario no logueado)");
+            setLoading(false);
+            return [];
+        }
 
         try {
-            const token = localStorage.getItem("token"); // 👈 asegúrate de que existe
-            if (!token) {
-                throw new Error("No hay token en localStorage");
-            }
-
+            console.log("🔑 Token actual:", token);
             const res = await axios.get(`${BASE_URL}/users`, {
                 headers: {
-                    Authorization: `Bearer ${token}`, // ✅ aquí el token
+                    Authorization: `Bearer ${token}`, // ✅ token del contexto
                 },
             });
 
@@ -86,7 +89,6 @@ export default function useAdmin() {
             setLoading(false);
         }
     };
-
 
     return { getUsers, loading, error };
 }

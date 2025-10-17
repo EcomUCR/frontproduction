@@ -9,12 +9,12 @@ export default function AdminUsersTable() {
     const [users, setUsers] = useState<any[]>([]);
 
     useEffect(() => {
-        const loadUsers = async () => {
+        const load = async () => {
             const data = await getUsers();
             setUsers(data);
         };
-        loadUsers();
-    }, []);
+        load();
+    }, [getUsers]);
 
     if (loading) {
         return <p className="text-center text-gray-500 py-10">Cargando usuarios...</p>;
