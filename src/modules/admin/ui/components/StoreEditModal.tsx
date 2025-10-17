@@ -72,31 +72,37 @@ export default function StoreEditModal({
     setBannerFile(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setUploading(true);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    setUploading(true);
 
-      const updatedData = { ...formData };
+    // Copia el formData actualizado
+    const updatedData: Store = {
+      ...formData,
+      is_verified: !!formData.is_verified, // 👈 fuerza el booleano correcto
+    };
 
-      if (logoFile) {
-        const uploadedLogo = await uploadImage(logoFile);
-        updatedData.image = uploadedLogo;
-      }
-
-      if (bannerFile) {
-        const uploadedBanner = await uploadImage(bannerFile);
-        updatedData.banner = uploadedBanner;
-      }
-
-      await onSave(updatedData);
-      onClose();
-    } catch (error) {
-      console.error("Error al subir imágenes o guardar tienda:", error);
-    } finally {
-      setUploading(false);
+    if (logoFile) {
+      const uploadedLogo = await uploadImage(logoFile);
+      updatedData.image = uploadedLogo;
     }
-  };
+
+    if (bannerFile) {
+      const uploadedBanner = await uploadImage(bannerFile);
+      updatedData.banner = uploadedBanner;
+    }
+
+    console.log("Datos enviados:", updatedData); // 🔎 útil para debug
+    await onSave(updatedData);
+    onClose();
+  } catch (error) {
+    console.error("Error al subir imágenes o guardar tienda:", error);
+  } finally {
+    setUploading(false);
+  }
+};
+
 
   useEffect(() => {
     const scrollY = window.scrollY;
