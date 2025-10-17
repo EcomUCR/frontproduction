@@ -155,7 +155,7 @@ export default function UserEditModal({ user, onClose, onSave, onEditStore }: Us
                                     type="button"
                                     className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
                                 >
-                                    <IconTrash size={16} /> Eliminar
+                                    <IconTrash size={16} /> 
                                 </button>
                             </div>
 
