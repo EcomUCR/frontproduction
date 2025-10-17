@@ -241,7 +241,7 @@ export default function UserEditModal({
                     onClick={handleRemoveImage}
                     className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
                   >
-                    <IconTrash size={16} /> Quitar
+                    <IconTrash size={16} />
                   </button>
                 )}
               </div>
