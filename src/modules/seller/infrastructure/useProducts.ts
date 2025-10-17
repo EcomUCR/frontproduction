@@ -20,7 +20,7 @@ export type Product = {
   price: number;
   discount_price?: number;
   stock: number;
-  status: "ACTIVE" | "INACTIVE" | "ARCHIVED";
+  status: "ACTIVE" | "INACTIVE" | "DRAFT"| "ARCHIVED";
   categories: number[];
   rating?: number;
   image: File | string | null;
@@ -232,7 +232,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/products/${id}`);
-      return res.data.map(normalizeProduct);
+      return normalizeProduct(res.data);
     } catch (e: any) {
       setError("No se pudo cargar el producto");
       return null;

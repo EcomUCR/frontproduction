@@ -275,14 +275,14 @@ export default function CrudProductPage() {
                         status: e.target.value as
                           | "ACTIVE"
                           | "INACTIVE"
-                          | "ARCHIVED",
+                          | "DRAFT",
                       })
                     }
                     className="bg-main-dark/20 rounded-2xl p-2 w-full"
                   >
                     <option value="ACTIVE">Activo</option>
                     <option value="INACTIVE">Inactivo</option>
-                    <option value="ARCHIVED">Archivado</option>
+                    <option value="DRAFT">Archivado</option>
                   </select>
                 </label>
               </div>
