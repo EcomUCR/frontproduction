@@ -21,9 +21,11 @@ interface UserEditModalProps {
     };
     onClose: () => void;
     onSave: (updatedUser: any) => Promise<void>;
+    onEditStore?: (user: any) => void;
 }
 
-export default function UserEditModal({ user, onClose, onSave }: UserEditModalProps) {
+
+export default function UserEditModal({ user, onClose, onSave, onEditStore }: UserEditModalProps) {
     const [formData, setFormData] = useState({
         ...user,
         password: "",
@@ -264,12 +266,16 @@ export default function UserEditModal({ user, onClose, onSave }: UserEditModalPr
                         )
                         }
                         {user.role === "SELLER" && (
-                            <div className="bg-gray-50 rounded-2xl p-6 shadow-inner flex flex-col gap-4">
-                                <h2 className="text-center text-lg">Tienda de <span className="font-semibold">{user.username} </span></h2>
-                                <ButtonComponent
-                                    text="Ver tienda"
-                                    style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition"
-                                />
+                            <div className="bg-gray-50 rounded-2xl items-center justify-center flex p-6 shadow-inner ">
+                                <div className="flex flex-col gap-4">
+                                    <h2 className="text-center text-lg">Tienda de <span className="font-semibold">{user.username} </span></h2>
+                                    <ButtonComponent
+                                        text="Modificar tienda"
+                                        onClick={() => onEditStore?.(user)} // 👈 llama la función pasada desde el padre
+                                        style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition"
+                                    />
+
+                                </div>
                             </div>
                         )
 
