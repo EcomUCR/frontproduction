@@ -115,7 +115,7 @@ export default function StoreEditModal({
                             </div>
                             <div className="flex gap-3 mb-6">
                                 <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                                    <IconCamera size={16} /> Subir
+                                    <IconCamera size={16} /> Editar
                                     <input type="file" className="hidden" />
                                 </label>
                                 <button
@@ -139,7 +139,7 @@ export default function StoreEditModal({
 
                             <div className="flex gap-3 mb-6">
                                 <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                                    <IconCamera size={16} /> Subir
+                                    <IconCamera size={16} /> Editar
                                     <input type="file" className="hidden" />
                                 </label>
                                 <button
