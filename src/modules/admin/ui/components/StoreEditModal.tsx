@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IconArrowLeft, IconCamera, IconTrash } from "@tabler/icons-react";
+import { IconArrowLeft, IconCamera, IconEdit, IconTrash } from "@tabler/icons-react";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import { Switch } from "../../../../components/ui/switch";
 import { uploadImage } from "../../../users/infrastructure/imageService";
@@ -199,7 +199,7 @@ export default function StoreEditModal({
 
               <div className="flex gap-3 mb-6">
                 <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                  <IconCamera size={16} /> Cambiar logo
+                  <IconEdit size={16} />
                   <input
                     type="file"
                     accept="image/*"
@@ -213,7 +213,7 @@ export default function StoreEditModal({
                     onClick={handleRemoveLogo}
                     className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
                   >
-                    <IconTrash size={16} /> Quitar
+                    <IconTrash size={16} />
                   </button>
                 )}
               </div>
@@ -235,7 +235,7 @@ export default function StoreEditModal({
 
               <div className="flex gap-3 mb-6">
                 <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                  <IconCamera size={16} /> Cambiar banner
+                  <IconEdit size={16} />
                   <input
                     type="file"
                     accept="image/*"
@@ -249,7 +249,7 @@ export default function StoreEditModal({
                     onClick={handleRemoveBanner}
                     className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
                   >
-                    <IconTrash size={16} /> Quitar
+                    <IconTrash size={16} />
                   </button>
                 )}
               </div>

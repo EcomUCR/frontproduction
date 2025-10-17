@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IconArrowLeft, IconCamera, IconTrash } from "@tabler/icons-react";
+import { IconArrowLeft, IconCamera, IconEdit, IconTrash } from "@tabler/icons-react";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import { Switch } from "../../../../components/ui/switch";
 import { uploadImage } from "../../../users/infrastructure/imageService";
