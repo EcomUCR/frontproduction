@@ -90,5 +90,25 @@ export default function useAdmin() {
         }
     };
 
-    return { getUsers, loading, error };
+    const updateUserStatus = async (userId: number, newStatus: boolean) => {
+        try {
+            const token = localStorage.getItem("access_token");
+            if (!token) throw new Error("No hay token en localStorage");
+
+            await axios.put(
+                `${BASE_URL}/users/${userId}/status`,
+                { status: newStatus },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log(`✅ Estado del usuario ${userId} actualizado a ${newStatus}`);
+            return true;
+        } catch (e) {
+            console.error("❌ Error al actualizar estado del usuario:", e);
+            return false;
+        }
+    };
+
+
+    return { getUsers, updateUserStatus, loading, error };
 }

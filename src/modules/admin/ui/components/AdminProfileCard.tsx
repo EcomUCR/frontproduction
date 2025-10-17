@@ -19,7 +19,6 @@ export default function AdminProfileCard({
     status,
     onStatusChange,
 }: AdminProfileCardProps) {
-    // 🧩 Determinar el ícono según el rol
     const getRoleIcon = () => {
         switch (role) {
             case "CUSTOMER":
@@ -32,24 +31,25 @@ export default function AdminProfileCard({
     };
 
     return (
-        <div className="flex justify-between w-full items-center bg-main-dark/20 rounded-full px-5 py-3 hover:bg-main-dark/30 transition-all duration-200">
-            <p>{id}</p>
-            <p>@{username}</p>
-            <p>{email}</p>
+        <div className="flex items-center w-full bg-main-dark/20 rounded-full px-5 py-3 hover:bg-main-dark/30 transition-all duration-200">
+            {/* Las columnas deben tener el mismo ancho que las del encabezado */}
+            <p className="w-22">{id}</p>
+            <p className="w-38 truncate pr-2">@{username}</p>
+            <p className="w-55 truncate pr-2">{email}</p>
 
-            <div className="flex items-center gap-2">
+            <div className="w-32 flex items-center gap-2">
                 {getRoleIcon()}
                 <p>{role}</p>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center w-24">
                 <Switch
                     checked={status}
                     onCheckedChange={(checked) => onStatusChange?.(checked)}
                 />
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center w-16">
                 <ButtonComponent
                     style="flex justify-center text-center"
                     icon={<IconSettings />}
