@@ -37,6 +37,10 @@ export function useProducts() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const normalizeProduct = (p: any): Product => ({
+    ...p,
+    store: p.store || (p.store_name ? { id: p.store_id, name: p.store_name } : undefined),
+  });
 
   // Obtener categorías
   const getCategories = async (): Promise<Category[]> => {
@@ -57,7 +61,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/products/featured`);
-      return res.data;
+      return res.data.map(normalizeProduct);
     } catch (e: any) {
       setError("No se pudieron cargar los productos destacados");
       return [];
@@ -65,6 +69,7 @@ export function useProducts() {
       setLoading(false);
     }
   };
+
   // Subir imagen y obtener URL de cloudinary
   const uploadImage = async (imageFile: File): Promise<string> => {
     const formData = new FormData();
@@ -138,7 +143,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/categories/${categoryId}/products`);
-      return res.data;
+      return res.data.map(normalizeProduct);
     } catch (e: any) {
       setError("No se pudieron cargar los productos de esta categoría");
       return [];
@@ -151,7 +156,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/stores/${store_id}/featured`);
-      return res.data;
+      return res.data.map(normalizeProduct);
     } catch (e: any) {
       setError("No se pudieron cargar los productos destacados de la tienda");
       return [];
@@ -212,7 +217,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/products`);
-      return res.data; // Ajusta esto según el formato de tu backend
+      return res.data.map(normalizeProduct);
     } catch (e: any) {
       setError("No se pudieron cargar los productos");
       return [];
@@ -221,12 +226,13 @@ export function useProducts() {
     }
   };
 
+
   const getProductById = async (id: number): Promise<Product | null> => {
     setLoading(true);
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/products/${id}`);
-      return res.data;
+      return res.data.map(normalizeProduct);
     } catch (e: any) {
       setError("No se pudo cargar el producto");
       return null;
@@ -241,7 +247,7 @@ export function useProducts() {
     setError(null);
     try {
       const res = await axios.get(`${BASE_URL}/stores/${store_id}/products`);
-      return res.data;
+      return res.data.map(normalizeProduct);
     } catch (e: any) {
       setError("No se pudieron cargar los productos");
       return [];
