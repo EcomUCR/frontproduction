@@ -32,18 +32,19 @@ export default function RegisterSellerPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!acceptedTerms) return; // ✅ evita enviar si no aceptó los términos
+    if (!acceptedTerms) return;
     setRegisterError(null);
     try {
       await register({
-        username: form.username,
-        email: form.email,
+        username: form.username.toLowerCase(),
+        email: form.email.toLowerCase(),
         password: form.password,
         phone_number: form.phone_number,
         role: "SELLER",
       });
 
-      const loginSuccess = await login(form.email, form.password);
+      const loginSuccess = await login(form.email.toLowerCase(), form.password);
+
       if (loginSuccess) navigate("/");
     } catch (err: any) {
       setRegisterError(
@@ -51,6 +52,7 @@ export default function RegisterSellerPage() {
       );
     }
   };
+
 
   return (
     <div>

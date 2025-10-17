@@ -39,9 +39,10 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
       return;
     }
 
+    
     const payload = {
-      username: form.username,
-      email: form.email,
+      username: form.username.toLowerCase(), 
+      email: form.email.toLowerCase(),      
       password: form.password,
       first_name: form.first_name || undefined,
       last_name: form.last_name || undefined,
@@ -52,9 +53,10 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
       await register(payload);
       onRegisterSuccess?.();
     } catch {
-      // error ya manejado por el hook
+      
     }
   };
+
 
   return (
     <div className="flex flex-col items-center w-full justify-center">

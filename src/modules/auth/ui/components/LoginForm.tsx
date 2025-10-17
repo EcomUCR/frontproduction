@@ -13,15 +13,21 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    console.log("Email:", email, "Password:", password);
-    // Usar SIEMPRE el login de AuthContext
-    const success = await login(email, password);
+
+    
+    const emailLower = email.toLowerCase();
+
+    console.log("Email:", emailLower, "Password:", password);
+
+   
+    const success = await login(emailLower, password);
     if (!success) {
       setError("Usuario o contraseña incorrectos.");
     } else {
       navigate("/");
     }
   };
+
 
   return (
     <div className="flex flex-col items-center w-full justify-center">
