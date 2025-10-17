@@ -11,7 +11,7 @@ export default function AdminUsersTable() {
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"ALL" | "CUSTOMER" | "SELLER" | "ADMIN">("ALL");
 
-    // 🧩 Estados para el modal de edición
+    //  Estados para el modal de edición
     const [selectedUser, setSelectedUser] = useState<any | null>(null);
     const [showModal, setShowModal] = useState(false);
 
@@ -20,22 +20,22 @@ export default function AdminUsersTable() {
         let isMounted = true;
         const load = async () => {
             const data = await getUsers();
-            const sortedUsers = data.sort((a, b) => a.id - b.id); // 🔼 de menor a mayor
+            const sortedUsers = data.sort((a, b) => a.id - b.id); //  de menor a mayor
             if (isMounted) setUsers(sortedUsers);
         };
         load();
         return () => {
             isMounted = false;
         };
-    }, []); // 👈 solo una vez
+    }, []); //  solo una vez
 
-    // 🧩 Abrir modal para editar
+    //  Abrir modal para editar
     const handleEditUser = (user: any) => {
         setSelectedUser(user);
         setShowModal(true);
     };
 
-    // 🧩 Guardar cambios del usuario (PUT)
+    //  Guardar cambios del usuario (PUT)
     const handleSaveUser = async (updatedData: any) => {
         // 🧹 Limpiar campos innecesarios o vacíos
         const cleanedData = { ...updatedData };
@@ -45,7 +45,7 @@ export default function AdminUsersTable() {
         delete cleanedData.last_connection;
         if (!cleanedData.password) delete cleanedData.password;
 
-        console.log("📤 Enviando datos limpios:", cleanedData);
+        console.log("Enviando datos limpios:", cleanedData);
 
         const updatedUser = await updateUserData(selectedUser.id, cleanedData);
         if (updatedUser) {
@@ -58,7 +58,7 @@ export default function AdminUsersTable() {
 
 
 
-    // 🔍 Filtros y búsqueda
+    //  Filtros y búsqueda
     const filteredUsers = users.filter((user) => {
         const matchesSearch =
             user.username?.toLowerCase().includes(search.toLowerCase()) ||
@@ -70,23 +70,23 @@ export default function AdminUsersTable() {
         return matchesSearch && matchesRole;
     });
 
-    // 🌀 Loading
+    //  Loading
     if (loading) {
         return <p className="text-center text-gray-500 py-10">Cargando usuarios...</p>;
     }
 
-    // ❌ Error
+    //  Error
     if (error) {
         return <p className="text-center text-red-500 py-10">{error}</p>;
     }
 
-    // ✅ Render principal
+    //  Render principal
     return (
         <div className="mx-10 border-l-2 border-main-dark/20 pl-4">
             <div className="pl-10">
                 <h1 className="text-2xl font-semibold font-quicksand">Lista de usuarios</h1>
 
-                {/* 🔍 Búsqueda y Filtros */}
+                {/*  Búsqueda y Filtros */}
                 <div className="flex justify-between pt-10">
                     {/* Buscar */}
                     <div className="flex bg-main-dark/10 items-center rounded-full px-1">
@@ -128,7 +128,7 @@ export default function AdminUsersTable() {
                     </div>
                 </div>
 
-                {/* 🧱 Tabla */}
+                {/*  Tabla */}
                 <div className="pt-8 space-y-4">
                     {/* Encabezado */}
                     <div className="flex items-center w-full font-semibold bg-main-dark/40 rounded-full px-5 py-4">
@@ -162,7 +162,7 @@ export default function AdminUsersTable() {
                                         );
                                     }
                                 }}
-                                onEdit={() => handleEditUser(user)} // 🧩 botón ⚙️ abre modal
+                                onEdit={() => handleEditUser(user)} //  botón  abre modal
                             />
                         ))
                     ) : (
@@ -171,7 +171,7 @@ export default function AdminUsersTable() {
                 </div>
             </div>
 
-            {/* 🧩 Modal de edición */}
+            {/*  Modal de edición */}
             {showModal && selectedUser && (
                 <AdminUserEditModal
                     user={selectedUser}
