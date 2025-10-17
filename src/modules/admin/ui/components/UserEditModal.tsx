@@ -62,8 +62,10 @@ export default function UserEditModal({ user, onClose, onSave }: UserEditModalPr
     }, []);
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn font-quicksand">
-            <div className="bg-white w-[920px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-10 relative border border-main/10 animate-slideUp flex flex-col gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn font-quicksand"
+        onClick={onClose}>
+            <div className="bg-white w-[920px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-10 relative border border-main/10 animate-slideUp flex flex-col gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
+            onClick={(e) => e.stopPropagation()}>
                 {/* 🔹 Header */}
                 <div className="flex flex-col justify-between items-center border-b border-gray-200 pb-4">
                     <div className="flex w-full items-center pb-10">
