@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../../../hooks/context/AuthContext"; // 👈 importamos el contexto
+import { useAuth } from "../../../hooks/context/AuthContext"; // 👈 token desde el contexto
 
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
@@ -60,8 +60,9 @@ export type Product = {
 export default function useAdmin() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { token } = useAuth(); // 👈 usamos el token directamente del contexto
+    const { token } = useAuth();
 
+    // 🔹 Obtener todos los usuarios
     const getUsers = async (): Promise<User[]> => {
         setLoading(true);
         setError(null);
@@ -75,9 +76,7 @@ export default function useAdmin() {
         try {
             console.log("🔑 Token actual:", token);
             const res = await axios.get(`${BASE_URL}/users`, {
-                headers: {
-                    Authorization: `Bearer ${token}`, // ✅ token del contexto
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             return res.data;
@@ -90,13 +89,16 @@ export default function useAdmin() {
         }
     };
 
+    // 🔹 Actualizar estado (activo/inactivo)
     const updateUserStatus = async (userId: number, newStatus: boolean) => {
-        try {
-            const token = localStorage.getItem("access_token");
-            if (!token) throw new Error("No hay token en localStorage");
+        if (!token) {
+            console.error("❌ No hay token disponible para actualizar estado");
+            return false;
+        }
 
-            await axios.put(
-                `${BASE_URL}/users/${userId}/status`,
+        try {
+            await axios.patch(
+                `${BASE_URL}/users/${userId}`,
                 { status: newStatus },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -109,6 +111,32 @@ export default function useAdmin() {
         }
     };
 
+    // 🔹 Actualizar datos del usuario (desde el modal)
+    const updateUserData = async (userId: number, updatedData: Partial<User>) => {
+    if (!token) {
+        console.error("❌ No hay token disponible para actualizar datos");
+        return null;
+    }
 
-    return { getUsers, updateUserStatus, loading, error };
+    try {
+        const res = await axios.patch(`${BASE_URL}/users/${userId}`, updatedData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log(`✅ Usuario ${userId} actualizado correctamente`);
+        return res.data.user; // 👈 fix importante
+    } catch (e) {
+        console.error("❌ Error al actualizar datos del usuario:", e);
+        return null;
+    }
+};
+
+
+    return {
+        getUsers,
+        updateUserStatus,
+        updateUserData, // 👈 nuevo método
+        loading,
+        error,
+    };
 }
