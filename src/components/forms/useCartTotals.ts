@@ -18,7 +18,7 @@ export function useCartTotals() {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem("token"); // 👈 usa el token guardado
+      const token = localStorage.getItem("access_token"); // 👈 usa el token guardado
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/cart/totals`,
         {
@@ -27,6 +27,7 @@ export function useCartTotals() {
           },
         }
       );
+
 
       setTotals(res.data);
     } catch (err: any) {
