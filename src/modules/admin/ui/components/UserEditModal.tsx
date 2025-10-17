@@ -30,7 +30,7 @@ interface UserEditModalProps {
   user: User;
   onClose: () => void;
   onSave: (updatedUser: User) => Promise<void>;
-  onEditStore?: (updatedUser: User) => void; // usado para actualizar tienda también
+  onEditStore?: (updatedStore: Store) => Promise<void>; // ahora actualiza la tienda directamente
 }
 
 export default function UserEditModal({
@@ -58,65 +58,58 @@ export default function UserEditModal({
     }));
   };
 
-  // 📸 Seleccionar nueva imagen (para perfil o tienda)
+  // 📸 Seleccionar nueva imagen
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setProfileFile(file);
     const previewURL = URL.createObjectURL(file);
-    setFormData((prev: User) => ({
-      ...prev,
-      image: previewURL,
-      store:
-        prev.role === "SELLER" && prev.store
-          ? { ...prev.store, image: previewURL }
-          : prev.store,
-    }));
+
+    setFormData((prev) =>
+      prev.store
+        ? { ...prev, store: { ...prev.store, image: previewURL } }
+        : { ...prev, image: previewURL }
+    );
   };
 
   // ❌ Eliminar imagen
   const handleRemoveImage = () => {
-    setFormData((prev: User) => ({
-      ...prev,
-      image: null,
-      store:
-        prev.role === "SELLER" && prev.store
-          ? { ...prev.store, image: null }
-          : prev.store,
-    }));
+    setFormData((prev) =>
+      prev.store
+        ? { ...prev, store: { ...prev.store, image: null } }
+        : { ...prev, image: null }
+    );
     setProfileFile(null);
   };
 
-  // 💾 Guardar cambios y sincronizar con la tienda si aplica
+  // 💾 Guardar cambios
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setUploading(true);
-
       const updatedData = { ...formData };
 
-      // 🖼️ Subir imagen si hay nueva
-      if (profileFile) {
+      if (profileFile && updatedData.store) {
+        // 🖼️ Si tiene tienda, sube el logo de la tienda
+        const uploadedImage = await uploadImage(profileFile);
+        updatedData.store.image = uploadedImage;
+        await onEditStore?.(updatedData.store);
+      } else if (profileFile && !updatedData.store) {
+        // 🧍 Si no tiene tienda, sube la imagen del usuario
         const uploadedImage = await uploadImage(profileFile);
         updatedData.image = uploadedImage;
-
-        // Si es vendedor, actualizar logo de la tienda también
-        if (updatedData.role === "SELLER" && updatedData.store) {
-          updatedData.store.image = uploadedImage;
-          onEditStore?.(updatedData);
-        }
       }
 
       await onSave(updatedData);
       onClose();
-    } catch (error) {
-      console.error("❌ Error al guardar usuario:", error);
+    } catch (err) {
+      console.error("❌ Error al guardar usuario:", err);
     } finally {
       setUploading(false);
     }
   };
 
-  // Bloquear scroll del fondo
+  // 🔒 Bloquear scroll del fondo
   useEffect(() => {
     const scrollY = window.scrollY;
     document.body.style.position = "fixed";
@@ -134,11 +127,8 @@ export default function UserEditModal({
     };
   }, []);
 
-  // 🧠 Mostrar el logo de tienda si es SELLER, si no, su propio image
-  const profileImage =
-    formData.role === "SELLER"
-      ? formData.store?.image || formData.image
-      : formData.image;
+  // 🧠 Mostrar el logo si tiene tienda, sino su imagen personal
+  const profileImage = formData.store?.image || formData.image;
 
   const userInitial =
     formData.first_name?.charAt(0)?.toUpperCase() ||
@@ -211,13 +201,22 @@ export default function UserEditModal({
             <div className="bg-gradient-to-br from-main/10 to-contrast-secondary/10 rounded-2xl p-6 shadow-inner flex flex-col items-center">
               {/* Imagen */}
               <div className="relative w-36 h-36 rounded-full overflow-hidden shadow-lg mb-3">
-                {profileImage ? (
+                {formData.store?.image ? (
+                  // 🏪 Si es vendedor con tienda → mostrar logo de tienda
+                  <img
+                    src={formData.store.image}
+                    alt="Store Logo"
+                    className="w-full h-full object-contain"
+                  />
+                ) : profileImage ? (
+                  // 👤 Si es usuario normal → mostrar su foto
                   <img
                     src={profileImage}
                     alt="User"
                     className="w-full h-full object-contain"
                   />
                 ) : (
+                  // 🧩 Si no tiene imagen
                   <div className="w-full h-full flex items-center justify-center bg-main/20 text-main text-4xl font-semibold">
                     {userInitial}
                   </div>
@@ -225,26 +224,28 @@ export default function UserEditModal({
               </div>
 
               {/* Botones debajo de la imagen */}
-              <div className="flex gap-3 mb-6">
-                <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                  <IconCamera size={16} /> Cambiar
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleProfileChange}
-                    className="hidden"
-                  />
-                </label>
-                {profileImage && (
-                  <button
-                    type="button"
-                    onClick={handleRemoveImage}
-                    className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
-                  >
-                    <IconTrash size={16} /> Quitar
-                  </button>
-                )}
-              </div>
+              {(formData.role === "CUSTOMER" || !formData.store) && (
+                <div className="flex gap-3 mb-6">
+                  <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
+                    <IconCamera size={16} /> Cambiar
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleProfileChange}
+                      className="hidden"
+                    />
+                  </label>
+                  {profileImage && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
+                    >
+                      <IconTrash size={16} /> Quitar
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Inputs */}
               <div className="w-full space-y-3">
@@ -330,13 +331,6 @@ export default function UserEditModal({
                   />
                 </div>
               </div>
-
-              <div className="flex flex-col w-full mt-6">
-                <ButtonComponent
-                  text="Eliminar cuenta"
-                  style="bg-main text-white rounded-full py-2"
-                />
-              </div>
             </div>
 
             {/* Columna derecha */}
@@ -372,7 +366,7 @@ export default function UserEditModal({
                   </h2>
                   <ButtonComponent
                     text="Modificar tienda"
-                    onClick={() => onEditStore?.(formData)}
+                    onClick={() => onEditStore?.(formData)} // le pasa todo el usuario, con su tienda incluida
                     style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition"
                   />
                 </div>
