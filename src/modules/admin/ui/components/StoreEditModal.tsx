@@ -50,7 +50,7 @@ export default function StoreEditModal({
             onClick={onClose}
         >
             <div
-                className="bg-white w-[920px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-10 relative border border-main/10 animate-slideUp flex flex-col gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
+                className="bg-white w-[1280px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-10 relative border border-main/10 animate-slideUp flex flex-col gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -254,7 +254,7 @@ export default function StoreEditModal({
                     {/* Footer */}
                     <div className="flex flex-col justify-center items-center border-t border-gray-200 pt-4">
                         <p className="text-xs text-gray-500 mb-3">
-                            Los cambios se aplicarán inmediatamente.
+                            Los cambios se aplicarán inmediatamente y serán notificados al vendedor.
                         </p>
                         <div className="flex gap-4">
                             <ButtonComponent
