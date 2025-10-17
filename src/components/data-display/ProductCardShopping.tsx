@@ -13,28 +13,29 @@ interface Props {
 export default function ProductCardShopping({ item }: Props) {
   const { product } = item;
   const { token, setCart } = useAuth();
-    const { showAlert } = useAlert();
+  const { showAlert } = useAlert();
 
   // 🔹 Actualizar cantidad (+/-)
   const updateQuantity = async (newQuantity: number) => {
     if (newQuantity < 1) return;
+
     try {
       const { data } = await axios.patch(
         `/cart/item/${item.id}`,
         { quantity: newQuantity },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setCart(data.cart);
+      window.dispatchEvent(new Event("cartUpdated")); // 🔁 notifica actualización global
     } catch (error) {
       console.error("Error al actualizar cantidad:", error);
       showAlert({
         title: "Ups!!",
-        message: "Ha ocurrido un error para actualizar la cantidad, intentalo mas tarde",
+        message:
+          "Ha ocurrido un error para actualizar la cantidad, inténtalo más tarde.",
         confirmText: "Ok",
       });
-      console.log("No se pudo actualizar la cantidad ❌");
     }
   };
 
@@ -49,17 +50,21 @@ export default function ProductCardShopping({ item }: Props) {
       const { data } = await axios.delete(`/cart/item/${item.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       setCart(data.cart);
       showAlert({
         title: "Yeii!!",
         message: "Producto eliminado del carrito",
         confirmText: "Ok",
       });
+
+      window.dispatchEvent(new Event("cartUpdated")); // 🔁 notifica actualización global
     } catch (error) {
       console.error("Error al eliminar producto:", error);
       showAlert({
         title: "Ups!!",
-        message: "Ha ocurrido un error al eliminar el producto, intentalo mas tarde",
+        message:
+          "Ha ocurrido un error al eliminar el producto, inténtalo más tarde.",
         confirmText: "Ok",
       });
     }
@@ -73,7 +78,11 @@ export default function ProductCardShopping({ item }: Props) {
       {/* Imagen */}
       <div className="flex-shrink-0 flex items-center justify-center w-32 h-32 rounded-2xl overflow-hidden bg-white shadow-inner">
         <Link to={`/product/${product.id}`}>
-          <img src={product.image_1_url || "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"}
+          <img
+            src={
+              product.image_1_url ||
+              "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"
+            }
             alt={product.name}
             className="object-contain w-full h-full transition-transform duration-500 cursor-pointer"
           />
@@ -85,13 +94,16 @@ export default function ProductCardShopping({ item }: Props) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <Link to={`/product/${product.id}`}>
-              <h3 className="font-bold text-lg text-gray-main cursor-pointer">{product.name}</h3>
+              <h3 className="font-bold text-lg text-gray-main cursor-pointer">
+                {product.name}
+              </h3>
             </Link>
             <span
-              className={`text-xs ${product.stock > 0
+              className={`text-xs ${
+                product.stock > 0
                   ? "text-green-600"
                   : "text-red-500 font-semibold"
-                }`}
+              }`}
             >
               {product.stock > 0 ? "Disponible" : "Agotado"}
             </span>
@@ -130,15 +142,15 @@ export default function ProductCardShopping({ item }: Props) {
           {product.discount_price && product.discount_price > 0 ? (
             <>
               <p className="text-xs line-through text-gray-400">
-                ₡{product.price}
+                ₡{product.price.toLocaleString("es-CR")}
               </p>
               <p className="text-xl font-bold text-main bg-clip-text">
-                ₡{product.discount_price}
+                ₡{product.discount_price.toLocaleString("es-CR")}
               </p>
             </>
           ) : (
             <p className="text-xl font-bold text-main">
-              ₡{product.price}
+              ₡{product.price.toLocaleString("es-CR")}
             </p>
           )}
         </div>
@@ -156,6 +168,6 @@ export default function ProductCardShopping({ item }: Props) {
           </button>
         </div>
       </div>
-      </figure>
+    </figure>
   );
 }
