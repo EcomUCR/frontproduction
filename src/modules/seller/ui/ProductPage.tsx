@@ -14,7 +14,6 @@ import {
   IconBrandWhatsapp,
   IconBrandX,
   IconChevronRight,
-  IconHeart,
   IconLink,
   IconShare,
 } from "@tabler/icons-react";
@@ -33,19 +32,13 @@ import { useAuth } from "../../../hooks/context/AuthContext";
 import axios from "axios";
 import { useAlert } from "../../../hooks/context/AlertContext";
 import { useNavigate } from "react-router-dom";
+import AnimatedHeartButton from "../../../components/data-display/AnimatedHeartButton";
 
 type BorderColors = {
   description: string;
   reviews: string;
   details: string;
 };
-
-const borderColors: BorderColors = {
-  description: "border-main",
-  reviews: "border-contrast-main",
-  details: "border-contrast-secondary",
-};
-
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -226,12 +219,16 @@ export default function ProductPage() {
                     {/* 🔹 Botones de acción */}
                     <div className="border-t-2 border-main pt-10">
                       <div className="flex relative border border-contrast-secondary rounded-full px-3 py-2">
-                        <ButtonComponent
-                          icon={<IconHeart />}
-                          text="Agregar a la lista de deseos"
-                          style="flex text-sm px-2 gap-2 items-center hover:font-semibold"
-                          iconStyle="text-contrast-secondary"
-                        />
+                        <div className="flex items-center gap-2">
+                          <AnimatedHeartButton
+                            productId={product.id!}
+                            label="Agregar a la lista de deseos"
+                            variant="inline"
+                          />
+
+                        </div>
+
+
                         <ButtonComponent
                           icon={<IconShare />}
                           text="Compartir"
@@ -300,40 +297,64 @@ export default function ProductPage() {
                       </div>
                     </div>
 
-                    {/* 🔹 Tabs */}
+                    {/* Tabs */}
                     <div
-                      className={`rounded-full border text-sm flex justify-between my-10 ${borderColors[activeTab]}`}
+                      className={`relative flex justify-between items-center my-10 p-2 rounded-full overflow-hidden text-sm font-quicksand transition-colors duration-500 z-0 ${activeTab === "description"
+                        ? "border-1 border-main"
+                        : activeTab === "reviews"
+                          ? "border-1 border-contrast-secondary"
+                          : "border-1 border-contrast-main"
+                        }`}
                     >
+                      {/* Fondo deslizante */}
+                      <div
+                        className={`absolute top-[4px] left-[4px] h-[calc(100%-8px)] w-1/3 rounded-full shadow-md transition-all duration-500 ease-in-out z-0 ${activeTab === "description"
+                          ? "bg-main"
+                          : activeTab === "reviews"
+                            ? "bg-contrast-secondary"
+                            : "bg-contrast-main"
+                          }`}
+                        style={{
+                          transform:
+                            activeTab === "description"
+                              ? "translateX(0%)"
+                              : activeTab === "reviews"
+                                ? "translateX(100%)"
+                                : "translateX(200%)",
+                        }}
+                      />
+
+                      {/* Botones */}
                       <ButtonComponent
                         text="Descripción"
                         onClick={() => setActiveTab("description")}
-                        style={
-                          activeTab === "description"
-                            ? "bg-main p-4 m-1 rounded-full text-white font-bold"
-                            : "pl-6 text-main-dark/50 hover:text-main hover:font-semibold"
-                        }
+                        style={`relative z-10 flex-1 py-3 rounded-full transition-all ${activeTab === "description"
+                          ? "text-white font-bold"
+                          : "text-main-dark/50 hover:text-main"
+                          }`}
                       />
+
                       <ButtonComponent
                         text="Calificaciones"
                         onClick={() => setActiveTab("reviews")}
-                        style={
-                          activeTab === "reviews"
-                            ? "bg-contrast-main p-4 m-1 rounded-full text-white font-bold"
-                            : "text-main-dark/50 hover:text-main hover:font-semibold"
-                        }
+                        style={`relative z-10 flex-1 py-3 rounded-full transition-all ${activeTab === "reviews"
+                          ? "text-white font-bold"
+                          : "text-main-dark/50 hover:text-main"
+                          }`}
                       />
+
                       <ButtonComponent
                         text="Detalles"
                         onClick={() => setActiveTab("details")}
-                        style={
-                          activeTab === "details"
-                            ? "bg-contrast-secondary p-4 m-1 rounded-full text-white font-bold"
-                            : "pr-6 text-main-dark/50 hover:text-main hover:font-semibold"
-                        }
+                        style={`relative z-10 flex-1 py-3 rounded-full transition-all ${activeTab === "details"
+                          ? "text-white font-bold"
+                          : "text-main-dark/50 hover:text-main"
+                          }`}
                       />
                     </div>
 
-                    {/* 🔹 Contenido Tabs */}
+
+                    {/*Contenido Tabs */}
                     <div>
                       {activeTab === "description" && (
                         <p className="whitespace-pre-line overflow-y-auto p-5 relative h-80">{product.description || "Sin descripción."}</p>
@@ -359,7 +380,7 @@ export default function ProductPage() {
                   </div>
                 </section>
 
-                {/* 🔹 Más productos de la tienda */}
+                {/* Más productos de la tienda */}
                 <section className="my-10 px-10">
                   <h2 className="text-2xl font-semibold font-quicksand">
                     Más de {product.store?.name || "la tienda"}
@@ -392,7 +413,7 @@ export default function ProductPage() {
                   )}
                 </section>
 
-                {/* 🔹 Productos similares */}
+                {/* Productos similares */}
                 <section className="my-10 px-10">
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-semibold font-quicksand">

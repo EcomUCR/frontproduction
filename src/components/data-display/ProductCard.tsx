@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { IconEdit, IconHeart, IconShoppingBag } from "@tabler/icons-react";
+import { IconEdit, IconShoppingBag } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import axios from "axios";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useAlert } from "../../hooks/context/AlertContext";
 import { useNavigate } from "react-router-dom";
+import AnimatedHeartButton from "./AnimatedHeartButton";
 
 interface ProductCardProps {
   id: number;
@@ -76,11 +77,12 @@ export default function ProductCard(props: ProductCardProps) {
 
       {!props.edit && (
         <div className="group-hover:opacity-100 opacity-0 transition-all duration-300 ease-in-out">
-          <ButtonComponent
-            icon={<IconHeart />}
-            iconStyle="text-white"
-            style="absolute top-3 right-3 w-9 h-9 bg-contrast-main rounded-xl flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400"
-          />
+          {/* Botón con animación */}
+          <div className="absolute top-3 right-3">
+            <AnimatedHeartButton productId={props.id} variant="filled" />
+          </div>
+
+
         </div>
       )}
 
@@ -123,10 +125,10 @@ export default function ProductCard(props: ProductCardProps) {
               </div>
             </div>
 
-            {/* 🛒 Botón añadir al carrito */}
+            {/* Botón añadir al carrito */}
             <div
               className="absolute flex flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 bg-contrast-main text-white font-semibold p-2 rounded-xl hover:bg-gradient-to-br from-contrast-main to-contrast-secondary items-center transition-all duration-300 cursor-pointer"
-              onClick={handleAddToCart} // 👈 evento
+              onClick={handleAddToCart} // evento
             >
               <IconShoppingBag />
               <ButtonComponent
