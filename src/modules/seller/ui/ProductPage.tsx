@@ -350,11 +350,11 @@ export default function ProductPage() {
                     </div>
                   </div>
 
-                  {/* 🔹 Formulario de compra */}
+                  {/* Formulario de compra */}
                   <div className="w-3/12">
                     <FormShopping
                       variant="product"
-                      onAddToCart={() => handleAddToCart(product.id)}
+                      onAddToCart={() => handleAddToCart(product.id!)}
                     />
                   </div>
                 </section>

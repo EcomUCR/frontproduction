@@ -26,7 +26,7 @@ export default function FormShopping({
   variant = "checkout",
   onAddToCart,
 }: FormShoppingProps) {
-  const { getForexRate, rate, loading: loadingVisa, error: errorVisa } = useVisa();
+  const { getForexRate, rate, /*loading: loadingVisa*/ error: errorVisa } = useVisa();
   const { processCheckout } = useCheckout();
   const { totals, getTotals, loading, error } = useCartTotals();
 
