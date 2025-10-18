@@ -58,7 +58,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
 
   return (
     <div className="flex flex-col items-center w-full justify-center">
-      <img className="h-20" src={logo} alt="" />
+      <img className="h-20" src={logo} alt="TukiShop" />
       <p className="font-fugaz text-2xl">TukiShop</p>
 
       <div className="flex flex-col w-full items-center space-y-5 mt-10">
@@ -66,6 +66,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
           className="flex flex-col items-center w-full space-y-5"
           onSubmit={handleSubmit}
         >
+          {/* Nombre y apellido */}
           <div className="flex justify-center gap-5 w-[80%]">
             <input
               className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
@@ -87,6 +88,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
             />
           </div>
 
+          {/* Email y username */}
           <div className="flex justify-center items-center flex-col space-y-5 w-[80%]">
             <input
               className="border-2 border-main text-main rounded-full px-4 py-3 w-[94%] font-quicksand"
@@ -107,6 +109,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
             />
           </div>
 
+          {/* Contraseña y confirmación */}
           <div className="flex justify-center gap-5 w-[80%]">
             <input
               className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
@@ -128,38 +131,43 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
             />
           </div>
 
+          {/* Checkbox de Términos */}
           <div className="flex flex-col items-center w-full">
-            <label htmlFor="" className="flex items-center gap-2 mb-3">
+            <label htmlFor="terms" className="flex items-center gap-2 mb-3">
               <input
-                className="mt-0.5 cursor-pointer"
+                id="terms"
+                className="mt-0.5 cursor-pointer accent-main"
                 type="checkbox"
                 name="terms"
                 checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)} // ✅ controla el checkbox
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
               />
               <button
                 type="button"
-                className="cursor-pointer"
-                onClick={() => setShowTerms(true)} // abre modal
+                className="cursor-pointer text-sm"
+                onClick={() => setShowTerms(true)}
               >
                 Acepto los{" "}
-                <span className="font-semibold underline">
+                <span className="font-semibold underline text-main">
                   términos y condiciones
                 </span>
               </button>
             </label>
 
+            {/* Botón deshabilitado si no se aceptan los TYC */}
             <button
-              className="bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand"
+              className={`bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand transition ${
+                !acceptedTerms || loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
               type="submit"
-              disabled={loading}
+              disabled={!acceptedTerms || loading}
             >
               {loading ? "Registrando..." : "Crear cuenta"}
             </button>
           </div>
         </form>
 
-        {/* ✅ Muestra el mensaje si no acepta términos */}
+        {/* Mensajes de error */}
         {localError && <div className="text-red-500">{localError}</div>}
         {error && <div className="text-red-500">{error}</div>}
       </div>
@@ -168,10 +176,10 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
       {showTerms && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl w-[90%] max-w-3xl h-[80vh] overflow-y-auto p-6 relative">
-
             <h2 className="text-2xl font-bold mb-4 text-main">
               Términos y Condiciones de Uso de TukiShop
             </h2>
+
             <p className="text-sm text-gray-700 whitespace-pre-line">
               Última actualización: 02/10/2025
 
@@ -220,7 +228,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               © 2025 TukiShop. Todos los derechos reservados.
             </p>
 
-            {/* Botón cerrar abajo */}
+            {/* Botón cerrar modal */}
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => setShowTerms(false)}
