@@ -22,7 +22,7 @@ type Banner = {
 export default function CrudBanners() {
   const { banners, fetchBanners, loading } = useBanner();
   const [showModal, setShowModal] = useState(false);
-  const [selectedBanner, setSelectedBanner] = useState<Banner | null>(null);
+  const [, setSelectedBanner] = useState<Banner | null>(null);
   const [newBanner, setNewBanner] = useState<Banner>({
     title: "",
     subtitle: "",
