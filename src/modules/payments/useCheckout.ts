@@ -5,60 +5,90 @@ import { useAlert } from "../../hooks/context/AlertContext";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 export function useCheckout() {
-    const { token } = useAuth();
-    const { showAlert } = useAlert();
-    // 🧾 Llamado al endpoint /api/checkout
-    const processCheckout = async (formData: any) => {
-        if (!token) {
-            alert("Debes iniciar sesión antes de pagar 🧾");
-            return;
-        }
+  const { token } = useAuth();
+  const { showAlert } = useAlert();
 
-        try {
-            // 🔹 Adaptar datos a lo que Laravel espera exactamente
-            const payload = {
-                payment_method: "VISA",
-                currency: "CRC",
-                street: "Dirección de ejemplo",
-                city: "Puntarenas",
-                state: "Puntarenas",
-                zip_code: "60101",
-                country: "Costa Rica",
-                card: {
-                    name: formData.name,
-                    number: formData.cardNumber, // ✅ corregido
-                    exp_month: formData.expMonth, // ✅ corregido
-                    exp_year: formData.expYear,   // ✅ corregido
-                    cvv: formData.cvv,
-                },
-            };
+  /**
+   * Procesa el checkout luego de un pago con Stripe.
+   * Recibe el paymentIntent retornado por stripe.confirmCardPayment()
+   */
+  const processCheckout = async (paymentIntent: any) => {
+    if (!token) {
+      showAlert({
+        title: "Inicia sesión",
+        message: "Debes iniciar sesión antes de realizar el pago 🧾",
+        type: "warning",
+      });
+      return;
+    }
 
-            const { data } = await axios.post("/checkout", payload, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+    try {
+      // 🔹 Adaptar los datos a lo que Laravel espera exactamente
+      const payload = {
+        payment_id: paymentIntent.id || "unknown_id",
+        payment_method: paymentIntent.payment_method_types?.[0] || "card",
+        currency: (paymentIntent.currency || "usd").toUpperCase(),
+        amount: paymentIntent.amount ? paymentIntent.amount / 100 : 0,
+        status: paymentIntent.status || "failed",
+        street: "Dirección de ejemplo",
+        city: "Puntarenas",
+        state: "Puntarenas",
+        zip_code: "60101",
+        country: "Costa Rica",
+      };
 
-            console.log("✅ Checkout exitoso:", data);
-            showAlert({
-                title: "Pago exitoso",
-                message: "El pago se realizo correctamente",
-                type: "success",
-            });
-            return data;
-        } catch (err: any) {
-            console.error("❌ Error en checkout:", err.response?.data || err);
-            showAlert({
-                title: "Error en el pago",
-                message: JSON.stringify( "Error en la validación del pago "),
-                type: "error",
-            });
-            console.log("No se pudo procesar el pago ❌" + err.response?.data || err);
-            // throw new Error(
-            //     err.response?.data?.errors || err.response?.data?.message || "Error en la validación del pago ❌"
-            // );
-            throw err;
-        }
-    };
+      console.log("📦 Enviando checkout:", payload);
 
+      const { data } = await axios.post("/checkout", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    return { processCheckout };
+      // ✅ Manejar diferentes resultados del pago
+      if (paymentIntent.status === "succeeded") {
+        showAlert({
+          title: "Pago exitoso 🎉",
+          message: "Tu orden fue procesada correctamente 🛍️",
+          type: "success",
+        });
+      } else if (paymentIntent.status === "requires_payment_method") {
+        showAlert({
+          title: "Error en el pago",
+          message:
+            "Tu método de pago no es válido o fue rechazado. Intenta con otra tarjeta.",
+          type: "error",
+        });
+      } else if (paymentIntent.status === "requires_action") {
+        showAlert({
+          title: "Acción requerida",
+          message:
+            "Tu banco requiere autenticación adicional (3D Secure). Intenta nuevamente.",
+          type: "warning",
+        });
+      } else {
+        showAlert({
+          title: "Pago fallido",
+          message:
+            "No se pudo procesar tu pago. Verifica los datos de tu tarjeta o intenta más tarde.",
+          type: "error",
+        });
+      }
+
+      console.log("✅ Checkout registrado en backend:", data);
+      return data;
+    } catch (err: any) {
+      console.error("❌ Error en checkout:", err.response?.data || err);
+
+      showAlert({
+        title: "Error del servidor",
+        message:
+          err.response?.data?.message ||
+          "Ocurrió un error al registrar el pago en el sistema.",
+        type: "error",
+      });
+
+      throw err;
+    }
+  };
+
+  return { processCheckout };
 }

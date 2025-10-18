@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useCartTotals } from "./useCartTotals";
 import { useVisa } from "../../modules/payments/useVisa";
 import { useCheckout } from "../../modules/payments/useCheckout";
-import CreditCardForm from "../../components/ui/CreditCardFields";
 import visa from "../../img/resources/logo_visa.png";
 import mastercard from "../../img/resources/logo_mastercard.png";
 import paypal from "../../img/resources/logo_paypal.png";
@@ -10,8 +9,16 @@ import american_express from "../../img/resources/american_express_logo.png";
 import { IconMapPin } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import StripePaymentForm from "../../components/ui/StripePaymentForm";
+
+// ⚙️ Crea la instancia de Stripe una sola vez FUERA del componente
+// Sustituye tu clave de prueba aquí directamente
+const stripePromise = loadStripe("pk_test_51SJQBqLl2yLxOyLIFdLhdGoXjNKpBn2WFxWjMhInw72TUbRe7DVmYLa17tBOfswYlYqe0E3J3bqYWFyuJaEFYMLI00aJOZAoJY");
+
 interface FormShoppingProps {
-  variant?: "checkout" | "product"; 
+  variant?: "checkout" | "product";
   onAddToCart?: () => void; // solo se usa cuando variant === "product"
 }
 
@@ -26,11 +33,6 @@ export default function FormShopping({
   useEffect(() => {
     getTotals();
   }, []);
-
-  const handleCardSubmit = async (formData: any) => {
-    await getForexRate("CRC", "USD");
-    await processCheckout(formData);
-  };
 
   const format = (n: number) => (n ?? 0).toLocaleString("es-CR");
 
@@ -84,9 +86,18 @@ export default function FormShopping({
             <p>Enviar a Andrés</p>
           </div>
 
-          {/* Formulario */}
+          {/* Formulario con Stripe */}
           <div className="pt-10">
-            <CreditCardForm onSubmit={handleCardSubmit} loading={loadingVisa} />
+            <Elements stripe={stripePromise}>
+              <StripePaymentForm
+                total={totals?.total || 0}
+                onPaymentSuccess={async (paymentIntent) => {
+                  console.log("✅ Pago exitoso:", paymentIntent);
+                  await getForexRate("CRC", "USD"); // mantiene tu conversión
+                  await processCheckout(paymentIntent); // registra orden en Laravel
+                }}
+              />
+            </Elements>
           </div>
 
           {/* Métodos de pago */}
@@ -96,11 +107,7 @@ export default function FormShopping({
               <img className="h-10" src={visa} alt="Visa" />
               <img className="h-10" src={mastercard} alt="Mastercard" />
               <img className="h-10" src={paypal} alt="PayPal" />
-              <img
-                className="h-10"
-                src={american_express}
-                alt="American Express"
-              />
+              <img className="h-10" src={american_express} alt="American Express" />
             </div>
           </div>
 
