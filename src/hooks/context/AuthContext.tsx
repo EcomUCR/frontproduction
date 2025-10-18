@@ -52,8 +52,13 @@ export type CartItemType = {
     price: number;
     discount_price?: number | null;
     stock: number;
+    store: {
+      id: number;
+      name: string;
+    };
   };
 };
+
 
 type CartType = {
   id: number;
