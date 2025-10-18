@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { IconX, IconBell } from "@tabler/icons-react";
 
+
 export default function NotificationDropdown() {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -37,7 +38,7 @@ export default function NotificationDropdown() {
             {/* Botón campana */}
             <button
                 onClick={() => setOpen(!open)}
-                className="relative p-2 rounded-full hover:bg-white/10 transition"
+                className="relative p-2 rounded-full transition cursor-pointer"
             >
                 <IconBell size={22} className="text-white" />
                 {notifications.length > 0 && (
