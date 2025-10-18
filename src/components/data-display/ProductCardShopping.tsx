@@ -126,7 +126,7 @@ export default function ProductCardShopping({ item }: Props) {
           <p className="text-xs text-gray-500">
             Tienda: <span className="font-medium">{product.store.name}</span>
           </p>
-          <StarRatingComponent value={4} size={12} />
+          <StarRatingComponent value={product.rating} size={12} />
         </div>
 
         {/* Cantidad */}
