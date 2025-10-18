@@ -32,6 +32,7 @@ import axios from "axios";
 import { useAlert } from "../../../hooks/context/AlertContext";
 import { useNavigate } from "react-router-dom";
 import AnimatedHeartButton from "../../../components/data-display/AnimatedHeartButton";
+import { AnimatePresence, motion } from "framer-motion";
 
 type BorderColors = {
   description: string;
@@ -275,7 +276,7 @@ export default function ProductPage() {
                           />
 
                           {/* Menú desplegable */}
-                          <div className="absolute -left-25 top-25">
+                          <div className="absolute right-23 top-25">
                             <ul className="flex gap-3">
                               <li
                                 className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"}`}
@@ -284,31 +285,31 @@ export default function ProductPage() {
                                 <IconLink />
                               </li>
                               <li
-                                className={`relative bottom-0 left-24 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                className={`relative bottom-10 left-27 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"}`}
                                 onClick={() => handleShare("whatsapp")}
                               >
                                 <IconBrandWhatsapp />
                               </li>
                               <li
-                                className={`relative -bottom-1 left-24 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                className={`relative bottom-10 left-27 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"}`}
                                 onClick={() => handleShare("facebook")}
                               >
                                 <IconBrandFacebook />
                               </li>
                               <li
-                                className={`relative bottom-5 left-23 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                className={`relative bottom-10 left-27 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"}`}
                                 onClick={() => handleShare("instagram")}
                               >
                                 <IconBrandInstagram />
                               </li>
                               <li
-                                className={`relative bottom-17 left-15 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                className={`relative bottom-10 left-27 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"}`}
                                 onClick={() => handleShare("tiktok")}
                               >
                                 <IconBrandTiktok />
                               </li>
                               <li
-                                className={`relative bottom-30 -left-1 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                className={`relative bottom-10 left-27 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"}`}
                                 onClick={() => handleShare("x")}
                               >
                                 <IconBrandX />
@@ -352,18 +353,18 @@ export default function ProductPage() {
                     {/* Tabs */}
                     <div
                       className={`relative flex justify-between items-center my-10 p-2 rounded-full overflow-hidden text-sm font-quicksand transition-colors duration-500 z-0 ${activeTab === "description"
-                          ? "border-1 border-main"
-                          : activeTab === "reviews"
-                            ? "border-1 border-contrast-secondary"
-                            : "border-1 border-contrast-main"
+                        ? "border-1 border-main"
+                        : activeTab === "reviews"
+                          ? "border-1 border-contrast-secondary"
+                          : "border-1 border-contrast-main"
                         }`}
                     >
                       <div
                         className={`absolute top-[4px] left-[4px] h-[calc(100%-8px)] w-1/3 rounded-full shadow-md transition-all duration-500 ease-in-out z-0 ${activeTab === "description"
-                            ? "bg-main"
-                            : activeTab === "reviews"
-                              ? "bg-contrast-secondary"
-                              : "bg-contrast-main"
+                          ? "bg-main"
+                          : activeTab === "reviews"
+                            ? "bg-contrast-secondary"
+                            : "bg-contrast-main"
                           }`}
                         style={{
                           transform:
@@ -379,8 +380,8 @@ export default function ProductPage() {
                         text="Descripción"
                         onClick={() => setActiveTab("description")}
                         style={`relative z-10 flex-1 py-3 rounded-full transition-all ${activeTab === "description"
-                            ? "text-white font-bold"
-                            : "text-main-dark/50 hover:text-main"
+                          ? "text-white font-bold"
+                          : "text-main-dark/50 hover:text-main"
                           }`}
                       />
 
@@ -388,8 +389,8 @@ export default function ProductPage() {
                         text="Calificaciones"
                         onClick={() => setActiveTab("reviews")}
                         style={`relative z-10 flex-1 py-3 rounded-full transition-all ${activeTab === "reviews"
-                            ? "text-white font-bold"
-                            : "text-main-dark/50 hover:text-main"
+                          ? "text-white font-bold"
+                          : "text-main-dark/50 hover:text-main"
                           }`}
                       />
 
@@ -397,30 +398,57 @@ export default function ProductPage() {
                         text="Detalles"
                         onClick={() => setActiveTab("details")}
                         style={`relative z-10 flex-1 py-3 rounded-full transition-all ${activeTab === "details"
-                            ? "text-white font-bold"
-                            : "text-main-dark/50 hover:text-main"
+                          ? "text-white font-bold"
+                          : "text-main-dark/50 hover:text-main"
                           }`}
                       />
                     </div>
 
                     {/*Contenido Tabs */}
-                    <div>
-                      {activeTab === "description" && (
-                        <p className="whitespace-pre-line overflow-y-auto p-5 relative h-80">
-                          {product.description || "Sin descripción."}
-                        </p>
-                      )}
-                      {activeTab === "reviews" && (
-                        <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">
-                          Este producto aún no tiene calificaciones.
-                        </p>
-                      )}
-                      {activeTab === "details" && (
-                        <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">
-                          No se han agregado detalles adicionales para este producto.
-                        </p>
-                      )}
+
+                    <div className="relative overflow-hidden h-80">
+                      <AnimatePresence mode="wait">
+                        {activeTab === "description" && (
+                          <motion.p
+                            key="description"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="absolute inset-0 whitespace-pre-line overflow-y-auto p-5"
+                          >
+                            {product.description || "Sin descripción."}
+                          </motion.p>
+                        )}
+
+                        {activeTab === "reviews" && (
+                          <motion.p
+                            key="reviews"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="absolute inset-0 whitespace-pre-line overflow-y-auto p-6"
+                          >
+                            Este producto aún no tiene calificaciones.
+                          </motion.p>
+                        )}
+
+                        {activeTab === "details" && (
+                          <motion.p
+                            key="details"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="absolute inset-0 whitespace-pre-line overflow-y-auto p-6"
+                          >
+                            No se han agregado detalles adicionales para este producto.
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
                     </div>
+
                   </div>
 
                   {/* Formulario de compra */}
