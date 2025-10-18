@@ -42,7 +42,7 @@ export default function FormShopping({
         {variant === "product" ? "Detalles del producto" : "Detalles de la compra"}
       </h2>
 
-      {/* 💰 Totales */}
+      {/* Totales */}
       {loading ? (
         <p className="text-gray-500 mt-5">Cargando totales...</p>
       ) : error ? (
@@ -77,7 +77,7 @@ export default function FormShopping({
         </div>
       )}
 
-      {/* 🔹 Checkout Mode */}
+      {/*  Checkout Mode */}
       {variant === "checkout" && (
         <>
           {/* Dirección */}
@@ -92,7 +92,7 @@ export default function FormShopping({
               <StripePaymentForm
                 total={totals?.total || 0}
                 onPaymentSuccess={async (paymentIntent) => {
-                  console.log("✅ Pago exitoso:", paymentIntent);
+                  console.log(" Pago exitoso:", paymentIntent);
                   await getForexRate("CRC", "USD");
                   await processCheckout(paymentIntent, totals); // ✅ registra orden + limpia carrito
                 }}
@@ -119,7 +119,7 @@ export default function FormShopping({
                 {rate.sourceCurrencyCode} → {rate.destinationCurrencyCode} ={" "}
                 {rate.rate}
               </p>
-              <p>🧪 Mock activo: {rate.mock ? "Sí" : "No"}</p>
+              <p> Mock activo: {rate.mock ? "Sí" : "No"}</p>
             </div>
           )}
 
@@ -130,7 +130,7 @@ export default function FormShopping({
         </>
       )}
 
-      {/* 🔹 Product Mode */}
+      {/*  Product Mode */}
       {variant === "product" && (
         <div className="pt-10">
           <Button

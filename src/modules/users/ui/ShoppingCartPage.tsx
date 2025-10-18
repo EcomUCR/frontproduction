@@ -22,7 +22,7 @@ export default function ShoppingCartPage() {
       );
       setCart(data);
     } catch (error) {
-      console.error("❌ Error al obtener carrito:", error);
+      console.error(" Error al obtener carrito:", error);
     }
   };
 

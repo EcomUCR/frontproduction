@@ -43,7 +43,7 @@ export function useCheckout() {
         country: "Costa Rica",
       };
 
-      console.log("📦 Enviando checkout:", payload);
+      console.log(" Enviando checkout:", payload);
 
       // 🔹 Enviar orden al backend
       const { data } = await axios.post("/checkout", payload, {
@@ -56,16 +56,16 @@ export function useCheckout() {
       if (paymentIntent?.status === "succeeded") {
         try {
           await clearCart(); // Limpia el carrito (backend + local)
-          console.log("🧹 Carrito vaciado correctamente tras pago.");
+          console.log(" Carrito vaciado correctamente tras pago.");
         } catch (cartErr) {
-          console.warn("⚠️ No se pudo limpiar el carrito:", cartErr);
+          console.warn(" No se pudo limpiar el carrito:", cartErr);
         }
       }
 
       // 🟢 Mostrar alerta de éxito
       showAlert({
-        title: "Pago exitoso 🎉",
-        message: "Tu orden fue procesada correctamente 🛍️",
+        title: "Pago exitoso ",
+        message: "Tu orden fue procesada correctamente ",
         type: "success",
       });
 
