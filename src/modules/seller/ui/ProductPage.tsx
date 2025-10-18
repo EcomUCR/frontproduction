@@ -27,12 +27,12 @@ import {
   SkeletonFeatured,
 } from "../../../components/ui/AllSkeletons";
 import ProductCard from "../../../components/data-display/ProductCard";
-
 import { useAuth } from "../../../hooks/context/AuthContext";
 import axios from "axios";
 import { useAlert } from "../../../hooks/context/AlertContext";
 import { useNavigate } from "react-router-dom";
 import AnimatedHeartButton from "../../../components/data-display/AnimatedHeartButton";
+import { AnimatePresence, motion } from "framer-motion";
 
 type BorderColors = {
   description: string;
@@ -54,24 +54,82 @@ export default function ProductPage() {
   const { showAlert } = useAlert();
   const navigate = useNavigate();
 
+  // Función para compartir en redes o copiar enlace
+  const handleShare = async (platform: string) => {
+    const wishlistUrl = window.location.href;
+    const encodedUrl = encodeURIComponent(wishlistUrl);
+
+    try {
+      switch (platform) {
+        case "link":
+          await navigator.clipboard.writeText(wishlistUrl);
+          showAlert({
+            title: "Enlace copiado",
+            message: "El enlace del producto fue copiado al portapapeles.",
+            type: "success",
+          });
+          return;
+
+        case "whatsapp":
+          window.open(`https://wa.me/?text=${encodedUrl}`, "_blank");
+          return;
+
+        case "facebook":
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, "_blank");
+          return;
+
+        case "x":
+          window.open(
+            `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodeURIComponent(
+              "Mira este producto en TukiShop!"
+            )}`,
+            "_blank"
+          );
+          return;
+
+        case "instagram":
+          showAlert({
+            title: "Enlace copiado",
+            message: "El enlace del producto fue copiado al portapapeles.",
+            type: "success",
+          });
+          await navigator.clipboard.writeText(wishlistUrl);
+          return;
+
+        case "tiktok":
+          showAlert({
+            title: "Enlace copiado",
+            message: "El enlace del producto fue copiado al portapapeles.",
+            type: "success",
+          });
+          await navigator.clipboard.writeText(wishlistUrl);
+          return;
+
+        default:
+          return;
+      }
+    } catch (err) {
+      console.error("Error al compartir:", err);
+      showAlert({
+        title: "Error",
+        message: "No se pudo compartir el enlace.",
+        type: "error",
+      });
+    }
+  };
+
   useEffect(() => {
     if (!id) return;
 
     (async () => {
       setLoading(true);
       try {
-        // 1️⃣ Obtener el producto principal
         const prod = await getProductById(Number(id));
         setProduct(prod);
 
-        // 2️⃣ Si tiene store_id válido, traer productos de la misma tienda
         if (prod?.store_id) {
           const storeProducts = await getProductsByStore(prod.store_id);
-          setProdStore(
-            storeProducts
-              .filter((p) => p.id !== prod.id) // excluir el mismo producto
-              .slice(0, 10)
-          );
+          setProdStore(storeProducts.filter((p) => p.id !== prod.id).slice(0, 10));
         } else {
           setProdStore([]);
         }
@@ -83,7 +141,6 @@ export default function ProductPage() {
     })();
   }, [id]);
 
-
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -91,7 +148,6 @@ export default function ProductPage() {
 
     (async () => {
       try {
-        // 1️⃣ Obtener IDs de categorías del producto actual
         const categoryIds = product.categories?.map((c: any) => c.id) || [];
 
         if (categoryIds.length === 0) {
@@ -99,23 +155,19 @@ export default function ProductPage() {
           return;
         }
 
-        // 2️⃣ Obtener productos por categoría (acumulando sin duplicar)
         const allRelated: Product[] = [];
         for (const catId of categoryIds) {
           const products = await getProductsByCategory(catId);
           allRelated.push(...products);
         }
 
-        // 3️⃣ Filtrar duplicados y el producto actual
         const unique = allRelated.filter(
           (p, i, arr) =>
             p.id !== product.id &&
             arr.findIndex((x) => x.id === p.id) === i
         );
 
-        // 4️⃣ Limitar a máximo 5
         setSimilarProducts(unique.slice(0, 10));
-
       } catch (err) {
         console.error("Error al cargar productos similares:", err);
       }
@@ -151,7 +203,6 @@ export default function ProductPage() {
         type: "success",
       });
 
-      // 🔁 Refresca totales globales si los escuchas en otro componente
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       console.error(error);
@@ -162,7 +213,6 @@ export default function ProductPage() {
       });
     }
   };
-
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -179,30 +229,20 @@ export default function ProductPage() {
           />
         </section>
 
-        {/* ==============================
-            🔸 SKELETONS (Mientras carga)
-           ============================== */}
         {loading ? (
           <>
             <SkeletonProductPageMain show={loading} />
             <section className="my-10 px-10">
-              <h2 className="text-2xl font-semibold font-quicksand">
-                Más de la tienda
-              </h2>
+              <h2 className="text-2xl font-semibold font-quicksand">Más de la tienda</h2>
               <SkeletonFeaturedSlider show={loading} />
             </section>
             <section className="my-10 px-10">
-              <h2 className="text-2xl font-semibold font-quicksand">
-                Productos similares
-              </h2>
+              <h2 className="text-2xl font-semibold font-quicksand">Productos similares</h2>
               <SkeletonSimilarProducts show={loading} />
             </section>
           </>
         ) : (
           <>
-            {/* ==============================
-                🔸 CONTENIDO REAL DEL PRODUCTO
-               ============================== */}
             {product && (
               <>
                 <section className="flex px-10 pt-5 font-quicksand">
@@ -215,49 +255,67 @@ export default function ProductPage() {
                       />
                     </div>
 
-
                     {/* 🔹 Botones de acción */}
                     <div className="border-t-2 border-main pt-10">
-                      <div className="flex relative border border-contrast-secondary rounded-full px-3 py-2">
+                      <div className="flex relative items-center justify-between border border-contrast-secondary rounded-full px-3 py-2">
                         <div className="flex items-center gap-2">
                           <AnimatedHeartButton
                             productId={product.id!}
                             label="Agregar a la lista de deseos"
                             variant="inline"
                           />
-
                         </div>
 
+                        <div className="relative">
+                          <ButtonComponent
+                            icon={<IconShare />}
+                            text="Compartir"
+                            style="flex text-sm px-2 items-center gap-2 hover:font-semibold rounded-full"
+                            iconStyle="text-contrast-secondary"
+                            onClick={() => setIsModalOpen((prev) => !prev)}
+                          />
 
-                        <ButtonComponent
-                          icon={<IconShare />}
-                          text="Compartir"
-                          style="flex text-sm px-2 items-center gap-2 hover:font-semibold rounded-full"
-                          iconStyle="text-contrast-secondary"
-                          onClick={() => setIsModalOpen((prev) => !prev)}
-                        />
-                        {/*Menú desplegable de redes */}
-                        <div className="absolute left-15 top-30">
-                          <ul className="flex gap-3">
-                            <li className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"}`}>
-                              <IconLink />
-                            </li>
-                            <li className={`relative bottom-0 left-24 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"}`}>
-                              <IconBrandWhatsapp />
-                            </li>
-                            <li className={`relative -bottom-1 left-24 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"}`}>
-                              <IconBrandFacebook />
-                            </li>
-                            <li className={`relative bottom-5 left-23 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"}`}>
-                              <IconBrandInstagram />
-                            </li>
-                            <li className={`relative bottom-17 left-15 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"}`}>
-                              <IconBrandTiktok />
-                            </li>
-                            <li className={`relative bottom-30 -left-1 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"}`} >
-                              <IconBrandX />
-                            </li>
-                          </ul>
+                          {/* Menú desplegable */}
+                          <div className="absolute right-23 top-25">
+                            <ul className="flex gap-3">
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                onClick={() => handleShare("link")}
+                              >
+                                <IconLink />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                onClick={() => handleShare("whatsapp")}
+                              >
+                                <IconBrandWhatsapp />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                onClick={() => handleShare("facebook")}
+                              >
+                                <IconBrandFacebook />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                onClick={() => handleShare("instagram")}
+                              >
+                                <IconBrandInstagram />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                onClick={() => handleShare("tiktok")}
+                              >
+                                <IconBrandTiktok />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"}`}
+                                onClick={() => handleShare("x")}
+                              >
+                                <IconBrandX />
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -279,20 +337,15 @@ export default function ProductPage() {
                       </div>
 
                       <div className="font-comme">
-                        {product.discount_price &&
-                          product.discount_price > 0 ? (
+                        {product.discount_price && product.discount_price > 0 ? (
                           <>
-                            <p className="text-xs line-through">
-                              ₡{product.price}
-                            </p>
+                            <p className="text-xs line-through">₡{product.price}</p>
                             <p className="text-2xl font-bold text-main">
                               ₡{product.discount_price}
                             </p>
                           </>
                         ) : (
-                          <p className="text-2xl font-bold text-main">
-                            ₡{product.price}
-                          </p>
+                          <p className="text-2xl font-bold text-main">₡{product.price}</p>
                         )}
                       </div>
                     </div>
@@ -306,7 +359,6 @@ export default function ProductPage() {
                           : "border-1 border-contrast-main"
                         }`}
                     >
-                      {/* Fondo deslizante */}
                       <div
                         className={`absolute top-[4px] left-[4px] h-[calc(100%-8px)] w-1/3 rounded-full shadow-md transition-all duration-500 ease-in-out z-0 ${activeTab === "description"
                           ? "bg-main"
@@ -324,7 +376,6 @@ export default function ProductPage() {
                         }}
                       />
 
-                      {/* Botones */}
                       <ButtonComponent
                         text="Descripción"
                         onClick={() => setActiveTab("description")}
@@ -353,22 +404,51 @@ export default function ProductPage() {
                       />
                     </div>
 
-
                     {/*Contenido Tabs */}
-                    <div>
-                      {activeTab === "description" && (
-                        <p className="whitespace-pre-line overflow-y-auto p-5 relative h-80">{product.description || "Sin descripción."}</p>
-                      )}
-                      {activeTab === "reviews" && (
-                        <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">Este producto aún no tiene calificaciones.</p>
-                      )}
-                      {activeTab === "details" && (
-                        <p className="whitespace-pre-line overflow-y-auto p-6 relative h-80">
-                          No se han agregado detalles adicionales para este
-                          producto.
-                        </p>
-                      )}
+
+                    <div className="relative overflow-hidden h-80">
+                      <AnimatePresence mode="wait">
+                        {activeTab === "description" && (
+                          <motion.p
+                            key="description"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="absolute inset-0 whitespace-pre-line overflow-y-auto p-5"
+                          >
+                            {product.description || "Sin descripción."}
+                          </motion.p>
+                        )}
+
+                        {activeTab === "reviews" && (
+                          <motion.p
+                            key="reviews"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="absolute inset-0 whitespace-pre-line overflow-y-auto p-6"
+                          >
+                            Este producto aún no tiene calificaciones.
+                          </motion.p>
+                        )}
+
+                        {activeTab === "details" && (
+                          <motion.p
+                            key="details"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="absolute inset-0 whitespace-pre-line overflow-y-auto p-6"
+                          >
+                            No se han agregado detalles adicionales para este producto.
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
                     </div>
+
                   </div>
 
                   {/* Formulario de compra */}
