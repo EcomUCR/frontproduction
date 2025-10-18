@@ -98,7 +98,7 @@ export default function Footer() {
           </a>
         </div>
         <div className="flex flex-col gap-3 text-xs w-[33%] items-center pt-8">
-          <p className="font-semibold text-xl">Contactanos</p>
+          <p className="font-semibold text-xl">Contáctanos</p>
           <form className="flex flex-col gap-4 w-[80%]" onSubmit={handleSubmit}>
             <label className="flex flex-col gap-1">
               <p className="pl-3 font-semibold">Nombre</p>
@@ -116,8 +116,8 @@ export default function Footer() {
               <p className="pl-3 font-semibold">Asunto</p>
               <input
                 type="text"
-                name="name"
-                value={fields.name}
+                name="subject"
+                value={fields.subject}
                 onChange={handleChange}
                 placeholder="Escribe el asunto de tu mensaje"
                 className="rounded-full p-2 text-white border border-white w-full"
@@ -150,9 +150,8 @@ export default function Footer() {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-contrast-secondary cursor-pointer p-2 rounded-full hover:bg-contrast-main transition-all duration-300 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-contrast-secondary cursor-pointer p-2 rounded-full hover:bg-contrast-main transition-all duration-300 ${loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {loading ? "Enviando..." : "Enviar"}
             </button>
