@@ -521,7 +521,7 @@ export default function CrudProductPage() {
                 />
               )}
 
-              {/* Botones */}
+            
               <div className="flex flex-col items-center gap-5 py-10 w-full">
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
@@ -548,7 +548,7 @@ export default function CrudProductPage() {
 
                     const mainImageFile = form.images[0];
 
-                    // CONSTRUCCIÓN DEL PAYLOAD PARA ARCHIVAR
+                    
                     const payload: ProductPayload = {
                       image: mainImageFile || null,
                       price: Number(form.price),
