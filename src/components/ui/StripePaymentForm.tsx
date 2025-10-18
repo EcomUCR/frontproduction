@@ -30,7 +30,7 @@ export default function StripePaymentForm({
         `${import.meta.env.VITE_API_URL}/create-payment-intent`,
         {
           amount: Math.round(total * 100), // Stripe usa la unidad más pequeña (centavos)
-          currency: "usd",
+          currency: "crc",
         }
       );
 
