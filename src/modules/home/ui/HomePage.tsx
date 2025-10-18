@@ -7,8 +7,6 @@ import {
 } from "../../../components/ui/AllSkeletons";
 
 import audifonos from "../../../img/resources/audifonos.jpg";
-import smallBanner1 from "../../../img/resources/SmallBanner1.png";
-import smallBanner2 from "../../../img/resources/SmallBanner2.png";
 import FeaturedProductsSlider from "../../../components/data-display/FeaturedProductsSlider";
 import { useEffect, useState } from "react";
 import { useProducts } from "../../seller/infrastructure/useProducts";
@@ -17,9 +15,13 @@ import CategorySlider from "../../../components/data-display/CategorySlider";
 import ProductCard from "../../../components/data-display/ProductCard";
 import { IconChevronRight } from "@tabler/icons-react";
 import Footer from "../../../components/layout/Footer";
+import BannerComponent from "../../../components/data-display/BannerComponent";
+import { useBanner } from "../../admin/infrastructure/useBanner"; // 👈 nuevo import
 
 export default function HomePage() {
   const { getProducts, getFeaturedProducts } = useProducts();
+  const { banners, fetchBanners, loading: loadingBanners } = useBanner(); // 👈 hook banners
+
   const [offerProducts, setOfferProducts] = useState<Product[]>([]);
   const [exploreProducts, setExploreProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -28,6 +30,7 @@ export default function HomePage() {
   const [loadingExplore, setLoadingExplore] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
+  /** 🔹 Cargar productos normales */
   useEffect(() => {
     (async () => {
       const prods = await getProducts();
@@ -39,6 +42,7 @@ export default function HomePage() {
     })();
   }, []);
 
+  /** 🔹 Cargar productos destacados */
   useEffect(() => {
     (async () => {
       const prods = await getFeaturedProducts();
@@ -46,10 +50,17 @@ export default function HomePage() {
       setLoadingFeatured(false);
     })();
   }, []);
+
+  /** 🔹 Cargar banners desde la BD */
+  useEffect(() => {
+    fetchBanners();
+  }, []);
+
   return (
     <div>
       <NavBar />
       <div className="mx-auto max-w-[80rem]">
+        {/* 🔹 HEADER PRINCIPAL */}
         <header>
           <HeaderSlider />
         </header>
@@ -83,9 +94,7 @@ export default function HomePage() {
         {/* 🔹 CATEGORÍAS */}
         <section className="mx-10 my-10">
           <h2 className="text-2xl font-semibold font-quicksand">Categorías</h2>
-
           {loadingCategories && <SkeletonCategory count={4} />}
-
           <div
             className={`${
               loadingCategories ? "opacity-0" : "opacity-100"
@@ -131,11 +140,82 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* 🔹 BANNERS */}
-        <section className="flex justify-center gap-10 items-end mx-10 my-10">
-          <img className="w-full h-full" src={smallBanner1} alt="Banner 1" />
-          <img className="w-full h-full" src={smallBanner2} alt="Banner 2" />
-        </section>
+        {/* 🔹 BANNERS desde la BD */}
+        {/* 🔹 BANNERS desde la BD */}
+<section className="mx-10 my-10">
+  {loadingBanners ? (
+    <p className="text-gray-500 text-center">Cargando banners...</p>
+  ) : banners.length > 0 ? (
+    (() => {
+      const activeBanners = banners.filter(
+        (b) => b.type === "SHORT" && b.is_active
+      );
+
+      if (activeBanners.length === 1) {
+        // 🟡 Solo 1 → centrado
+        const b = activeBanners[0];
+        return (
+          <div className="flex justify-center items-center">
+            <div className="scale-[0.9] hover:scale-[0.93] transition-transform duration-300">
+              <BannerComponent
+                {...b}
+                image={
+                  typeof b.image === "string"
+                    ? b.image
+                    : URL.createObjectURL(b.image)
+                }
+                character={
+                  b.character
+                    ? typeof b.character === "string"
+                      ? b.character
+                      : URL.createObjectURL(b.character)
+                    : undefined
+                }
+              />
+            </div>
+          </div>
+        );
+      }
+
+      // 🟢 2 o más → grid centrado sin padding lateral
+      return (
+        <div
+          className={`grid ${
+            activeBanners.length === 2
+              ? "grid-cols-2 gap-10 justify-center"
+              : "grid-cols-2 gap-8 justify-center"
+          } items-end`}
+        >
+          {activeBanners.map((b) => (
+            <div
+              key={b.id}
+              className="hover:scale-[1.02] transition-transform duration-300 flex justify-center"
+            >
+              <BannerComponent
+                {...b}
+                image={
+                  typeof b.image === "string"
+                    ? b.image
+                    : URL.createObjectURL(b.image)
+                }
+                character={
+                  b.character
+                    ? typeof b.character === "string"
+                      ? b.character
+                      : URL.createObjectURL(b.character)
+                    : undefined
+                }
+              />
+            </div>
+          ))}
+        </div>
+      );
+    })()
+  ) : (
+    <p className="text-gray-500 text-center">No hay banners activos</p>
+  )}
+</section>
+
 
         {/* 🔹 EXPLORAR */}
         <section className="mx-10 my-10">
