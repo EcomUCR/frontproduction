@@ -93,8 +93,8 @@ export default function FormShopping({
                 total={totals?.total || 0}
                 onPaymentSuccess={async (paymentIntent) => {
                   console.log("✅ Pago exitoso:", paymentIntent);
-                  await getForexRate("CRC", "USD"); // mantiene tu conversión
-                  await processCheckout(paymentIntent); // registra orden en Laravel
+                  await getForexRate("CRC", "USD");
+                  await processCheckout(paymentIntent, totals); // ✅ ahora sí envía user y totales
                 }}
               />
             </Elements>
