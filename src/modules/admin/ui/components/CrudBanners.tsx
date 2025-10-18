@@ -27,6 +27,8 @@ type Banner = {
 
 export default function CrudBanners() {
     const [showModal, setShowModal] = useState(false);
+    const [selectedBanner, setSelectedBanner] = useState<Banner | null>(null);
+
     const [newBanner, setNewBanner] = useState<Banner>({
         id: Date.now(),
         title: "",
@@ -68,21 +70,62 @@ export default function CrudBanners() {
             alert("La imagen principal es obligatoria.");
             return;
         }
-        console.log("✅ Nuevo banner creado:", newBanner);
+
+        if (selectedBanner) {
+            console.log("✏️ Banner editado:", newBanner);
+        } else {
+            console.log("✅ Nuevo banner creado:", newBanner);
+        }
+
         setShowModal(false);
+        setSelectedBanner(null);
     };
 
-    // Banners existentes
+    // Banners existentes (mock)
     const largeBanners: Banner[] = [
         { id: 1, image: banner, type: "large", orientation: "1" },
-        { id: 2, image: banner6, type: "large", orientation: "2", character: caja, title: "Crea una cuenta de vendedor en TukiShop", link: "#" },
+        {
+            id: 2,
+            image: banner6,
+            type: "large",
+            orientation: "2",
+            character: caja,
+            title: "Crea una cuenta de vendedor en TukiShop",
+            link: "#",
+        },
         { id: 3, image: banner4, type: "large", orientation: "1" },
     ];
 
     const shortBanners: Banner[] = [
-        { id: 4, image: banner1, type: "short", orientation: "1", subtitle: "Alimentos, juguetes, premios y más para su bienestar.", btn_text: "Ver productos", character: perro, title: "Encuentra todo para tu perro." },
-        { id: 5, image: banner2, type: "short", orientation: "2", subtitle: "Explora la gran cantidad de productos de tiendas nacionales.", btn_text: "Explorar", character: trabajador, title: "Todo, a un click de distancia", btn_color: "NARANJA" },
+        {
+            id: 4,
+            image: banner1,
+            type: "short",
+            orientation: "1",
+            subtitle: "Alimentos, juguetes, premios y más para su bienestar.",
+            btn_text: "Ver productos",
+            character: perro,
+            title: "Encuentra todo para tu perro.",
+        },
+        {
+            id: 5,
+            image: banner2,
+            type: "short",
+            orientation: "2",
+            subtitle: "Explora la gran cantidad de productos de tiendas nacionales.",
+            btn_text: "Explorar",
+            character: trabajador,
+            title: "Todo, a un click de distancia",
+            btn_color: "NARANJA",
+        },
     ];
+
+    // 👇 Función para abrir modal al tocar un banner
+    const handleEditBanner = (banner: Banner) => {
+        setSelectedBanner(banner);
+        setNewBanner(banner);
+        setShowModal(true);
+    };
 
     return (
         <section className="border-l-2 border-main-dark/20 pl-4 font-quicksand">
@@ -93,16 +136,35 @@ export default function CrudBanners() {
                     <ButtonComponent
                         text="Agregar banner"
                         style="bg-main-dark text-white rounded-full py-2 px-4 font-quicksand hover:bg-main transition-all duration-400"
-                        onClick={() => setShowModal(true)}
+                        onClick={() => {
+                            setSelectedBanner(null);
+                            setNewBanner({
+                                id: Date.now(),
+                                title: "",
+                                subtitle: "",
+                                image: "",
+                                character: "",
+                                type: "short",
+                                orientation: "1",
+                                btn_text: "",
+                                btn_color: "NARANJA",
+                                link: "",
+                                is_active: true,
+                            });
+                            setShowModal(true);
+                        }}
                     />
                 </div>
 
-                {/*Modal del crud*/}
+                {/* Modal del CRUD */}
                 {showModal && (
                     <BannerModal
                         newBanner={newBanner}
                         setNewBanner={setNewBanner}
-                        onClose={() => setShowModal(false)}
+                        onClose={() => {
+                            setShowModal(false);
+                            setSelectedBanner(null);
+                        }}
                         onSave={handleSave}
                         handleInputChange={handleInputChange}
                         handleCheckboxChange={handleCheckboxChange}
@@ -116,7 +178,11 @@ export default function CrudBanners() {
                         <h2 className="text-xl font-quicksand mb-4">Large Banners</h2>
                         <div className="grid grid-cols-2 auto-rows-[10rem] place-items-center gap-6">
                             {largeBanners.map((b) => (
-                                <div key={b.id} className="w-full h-full">
+                                <div
+                                    key={b.id}
+                                    className="w-full h-full cursor-pointer hover:scale-[1.02] transition-all duration-200"
+                                    onClick={() => handleEditBanner(b)} // 👈 Tocar el banner abre el modal
+                                >
                                     <BannerComponent {...b} />
                                 </div>
                             ))}
@@ -127,7 +193,11 @@ export default function CrudBanners() {
                         <h2 className="text-xl font-quicksand mb-4">Short Banners</h2>
                         <div className="grid grid-cols-2 auto-rows-[12rem] place-items-center gap-6">
                             {shortBanners.map((b) => (
-                                <div key={b.id} className="scale-[0.7] origin-center w-fit">
+                                <div
+                                    key={b.id}
+                                    className="scale-[0.7] origin-center w-fit cursor-pointer hover:scale-[0.73] transition-all duration-200"
+                                    onClick={() => handleEditBanner(b)} // 👈 también abre el modal
+                                >
                                     <BannerComponent {...b} />
                                 </div>
                             ))}
