@@ -15,9 +15,9 @@ type Banner = {
     id: number;
     title?: string;
     image: string;
-    type: "large" | "short";
+    type: "LARGE" | "SHORT" | "SLIDER";
     is_active?: boolean;
-    orientation?: "1" | "2";
+    orientation?: "LEFT" | "RIGTH";
     subtitle?: string;
     character?: string;
     link?: string;
@@ -35,8 +35,8 @@ export default function CrudBanners() {
         subtitle: "",
         image: "",
         character: "",
-        type: "short",
-        orientation: "1",
+        type: "SHORT",
+        orientation: "LEFT",
         btn_text: "",
         btn_color: "NARANJA",
         link: "",
@@ -83,25 +83,25 @@ export default function CrudBanners() {
 
     // Banners existentes (mock)
     const largeBanners: Banner[] = [
-        { id: 1, image: banner, type: "large", orientation: "1" },
+        { id: 1, image: banner, type: "SLIDER", orientation: "LEFT" },
         {
             id: 2,
             image: banner6,
-            type: "large",
-            orientation: "2",
+            type: "LARGE",
+            orientation: "RIGTH",
             character: caja,
             title: "Crea una cuenta de vendedor en TukiShop",
             link: "#",
         },
-        { id: 3, image: banner4, type: "large", orientation: "1" },
+        { id: 3, image: banner4, type: "SLIDER", orientation: "LEFT" },
     ];
 
     const shortBanners: Banner[] = [
         {
             id: 4,
             image: banner1,
-            type: "short",
-            orientation: "1",
+            type: "SHORT",
+            orientation: "LEFT",
             subtitle: "Alimentos, juguetes, premios y más para su bienestar.",
             btn_text: "Ver productos",
             character: perro,
@@ -110,8 +110,8 @@ export default function CrudBanners() {
         {
             id: 5,
             image: banner2,
-            type: "short",
-            orientation: "2",
+            type: "SHORT",
+            orientation: "RIGTH",
             subtitle: "Explora la gran cantidad de productos de tiendas nacionales.",
             btn_text: "Explorar",
             character: trabajador,
@@ -144,8 +144,8 @@ export default function CrudBanners() {
                                 subtitle: "",
                                 image: "",
                                 character: "",
-                                type: "short",
-                                orientation: "1",
+                                type: "SHORT",
+                                orientation: "LEFT",
                                 btn_text: "",
                                 btn_color: "NARANJA",
                                 link: "",
