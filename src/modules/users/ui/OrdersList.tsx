@@ -29,7 +29,7 @@ export default function OrdersList() {
         <div className="px-5 py-8 max-w-[80rem] mx-auto font-quicksand">
             {/* 🔹 Header */}
             <div className="flex flex-col mb-8">
-                <h1 className="text-3xl font-bold text-main border-b-4 border-main pb-2 w-fit">
+                <h1 className="text-3xl font-bold border-b-4 border-main pb-2 w-fit">
                     Mis pedidos
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">

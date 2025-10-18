@@ -1,4 +1,5 @@
 import { IconShoppingBag } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 
 interface ProductOrderItemProps {
     item: {
@@ -17,8 +18,11 @@ export default function ProductOrderItem({ item }: ProductOrderItemProps) {
 
     return (
         <div className="flex items-center justify-between w-full bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 font-quicksand">
-            {/* Imagen del producto */}
-            <div className="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center">
+            {/* Imagen del producto (linkeada) */}
+            <Link
+                to={`/product/${item.id}`}
+                className="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center hover:scale-[1.03] transition-transform duration-300"
+            >
                 <img
                     src={
                         item.image_url ||
@@ -27,15 +31,22 @@ export default function ProductOrderItem({ item }: ProductOrderItemProps) {
                     alt={item.name}
                     className="object-contain w-full h-full"
                 />
-            </div>
+            </Link>
 
             {/* Información del producto */}
             <div className="flex flex-col flex-grow px-5 text-gray-800">
-                <h3 className="font-semibold text-base line-clamp-2">{item.name}</h3>
+                <Link
+                    to={`/product/${item.id}`}
+                    className="font-semibold text-base line-clamp-2 hover:text-main transition-colors duration-200"
+                >
+                    {item.name}
+                </Link>
+
                 <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                     <IconShoppingBag size={14} className="text-main" />
                     <span>Cantidad: {item.quantity}</span>
                 </div>
+
                 <p className="text-sm text-gray-500 mt-1">
                     Precio unitario:{" "}
                     <span className="font-semibold text-main">
