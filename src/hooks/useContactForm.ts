@@ -5,6 +5,7 @@ axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 interface ContactFields {
   name: string;
+  subject: string;
   email: string;
   message: string;
 }
@@ -21,6 +22,7 @@ interface UseContactFormReturn {
 export default function useContactForm(): UseContactFormReturn {
   const [fields, setFields] = useState<ContactFields>({
     name: "",
+    subject: "",
     email: "",
     message: "",
   });
@@ -45,7 +47,7 @@ export default function useContactForm(): UseContactFormReturn {
     try {
       await axios.post("/contact-messages", fields);
       setSent(true);
-      setFields({ name: "", email: "", message: "" });
+      setFields({ name: "", email: "", message: "", subject: "" });
     } catch (err) {
       setError("Ocurrió un error al enviar. Intenta de nuevo.");
     } finally {
