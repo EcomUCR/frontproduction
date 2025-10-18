@@ -127,28 +127,28 @@ export default function AdminUsersTable() {
                 {/*  Búsqueda y Filtros */}
                 <div className="flex justify-between pt-10">
                     {/* Buscar */}
-                    <div className="flex bg-main-dark/10 items-center rounded-full px-1">
+                    <div className="flex items-center bg-white border border-main-dark/10 rounded-full shadow-sm px-2 py-1.5 transition-all duration-300 focus-within:ring-2 focus-within:ring-main">
                         <input
-                            placeholder="Buscar"
+                            placeholder="Buscar usuario..."
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="rounded-full py-1 px-2 bg-transparent outline-none"
+                            className="rounded-full px-2 bg-transparent outline-none text-sm text-gray-700 placeholder-gray-400 w-44"
                         />
                         <ButtonComponent
-                            icon={<IconSearch />}
-                            style="bg-contrast-secondary text-white py-1 px-3 rounded-full"
+                            icon={<IconSearch size={20} />}
+                            style="bg-main px-5 text-white py-2 rounded-full hover:bg-contrast-secondary transition-all duration-300"
                         />
                     </div>
 
-                    {/* Filtrar por rol */}
-                    <div>
+                    {/* Filtro por rol */}
+                    <div className="flex items-center bg-white border border-main-dark/10 rounded-full shadow-sm px-3 py-1.5">
                         <select
                             value={filter}
                             onChange={(e) =>
                                 setFilter(e.target.value as "ALL" | "CUSTOMER" | "SELLER" | "ADMIN")
                             }
-                            className="bg-main-dark/10 rounded-full px-2 py-1"
+                            className="bg-transparent outline-none text-sm text-gray-700 font-medium cursor-pointer"
                         >
                             <option value="ALL">Todos</option>
                             <option value="CUSTOMER">Customer</option>
@@ -160,8 +160,8 @@ export default function AdminUsersTable() {
                     {/* Botón crear usuario */}
                     <div>
                         <ButtonComponent
-                            style="bg-main py-2 px-6 rounded-full text-white font-quicksand"
-                            text="Crear usuario"
+                            text="Agregar usuario"
+                            style="bg-main-dark text-white rounded-full py-3 px-4 font-quicksand hover:bg-main transition-all duration-400"
                         />
                     </div>
                 </div>
@@ -169,14 +169,15 @@ export default function AdminUsersTable() {
                 {/*  Tabla */}
                 <div className="pt-8 space-y-4">
                     {/* Encabezado */}
-                    <div className="flex items-center w-full font-semibold bg-main-dark/40 rounded-full px-5 py-4">
-                        <p className="w-22">UUID</p>
-                        <p className="w-38">Username</p>
-                        <p className="w-55">Email</p>
-                        <p className="w-32">Rol</p>
-                        <p>Status</p>
-                        <p></p>
+                    <div className="flex items-center justify-between w-full bg-main-dark backdrop-blur-sm text-white font-quicksand font-semibold rounded-2xl px-6 py-4 shadow-md">
+                        <p className="w-24 text-sm tracking-wide uppercase opacity-90">UUID</p>
+                        <p className="w-40 text-sm tracking-wide uppercase opacity-90">Username</p>
+                        <p className="w-56 text-sm tracking-wide uppercase opacity-90">Email</p>
+                        <p className="w-32 text-sm tracking-wide uppercase opacity-90">Rol</p>
+                        <p className="w-28 text-sm tracking-wide uppercase opacity-90">Status</p>
+                        <p className="w-10"></p>
                     </div>
+
 
                     {/* Lista dinámica */}
                     {filteredUsers.length > 0 ? (
