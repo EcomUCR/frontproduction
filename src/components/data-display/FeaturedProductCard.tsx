@@ -1,5 +1,5 @@
 // FeaturedProductCard.tsx
-import { IconEdit, IconHeart } from "@tabler/icons-react";
+import { IconEdit} from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import RaitingComponent from "../ui/StarRatingComponent";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import { useAuth } from "../../hooks/context/AuthContext";
 import axios from "axios";
 import { useAlert } from "../../hooks/context/AlertContext";
 import { useNavigate } from "react-router-dom";
+import AnimatedHeartButton from "./AnimatedHeartButton";
 
 
 interface FeaturedProductCardProps {
@@ -116,10 +117,9 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
               text={"Añadir al carrito"}
               onClick={handleAddToCart}
             />
-            <ButtonComponent
-              style="bg-contrast-main cursor-pointer rounded-full h-auto w-auto p-2 flex items-center justify-center hover:bg-contrast-secondary transition-all duration-400 shadow-md"
-              icon={<IconHeart />}
-            />
+            <div className="">
+              <AnimatedHeartButton productId={props.id} variant="filled" />
+            </div>
           </div>
         )}
       </div>
