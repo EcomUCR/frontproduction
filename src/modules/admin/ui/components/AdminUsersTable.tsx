@@ -120,7 +120,7 @@ export default function AdminUsersTable() {
 
     //  Render principal
     return (
-        <div className="mx-10 border-l-2 border-main-dark/20 pl-4">
+        <div className=" pl-4">
             <div className="pl-10">
                 <h1 className="text-2xl font-semibold font-quicksand">Lista de usuarios</h1>
 
@@ -161,7 +161,7 @@ export default function AdminUsersTable() {
                     <div>
                         <ButtonComponent
                             text="Agregar usuario"
-                            style="bg-main-dark text-white rounded-full py-3 px-4 font-quicksand hover:bg-main transition-all duration-400"
+                            style="bg-main text-white rounded-full py-3 px-4 font-quicksand hover:bg-contrast-secondary transition-all duration-400"
                         />
                     </div>
                 </div>
@@ -169,7 +169,7 @@ export default function AdminUsersTable() {
                 {/*  Tabla */}
                 <div className="pt-8 space-y-4">
                     {/* Encabezado */}
-                    <div className="flex items-center justify-between w-full bg-main-dark backdrop-blur-sm text-white font-quicksand font-semibold rounded-2xl px-6 py-4 shadow-md">
+                    <div className="flex items-center justify-between w-full bg-main backdrop-blur-sm text-white font-quicksand font-semibold rounded-2xl px-6 py-4 shadow-md">
                         <p className="w-24 text-sm tracking-wide uppercase opacity-90">UUID</p>
                         <p className="w-40 text-sm tracking-wide uppercase opacity-90">Username</p>
                         <p className="w-56 text-sm tracking-wide uppercase opacity-90">Email</p>

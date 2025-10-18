@@ -19,7 +19,7 @@ export default function WishListPage() {
             if (navigator.share) {
                 //Para móviles y navegadores compatibles
                 await navigator.share({
-                    title: "Mi Wishlist en TukiShop 💜",
+                    title: "Mi Wishlist en TukiShop",
                     text: "Mira mi lista de deseos en TukiShop y agrega lo que te guste:",
                     url: wishlistUrl,
                 });

@@ -22,7 +22,7 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
     return <div>No autorizado</div>;
 
   return (
-    <div className="mx-10 border-l-2 border-main-dark/20 pl-4">
+    <div className=" pl-4">
       <div className="flex flex-col pl-10">
         <h1 className="text-xl font-quicksand">Información de la cuenta</h1>
       </div>

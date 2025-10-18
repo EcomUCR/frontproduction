@@ -1,11 +1,20 @@
-import { IconBuildingStore, IconClipboardText, IconFileCheck, IconLogout2, IconMailOpened, IconPhotoScan, IconTag, IconUser } from "@tabler/icons-react";
+import {
+    IconBuildingStore,
+    IconClipboardText,
+    IconFileCheck,
+    IconLogout2,
+    IconMailOpened,
+    IconPhotoScan,
+    IconTag,
+    IconUser,
+} from "@tabler/icons-react";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 interface SideBarProps {
-    type: "SELLER" | "CUSTOMER" | "ADMIN" | null | undefined; // tipo de usuario
+    type: "SELLER" | "CUSTOMER" | "ADMIN" | null | undefined;
     onSelect: (section: string) => void;
-    selected: string; // sección seleccionada
+    selected: string;
 }
 
 export default function SideBar({ type, onSelect, selected }: SideBarProps) {
@@ -16,106 +25,121 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
         await logout();
         navigate("/loginRegister", { replace: true });
     };
+
+    const baseItem =
+        "flex items-center gap-3 px-5 py-3 rounded-xl cursor-pointer transition-all duration-300 font-medium text-sm relative";
+    const active =
+        "bg-main-dark/10 text-main-dark border-l-4 border-contrast-secondary shadow-sm translate-x-2";
+    const inactive =
+        "text-gray-700 hover:bg-main-dark/5 hover:text-main-dark hover:translate-x-1";
+
     return (
-        <div className="flex flex-col items-start p-4 font-quicksand h-full">
-            {(type === "CUSTOMER" || type === "SELLER") && (
-                <div>
-                    <h2 className="text-2xl font-semibold mb-4">Mi Cuenta</h2>
-                    <ul className="space-y-10 flex flex-col h-full w-full">
-                        <div className="space-y-3">
+        <aside className="flex flex-col justify-between bg-white/90 backdrop-blur-sm border-r border-main-dark/10 shadow-sm font-quicksand p-6 rounded-r-3xl h-full w-[16rem]">
+            {/* Header */}
+            <div>
+                <h2 className="text-2xl font-bold text-main-dark mb-6 text-center">
+                    {type === "ADMIN" ? "Panel de Administración" : "Mi Cuenta"}
+                </h2>
+
+                <ul className="space-y-2">
+                    {/* Customer / Seller */}
+                    {(type === "CUSTOMER" || type === "SELLER") && (
+                        <>
                             <li
-                                className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full 
-                                    ${selected === "profile" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
+                                className={`${baseItem} ${selected === "profile" ? active : inactive
+                                    }`}
                                 onClick={() => onSelect("profile")}
                             >
-                                <IconUser /><p>Información de la cuenta</p>
+                                <IconUser size={18} />
+                                <span>Información de la cuenta</span>
                             </li>
+
                             <li
-                                className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full  
-                                    ${selected === "transactions" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
+                                className={`${baseItem} ${selected === "transactions" ? active : inactive
+                                    }`}
                                 onClick={() => onSelect("transactions")}
                             >
-                                <IconClipboardText /><p>Historial de transacciones</p>
+                                <IconClipboardText size={18} />
+                                <span>Historial de transacciones</span>
                             </li>
+
                             {type === "SELLER" && (
                                 <>
                                     <li
-                                        className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
-                                            ${selected === "products" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
+                                        className={`${baseItem} ${selected === "products" ? active : inactive
+                                            }`}
                                         onClick={() => onSelect("products")}
                                     >
-                                        <IconBuildingStore /><p>Mis productos</p>
+                                        <IconBuildingStore size={18} />
+                                        <span>Mis productos</span>
                                     </li>
+
                                     <li
-                                        className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
-                                            ${selected === "orderStatus" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
+                                        className={`${baseItem} ${selected === "orderStatus" ? active : inactive
+                                            }`}
                                         onClick={() => onSelect("orderStatus")}
                                     >
-                                        <IconFileCheck /><p>Estado de pedidos</p>
+                                        <IconFileCheck size={18} />
+                                        <span>Estado de pedidos</span>
                                     </li>
                                 </>
                             )}
-                        </div>
-                        <li>
-                            <button className="flex items-center gap-2 cursor-pointer w-full px-3 py-3 rounded-full text-sm text-main-dark hover:text-contrast-secondary hover:translate-x-2 transition-all duration-300"
-                                onClick={handleLogout}
+                        </>
+                    )}
+
+                    {/* Admin */}
+                    {type === "ADMIN" && (
+                        <>
+                            <li
+                                className={`${baseItem} ${selected === "users" ? active : inactive
+                                    }`}
+                                onClick={() => onSelect("users")}
                             >
-                                <IconLogout2 className="transition-transform duration-300" />
-                                <p>Cerrar sesión</p>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            )}
-            {type === "ADMIN" && (
-                <div className="space-y-10">
-                    <h1 className="text-center text-3xl">Administración</h1>
-                    <div className="">
-                        <ul className="space-y-15 flex flex-col h-full w-full">
-                            <div className="space-y-3">
-                                <li
-                                    className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
-                                    ${selected === "users" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
-                                    onClick={() => onSelect("users")}
-                                >
-                                    <IconUser />
-                                    Usuarios
-                                </li>
-                                <li
-                                    className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
-                                    ${selected === "coupons" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
-                                    onClick={() => onSelect("coupons")}
-                                >
-                                    <IconTag />
-                                    Cupones
-                                </li>
-                                <li
-                                    className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
-                                    ${selected === "mailbox" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
-                                    onClick={() => onSelect("mailbox")}
-                                >
-                                    <IconMailOpened />
-                                    Buzón
-                                </li>
-                                <li
-                                    className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
-                                    ${selected === "banners" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
-                                    onClick={() => onSelect("banners")}
-                                >
-                                    <IconPhotoScan />
-                                    Banners
-                                </li>
-                            </div>
-                            <button className="flex items-center gap-2 cursor-pointer w-full px-3 py-3 rounded-full text-sm text-main-dark hover:text-contrast-secondary hover:translate-x-2 transition-all duration-300"
-                                onClick={handleLogout}
+                                <IconUser size={18} />
+                                <span>Usuarios</span>
+                            </li>
+
+                            <li
+                                className={`${baseItem} ${selected === "coupons" ? active : inactive
+                                    }`}
+                                onClick={() => onSelect("coupons")}
                             >
-                                <IconLogout2 className="transition-transform duration-300" />
-                                <p>Cerrar sesión</p>
-                            </button>
-                        </ul>
-                    </div>
-                </div>
-            )}
-        </div>
+                                <IconTag size={18} />
+                                <span>Cupones</span>
+                            </li>
+
+                            <li
+                                className={`${baseItem} ${selected === "mailbox" ? active : inactive
+                                    }`}
+                                onClick={() => onSelect("mailbox")}
+                            >
+                                <IconMailOpened size={18} />
+                                <span>Buzón</span>
+                            </li>
+
+                            <li
+                                className={`${baseItem} ${selected === "banners" ? active : inactive
+                                    }`}
+                                onClick={() => onSelect("banners")}
+                            >
+                                <IconPhotoScan size={18} />
+                                <span>Banners</span>
+                            </li>
+                        </>
+                    )}
+                </ul>
+            </div>
+
+            {/* Logout */}
+            <div className="pt-4 border-t border-main-dark/10 mt-4">
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm text-main-dark font-semibold hover:text-contrast-secondary hover:bg-main-dark/5 hover:translate-x-1 transition-all duration-300"
+                >
+                    <IconLogout2 size={18} />
+                    <span>Cerrar sesión</span>
+                </button>
+            </div>
+        </aside>
     );
 }

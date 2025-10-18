@@ -128,7 +128,7 @@ export default function CrudBanners() {
     };
 
     return (
-        <section className="border-l-2 border-main-dark/20 pl-4 font-quicksand">
+        <section className="pl-4 font-quicksand">
             <div className="pl-5">
                 {/* Header */}
                 <div className="pb-10 flex items-center justify-between">

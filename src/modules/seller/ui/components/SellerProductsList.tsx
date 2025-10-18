@@ -63,7 +63,7 @@ export default function SellerProductsList() {
   );
 
   return (
-    <div className="mx-10 border-l-2 border-main-dark/20 pl-4">
+    <div className=" pl-4">
       {/* Header */}
       {store?.is_verified === false && (
         <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-12 ml-10 shadow-lg border border-main/20">
