@@ -51,7 +51,7 @@ export default function ShoppingCartPage() {
               ))
             ) : (
               <p className="text-center font-semibold text-main text-lg py-10">
-                🛒 Tu carrito está vacío
+                Tu carrito está vacío
               </p>
             )}
 

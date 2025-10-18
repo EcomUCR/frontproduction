@@ -1,5 +1,12 @@
 // src/contexts/AlertContext.tsx
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useMemo,
+    useState,
+    type ReactNode,
+} from "react";
 import { createPortal } from "react-dom";
 import AlertComponent from "../../components/data-display/AlertComponent";
 
@@ -11,12 +18,10 @@ export type AlertOptions = {
     type?: AlertType;
     confirmText?: string;
     cancelText?: string;
-    onConfirm?: () => void;
-    onCancel?: () => void;
 };
 
 type AlertContextValue = {
-    showAlert: (options: AlertOptions) => void;
+    showAlert: (options: AlertOptions) => Promise<boolean>;
     hideAlert: () => void;
 };
 
@@ -32,27 +37,48 @@ export function AlertProvider({ children }: { children: ReactNode }) {
         cancelText: "Cancelar",
     });
 
+    const [resolver, setResolver] = useState<
+        ((value: boolean) => void) | null
+    >(null);
+
     const showAlert = useCallback((opts: AlertOptions) => {
-        setOptions({
-            title: "Alerta",
-            message: "",
-            type: "info",
-            confirmText: "Aceptar",
-            cancelText: "Cancelar",
-            ...opts,
+        return new Promise<boolean>((resolve) => {
+            setOptions({
+                title: "Alerta",
+                message: "",
+                type: "info",
+                confirmText: "Aceptar",
+                cancelText: "Cancelar",
+                ...opts,
+            });
+            setVisible(true);
+            setResolver(() => resolve);
         });
-        setVisible(true);
     }, []);
 
-    const hideAlert = useCallback(() => setVisible(false), []);
+    const hideAlert = useCallback(() => {
+        setVisible(false);
+    }, []);
 
-    const value = useMemo(() => ({ showAlert, hideAlert }), [showAlert, hideAlert]);
+    const handleConfirm = useCallback(() => {
+        resolver?.(true);
+        hideAlert();
+    }, [resolver, hideAlert]);
+
+    const handleCancel = useCallback(() => {
+        resolver?.(false);
+        hideAlert();
+    }, [resolver, hideAlert]);
+
+    const value = useMemo(
+        () => ({ showAlert, hideAlert }),
+        [showAlert, hideAlert]
+    );
 
     return (
         <AlertContext.Provider value={value}>
             {children}
 
-            {/* Renderizamos el modal en un portal para que SIEMPRE cubra toda la pantalla */}
             {typeof document !== "undefined" &&
                 createPortal(
                     <AlertComponent
@@ -62,14 +88,8 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                         type={options.type}
                         confirmText={options.confirmText}
                         cancelText={options.cancelText}
-                        onConfirm={() => {
-                            options.onConfirm?.();
-                            hideAlert();
-                        }}
-                        onCancel={() => {
-                            options.onCancel?.();
-                            hideAlert();
-                        }}
+                        onConfirm={handleConfirm}
+                        onCancel={handleCancel}
                     />,
                     document.body
                 )}

@@ -32,9 +32,9 @@ export default function ProductCardShopping({ item }: Props) {
       setCart(data.cart);
       window.dispatchEvent(new Event("cartUpdated")); // 🔁 notifica actualización global
     } catch (error) {
-      console.error("❌ Error al actualizar cantidad:", error);
+      console.error(" Error al actualizar cantidad:", error);
       showAlert({
-        title: "Ups 😞",
+        title: "Ups ",
         message: "Ocurrió un error al actualizar la cantidad.",
         confirmText: "Ok",
         type: "error",
@@ -46,9 +46,14 @@ export default function ProductCardShopping({ item }: Props) {
 
   // 🔹 Eliminar producto
   const handleDelete = async () => {
-    const confirmed = window.confirm(
-      `¿Seguro que deseas eliminar "${product.name}" del carrito?`
-    );
+    const confirmed = await showAlert({
+    title: "Eliminar producto",
+    message: "¿Deseas eliminar el producto del carrito?",
+    confirmText: "Eliminar",
+    cancelText: "Cancelar",
+    type: "warning",
+  });
+
     if (!confirmed) return;
 
     try {
@@ -59,21 +64,14 @@ export default function ProductCardShopping({ item }: Props) {
 
       setCart(data.cart);
 
-      showAlert({
-        title: "Producto eliminado 🗑️",
-        message: `"${product.name}" fue eliminado del carrito.`,
-        confirmText: "Ok",
-        type: "success",
-      });
-
       // Si el carrito quedó vacío → notificar y limpiar visualmente
       if (!data.cart.items || data.cart.items.length === 0) {
-        console.log("🧹 Carrito vacío tras eliminar último producto");
+        console.log(" Carrito vacío tras eliminar último producto");
       }
 
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
-      console.error("❌ Error al eliminar producto:", error);
+      console.error(" Error al eliminar producto:", error);
       showAlert({
         title: "Error al eliminar",
         message:
@@ -91,7 +89,7 @@ export default function ProductCardShopping({ item }: Props) {
   return (
     <figure
       className="relative flex items-center justify-between w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-5 shadow-md border border-gray-100 
-                 hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden mb-5 font-quicksand"
+                hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden mb-5 font-quicksand"
     >
       {/* Imagen */}
       <div className="flex-shrink-0 flex items-center justify-center w-32 h-32 rounded-2xl overflow-hidden bg-white shadow-inner">
@@ -117,11 +115,10 @@ export default function ProductCardShopping({ item }: Props) {
               </h3>
             </Link>
             <span
-              className={`text-xs ${
-                product.stock > 0
+              className={`text-xs ${product.stock > 0
                   ? "text-green-600"
                   : "text-red-500 font-semibold"
-              }`}
+                }`}
             >
               {product.stock > 0 ? "Disponible" : "Agotado"}
             </span>
