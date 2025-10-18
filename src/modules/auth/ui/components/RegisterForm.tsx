@@ -101,7 +101,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
             />
             <input
               className="border-2 border-main text-main rounded-full px-4 py-3 w-[94%] font-quicksand"
-              placeholder="Nombre de usuario (opcional)"
+              placeholder="Nombre de usuario"
               type="text"
               name="username"
               value={form.username}
