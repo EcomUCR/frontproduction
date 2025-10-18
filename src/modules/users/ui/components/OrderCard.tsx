@@ -44,13 +44,13 @@ export default function OrderCard({ order, onViewOrder }: OrderCardProps) {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
-        return "bg-yellow-100 text-yellow-700";
+        return "bg-main text-white";
       case "completed":
-        return "bg-green-100 text-green-700";
+        return "bg-contrast-main text-white";
       case "cancelled":
-        return "bg-red-100 text-red-700";
+        return "bg-contrast-secondary text-white";
       default:
-        return "bg-gray-100 text-gray-600";
+        return "bg-main-dark text-white";
     }
   };
 

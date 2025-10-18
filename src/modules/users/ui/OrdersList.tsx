@@ -23,6 +23,41 @@ export default function OrdersList() {
             payment_id: "PAY-82736",
             created_at: "2025-10-18T10:30:00Z",
         },
+        {
+            id: 142,
+            status: "pending",
+            subtotal: 25000,
+            shipping: 2500,
+            taxes: 3250,
+            total: 30750,
+            address_id: 5,
+            street: "Avenida Central 123",
+            city: "San José",
+            state: "San José",
+            zip_code: "10101",
+            country: "Costa Rica",
+            payment_method: "tarjeta",
+            payment_id: "PAY-82736",
+            created_at: "2025-10-18T10:30:00Z",
+        },
+        {
+            id: 142,
+            status: "cancelled",
+            subtotal: 25000,
+            shipping: 2500,
+            taxes: 3250,
+            total: 30750,
+            address_id: 5,
+            street: "Avenida Central 123",
+            city: "San José",
+            state: "San José",
+            zip_code: "10101",
+            country: "Costa Rica",
+            payment_method: "tarjeta",
+            payment_id: "PAY-82736",
+            created_at: "2025-10-18T10:30:00Z",
+        },
+        
     ];
 
     return (
@@ -38,7 +73,7 @@ export default function OrdersList() {
             </div>
 
             {/* 🔹 Lista de pedidos */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col">
                 {orders.map((order) => (
                     <OrderCard
                         key={order.id}
