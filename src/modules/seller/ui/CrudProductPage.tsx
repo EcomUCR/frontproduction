@@ -12,10 +12,23 @@ import CategorySelector from "../../../components/ui/CategorySelector";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import { useParams } from "react-router-dom";
 
-type ProductForm = Omit<Product, "price" | "discount_price"> & {
+
+type ProductForm = Omit<
+  Product,
+  "price" | "discount_price" | "image" | "image_1_url" | "image_2_url" | "image_3_url"
+> & {
   price: string | number;
   discount_price: string | number;
+  images: (File | string | null)[];
 };
+
+type ProductPayload = Omit<ProductForm, "images"> & {
+  image: File | string | null;
+  image_1?: File | string | null;
+  image_2?: File | string | null;
+  image_3?: File | string | null;
+};
+
 
 export default function CrudProductPage() {
   const {
@@ -36,24 +49,36 @@ export default function CrudProductPage() {
     error: errorDescription,
   } = useOpenAI();
 
+
+  const fileInputRefs = [
+    React.useRef<HTMLInputElement>(null),
+    React.useRef<HTMLInputElement>(null),
+    React.useRef<HTMLInputElement>(null),
+  ];
+
+
   const [form, setForm] = useState<ProductForm>({
     name: "",
     description: "",
     price: 0,
     discount_price: 0,
     stock: 0,
-    status: "ACTIVE", // ✅ texto correcto
+    status: "ACTIVE",
     categories: [],
-    image: null,
+    images: [null, null, null],
     is_featured: false,
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [previews, setPreviews] = useState<(string | null)[]>([
+    null,
+    null,
+    null,
+  ]);
   const [errorPrice, setErrorPrice] = useState<string | null>(null);
   const [errorDiscount, setErrorDiscount] = useState<string | null>(null);
 
-  // 🔹 Cargar categorías
+
   useEffect(() => {
     (async () => {
       const result = await getCategories();
@@ -61,23 +86,30 @@ export default function CrudProductPage() {
     })();
   }, []);
 
-  // 🔹 Cargar producto existente (modo edición)
+
   useEffect(() => {
     if (!id) return;
     (async () => {
       const product = await getProductById(Number(id));
       if (product) {
+
+        const loadedImages: (string | null)[] = [
+          (product as any).image_1_url || null,
+          (product as any).image_2_url || null,
+          (product as any).image_3_url || null,
+        ];
+
         setForm({
-          ...product,
-          image: product.image_1_url || null,
+          ...(product as any),
+          images: loadedImages,
           price: product.price.toString(),
           discount_price: product.discount_price?.toString() || "0",
           categories: Array.isArray(product.categories)
             ? product.categories.map((cat: any) => cat.id)
             : [],
-          status: product.status || "ACTIVE", // ✅ asegurar texto válido
+          status: product.status || "ACTIVE",
         });
-        setPreview(product.image_1_url || null);
+        setPreviews(loadedImages);
       }
     })();
   }, [id]);
@@ -86,6 +118,8 @@ export default function CrudProductPage() {
     const description = await getDescription(form.name);
     if (description) setForm({ ...form, description });
   };
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,43 +130,119 @@ export default function CrudProductPage() {
       return;
     }
 
-    const dataToSend = {
-      ...form,
+    const mainImageFile = form.images[0];
+
+    const payload: ProductPayload = {
+
+
+      image: mainImageFile || null,
+
       store_id: storeId,
       price: Number(form.price),
       discount_price: Number(form.discount_price),
+
+
+
+      image_1: form.images[0],
+      image_2: form.images[1],
+      image_3: form.images[2],
+
+
+
+      name: form.name,
+      description: form.description,
+      stock: form.stock,
+      status: form.status,
+      categories: form.categories,
+      is_featured: form.is_featured,
     };
 
     try {
       if (id) {
-        await updateProduct(Number(id), dataToSend);
+        await updateProduct(Number(id), payload as any);
       } else {
-        await createProduct(dataToSend);
+        await createProduct(payload as any);
+
+
+
         setForm({
           name: "",
           description: "",
           price: 0,
           discount_price: 0,
           stock: 0,
-          status: "ACTIVE", // ✅ mantener coherencia
+          status: "ACTIVE",
           categories: [],
-          image: null,
+          images: [null, null, null],
           is_featured: false,
         });
-        setPreview(null);
+        setPreviews([null, null, null]);
+
+
+        fileInputRefs.forEach(ref => {
+          if (ref.current) ref.current.value = '';
+        });
       }
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setForm({ ...form, image: file });
-      setPreview(URL.createObjectURL(file));
+      const fileURL = URL.createObjectURL(file);
+
+
+
+      setForm((prevForm) => {
+        const newImages = [...prevForm.images];
+        newImages[index] = file;
+        return { ...prevForm, images: newImages };
+      });
+
+
+
+      setPreviews((prevPreviews) => {
+        const newPreviews = [...prevPreviews];
+        newPreviews[index] = fileURL;
+        return newPreviews;
+      });
     }
   };
+
+
+
+  const handleRemoveImage = (index: number) => {
+
+
+    if (fileInputRefs[index].current) {
+      fileInputRefs[index].current!.value = '';
+    }
+
+
+
+    if (previews[index] && (form.images[index] instanceof File)) {
+      URL.revokeObjectURL(previews[index]!);
+    }
+
+    setForm((prevForm) => {
+      const newImages = [...prevForm.images];
+      newImages[index] = null;
+      return { ...prevForm, images: newImages };
+    });
+    setPreviews((prevPreviews) => {
+      const newPreviews = [...prevPreviews];
+      newPreviews[index] = null;
+      return newPreviews;
+    });
+  }
+
+  const mainPreview = previews[0] ||
+    (typeof form.images[0] === "string" ? form.images[0] : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg");
+
 
   return (
     <div>
@@ -142,6 +252,8 @@ export default function CrudProductPage() {
           <ButtonComponent
             icon={<IconArrowBackUp />}
             text="Volver"
+
+
             style="flex text-sm ml-5 px-2 items-center gap-2 rounded-full cursor-pointer"
             onClick={() => window.history.back()}
           />
@@ -151,6 +263,8 @@ export default function CrudProductPage() {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mx-30 flex flex-col gap-10 py-10">
+
+
             <div className="w-full flex justify-between">
               <label className="flex flex-col w-5/12 gap-2">
                 <p className="font-semibold">
@@ -167,7 +281,6 @@ export default function CrudProductPage() {
                 />
               </label>
 
-              {/* 🔹 Campos de precios */}
               <div className="flex w-6/12 gap-5">
                 <label className="flex flex-col w-full gap-2">
                   <p className="font-semibold">
@@ -191,9 +304,8 @@ export default function CrudProductPage() {
                       setForm({ ...form, price: Number(form.price) || 0 });
                     }}
                     placeholder="Precio"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${
-                      errorPrice ? "border border-red-500" : ""
-                    }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorPrice ? "border border-red-500" : ""
+                      }`}
                   />
                   {errorPrice && (
                     <p className="text-red-500 text-sm">{errorPrice}</p>
@@ -223,9 +335,8 @@ export default function CrudProductPage() {
                       });
                     }}
                     placeholder="Precio de oferta"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${
-                      errorDiscount ? "border border-red-500" : ""
-                    }`}
+                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorDiscount ? "border border-red-500" : ""
+                      }`}
                   />
                   {errorDiscount && (
                     <p className="text-red-500 text-sm">{errorDiscount}</p>
@@ -234,7 +345,7 @@ export default function CrudProductPage() {
               </div>
             </div>
 
-            {/* 🔹 Categorías y estado */}
+
             <div className="w-full flex gap-5">
               <div className="flex flex-col w-6/12 gap-2">
                 <p className="font-semibold">
@@ -289,7 +400,7 @@ export default function CrudProductPage() {
             </div>
           </div>
 
-          {/* 🔹 Sección inferior */}
+
           <div className="flex gap-2 w-full justify-between px-30">
             <div className="flex flex-col w-5/12 gap-6">
               <label className="flex flex-col w-full gap-2">
@@ -315,6 +426,7 @@ export default function CrudProductPage() {
                       }
                       onClick={handleGenerateDescription}
                       icon={<IconWand />}
+
                       style="flex justify-center text-sm w-[50%] px-2 py-2 items-center gap-2 rounded-full bg-main text-white cursor-pointer hover:bg-contrast-secondary transition-colors duration-300 ease-in-out"
                     />
                     {errorDescription && (
@@ -326,18 +438,44 @@ export default function CrudProductPage() {
                 </div>
               </label>
 
-              <label className="flex flex-col gap-2">
-                <p className="font-semibold">Agregar imágenes</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="bg-main-dark/20 rounded-2xl p-2 w-full cursor-pointer"
-                />
-              </label>
+
+              <div className="flex flex-col gap-4">
+                <p className="font-semibold">Agregar imágenes </p>
+                {previews.map((previewUrl, index) => (
+                  <div key={index} className="flex flex-col gap-2 p-2 border border-gray-300 rounded-lg">
+                    <label className="font-medium text-sm">
+                      {`Imagen ${index + 1}`}
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+
+                      ref={fileInputRefs[index]}
+                      onChange={(e) => handleImageChange(e, index)}
+                      className="bg-main-dark/20 rounded-2xl p-2 w-full cursor-pointer text-sm "
+                    />
+                    {previewUrl && (
+                      <div className="flex flex-col items-center gap-2 mt-2">
+                        <img
+                          src={previewUrl}
+                          alt={`Previsualización ${index + 1}`}
+                          className="w-20 h-20 object-cover rounded-md border border-gray-400"
+                        />
+                        <ButtonComponent
+                          type="button"
+                          text="Quitar imagen"
+                          onClick={() => handleRemoveImage(index)}
+
+                          style="text-xs text-red-600 hover:text-red-800 cursor-pointer"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* 🔹 Vista previa y botones */}
+
             <div className="flex flex-col items-center justify-center w-6/12 gap-2">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
@@ -351,6 +489,7 @@ export default function CrudProductPage() {
                 />
               </label>
 
+
               {form.is_featured ? (
                 <FeaturedProductCard
                   shop="Preview"
@@ -361,7 +500,7 @@ export default function CrudProductPage() {
                       ? form.discount_price.toString()
                       : undefined
                   }
-                  img={preview || undefined}
+                  img={mainPreview}
                   rating={0}
                   edit={false}
                   id={0}
@@ -376,31 +515,29 @@ export default function CrudProductPage() {
                       ? form.discount_price.toString()
                       : undefined
                   }
-                  img={
-                    preview
-                      ? preview
-                      : typeof form.image === "string"
-                      ? form.image
-                      : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-                  }
+                  img={mainPreview}
                   edit={false}
                   id={0}
                 />
               )}
 
+              {/* Botones */}
               <div className="flex flex-col items-center gap-5 py-10 w-full">
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
+
                   style="text-white text-lg p-2 items-center rounded-full bg-contrast-main w-2/3 hover:bg-contrast-secondary transition-all duration-400 cursor-pointer"
                   type="submit"
                 />
                 <ButtonComponent
                   text="Cancelar"
+
                   style="text-white text-lg p-2 items-center rounded-full bg-main-dark w-2/3 hover:bg-main transition-all duration-400 cursor-pointer"
                   onClick={() => window.history.back()}
                 />
                 <ButtonComponent
                   text="Archivar producto"
+
                   style="text-white text-lg p-2 items-center rounded-full bg-red-600 w-2/3 hover:bg-red-700 transition-all duration-400 cursor-pointer"
                   onClick={async () => {
                     if (!id) return;
@@ -408,13 +545,27 @@ export default function CrudProductPage() {
                       "¿Estás seguro de archivar este producto? Podrás restaurarlo más tarde."
                     );
                     if (!confirm) return;
+
+                    const mainImageFile = form.images[0];
+
+                    // CONSTRUCCIÓN DEL PAYLOAD PARA ARCHIVAR
+                    const payload: ProductPayload = {
+                      image: mainImageFile || null,
+                      price: Number(form.price),
+                      discount_price: Number(form.discount_price),
+                      status: "DRAFT",
+                      image_1: form.images[0],
+                      image_2: form.images[1],
+                      image_3: form.images[2],
+                      name: form.name,
+                      description: form.description,
+                      stock: form.stock,
+                      categories: form.categories,
+                      is_featured: form.is_featured,
+                    }
+
                     try {
-                      await updateProduct(Number(id), {
-                        ...form,
-                        price: Number(form.price),
-                        discount_price: Number(form.discount_price),
-                        status: "ARCHIVED" as any, // ✅ texto válido
-                      });
+                      await updateProduct(Number(id), payload as any);
                       alert("Producto archivado correctamente");
                       window.history.back();
                     } catch (err) {
