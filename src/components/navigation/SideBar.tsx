@@ -69,7 +69,7 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
             )}
             {type === "ADMIN" && (
                 <div className="space-y-10">
-                    <h1 className="text-center pt-5 text-3xl">Administración</h1>
+                    <h1 className="text-center text-3xl">Administración</h1>
                     <div className="">
                         <ul className="space-y-15 flex flex-col h-full w-full">
                             <div className="space-y-3">
