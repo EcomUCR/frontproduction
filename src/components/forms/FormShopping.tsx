@@ -94,7 +94,7 @@ export default function FormShopping({
                 onPaymentSuccess={async (paymentIntent) => {
                   console.log("✅ Pago exitoso:", paymentIntent);
                   await getForexRate("CRC", "USD");
-                  await processCheckout(paymentIntent, totals); // ✅ ahora sí envía user y totales
+                  await processCheckout(paymentIntent, totals); // ✅ registra orden + limpia carrito
                 }}
               />
             </Elements>
