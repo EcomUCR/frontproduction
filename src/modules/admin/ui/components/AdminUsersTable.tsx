@@ -133,8 +133,9 @@ export default function AdminUsersTable() {
     return (
         <div className="pl-4">
             <div className="pl-10">
-                <h1 className="text-2xl font-semibold font-quicksand">Lista de usuarios</h1>
-
+                <div className="w-50">
+                    <h1 className="text-2xl font-semibold font-quicksand border-b-3 border-main">Lista de usuarios</h1>
+                </div>
                 {/* Búsqueda y Filtros */}
                 <div className="flex justify-between pt-10">
                     <div className="flex items-center bg-white border border-main-dark/10 rounded-full shadow-sm px-2 py-1.5 transition-all duration-300 focus-within:ring-2 focus-within:ring-main">
@@ -228,8 +229,8 @@ export default function AdminUsersTable() {
                                 <PaginationPrevious
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     className={`${currentPage === 1
-                                            ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
-                                            : "hover:bg-main-dark/10 hover:text-main-dark"
+                                        ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
+                                        : "hover:bg-main-dark/10 hover:text-main-dark"
                                         } rounded-full px-3 py-2 transition-all duration-300`}
                                 />
                             </PaginationItem>
@@ -244,8 +245,8 @@ export default function AdminUsersTable() {
                                             onClick={() => handlePageChange(page)}
                                             isActive={isActive}
                                             className={`rounded-full w-9 h-9 flex items-center justify-center text-sm font-semibold transition-all duration-300 ${isActive
-                                                    ? "bg-contrast-secondary text-white shadow-md scale-105"
-                                                    : "bg-main-dark/10 text-main-dark hover:bg-main-dark/20"
+                                                ? "bg-contrast-secondary text-white shadow-md scale-105"
+                                                : "bg-main-dark/10 text-main-dark hover:bg-main-dark/20"
                                                 }`}
                                         >
                                             {page}
@@ -259,8 +260,8 @@ export default function AdminUsersTable() {
                                 <PaginationNext
                                     onClick={() => handlePageChange(currentPage + 1)}
                                     className={`${currentPage === totalPages
-                                            ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
-                                            : "hover:bg-main-dark/10 hover:text-main-dark"
+                                        ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
+                                        : "hover:bg-main-dark/10 hover:text-main-dark"
                                         } rounded-full px-3 py-2 transition-all duration-300`}
                                 />
                             </PaginationItem>

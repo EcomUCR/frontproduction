@@ -38,7 +38,7 @@ export default function AdminCoupons() {
             <div className="pl-5">
                 {/* Header */}
                 <div className="pb-10 flex items-center justify-between">
-                    <h1 className="text-2xl">Administración de cupones</h1>
+                    <h1 className="text-2xl border-b-3 border-main">Administración de cupones</h1>
                     <ButtonComponent
                         text="Crear cupón"
                         style="bg-main-dark text-white rounded-full py-2 px-4 font-quicksand hover:bg-main transition-all duration-400"

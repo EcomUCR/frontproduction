@@ -91,7 +91,7 @@ export default function SellerProductsList() {
       {store?.is_verified === true && (
         <>
           <section className="flex justify-between font-quicksand items-center px-10">
-            <h1 className="text-2xl font-semibold">Lista de productos</h1>
+            <h1 className="text-2xl font-semibold border-b-3 border-main">Lista de productos</h1>
             <div className="bg-main-dark/10 flex items-center gap-2 px-1 py-1 rounded-full">
               <input
                 type="text"
