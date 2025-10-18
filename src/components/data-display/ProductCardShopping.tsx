@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/context/AuthContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useAlert } from "../../hooks/context/AlertContext";
+import { useState } from "react";
 
 interface Props {
   item: CartItemType;
@@ -14,14 +15,16 @@ export default function ProductCardShopping({ item }: Props) {
   const { product } = item;
   const { token, setCart } = useAuth();
   const { showAlert } = useAlert();
+  const [updating, setUpdating] = useState(false); // evita spam en botones
 
   // 🔹 Actualizar cantidad (+/-)
   const updateQuantity = async (newQuantity: number) => {
-    if (newQuantity < 1) return;
+    if (newQuantity < 1 || updating) return;
+    setUpdating(true);
 
     try {
       const { data } = await axios.patch(
-        `/cart/item/${item.id}`,
+        `${import.meta.env.VITE_API_URL}/cart/item/${item.id}`,
         { quantity: newQuantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -29,13 +32,15 @@ export default function ProductCardShopping({ item }: Props) {
       setCart(data.cart);
       window.dispatchEvent(new Event("cartUpdated")); // 🔁 notifica actualización global
     } catch (error) {
-      console.error("Error al actualizar cantidad:", error);
+      console.error("❌ Error al actualizar cantidad:", error);
       showAlert({
-        title: "Ups!!",
-        message:
-          "Ha ocurrido un error para actualizar la cantidad, inténtalo más tarde.",
+        title: "Ups 😞",
+        message: "Ocurrió un error al actualizar la cantidad.",
         confirmText: "Ok",
+        type: "error",
       });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -47,33 +52,46 @@ export default function ProductCardShopping({ item }: Props) {
     if (!confirmed) return;
 
     try {
-      const { data } = await axios.delete(`/cart/item/${item.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/cart/item/${item.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       setCart(data.cart);
+
       showAlert({
-        title: "Yeii!!",
-        message: "Producto eliminado del carrito",
+        title: "Producto eliminado 🗑️",
+        message: `"${product.name}" fue eliminado del carrito.`,
         confirmText: "Ok",
+        type: "success",
       });
 
-      window.dispatchEvent(new Event("cartUpdated")); // 🔁 notifica actualización global
+      // Si el carrito quedó vacío → notificar y limpiar visualmente
+      if (!data.cart.items || data.cart.items.length === 0) {
+        console.log("🧹 Carrito vacío tras eliminar último producto");
+      }
+
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
-      console.error("Error al eliminar producto:", error);
+      console.error("❌ Error al eliminar producto:", error);
       showAlert({
-        title: "Ups!!",
+        title: "Error al eliminar",
         message:
-          "Ha ocurrido un error al eliminar el producto, inténtalo más tarde.",
+          "No se pudo eliminar el producto, inténtalo nuevamente más tarde.",
         confirmText: "Ok",
+        type: "error",
       });
     }
   };
 
+  // 🔹 Formato de precios en colones
+  const formatCRC = (n: number) =>
+    n?.toLocaleString("es-CR", { style: "currency", currency: "CRC" });
+
   return (
     <figure
       className="relative flex items-center justify-between w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-5 shadow-md border border-gray-100 
-                hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden mb-5"
+                 hover:border-contrast-secondary/40 transition-all duration-500 overflow-hidden mb-5 font-quicksand"
     >
       {/* Imagen */}
       <div className="flex-shrink-0 flex items-center justify-center w-32 h-32 rounded-2xl overflow-hidden bg-white shadow-inner">
@@ -84,17 +102,17 @@ export default function ProductCardShopping({ item }: Props) {
               "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"
             }
             alt={product.name}
-            className="object-contain w-full h-full transition-transform duration-500 cursor-pointer"
+            className="object-contain w-full h-full transition-transform duration-500 cursor-pointer hover:scale-105"
           />
         </Link>
       </div>
 
       {/* Información principal */}
-      <div className="flex flex-col justify-between flex-grow px-6 py-2 font-quicksand">
+      <div className="flex flex-col justify-between flex-grow px-6 py-2">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <Link to={`/product/${product.id}`}>
-              <h3 className="font-bold text-lg text-gray-main cursor-pointer">
+              <h3 className="font-bold text-lg text-gray-800 cursor-pointer hover:text-main transition-colors">
                 {product.name}
               </h3>
             </Link>
@@ -119,7 +137,8 @@ export default function ProductCardShopping({ item }: Props) {
           <div className="flex items-center bg-white border border-contrast-secondary/60 rounded-full shadow-sm">
             <button
               onClick={() => updateQuantity(item.quantity - 1)}
-              className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary transition-colors"
+              disabled={updating}
+              className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary disabled:opacity-50 transition-colors"
             >
               −
             </button>
@@ -128,7 +147,8 @@ export default function ProductCardShopping({ item }: Props) {
             </span>
             <button
               onClick={() => updateQuantity(item.quantity + 1)}
-              className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary transition-colors"
+              disabled={updating}
+              className="px-3 py-1 text-lg font-semibold text-contrast-main hover:text-contrast-secondary disabled:opacity-50 transition-colors"
             >
               +
             </button>
@@ -142,15 +162,15 @@ export default function ProductCardShopping({ item }: Props) {
           {product.discount_price && product.discount_price > 0 ? (
             <>
               <p className="text-xs line-through text-gray-400">
-                ₡{product.price.toLocaleString("es-CR")}
+                {formatCRC(product.price)}
               </p>
               <p className="text-xl font-bold text-main bg-clip-text">
-                ₡{product.discount_price.toLocaleString("es-CR")}
+                {formatCRC(product.discount_price)}
               </p>
             </>
           ) : (
             <p className="text-xl font-bold text-main">
-              ₡{product.price.toLocaleString("es-CR")}
+              {formatCRC(product.price)}
             </p>
           )}
         </div>
