@@ -113,9 +113,9 @@ export default function NavBar() {
             </div>
             <div className="flex space-x-2 items-center">
               <li>
-                <a href="#" className="">
+                <Link to="/wishlist" className="">
                   <IconHeart className="h-6 w-6" />
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/shoppingCart">
