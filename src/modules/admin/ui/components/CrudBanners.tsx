@@ -9,9 +9,7 @@ import trabajador from "../../../../img/resources/trabajador.png";
 import perro from "../../../../img/resources/perro.png";
 import caja from "../../../../img/resources/caja.png";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
-
 import BannerModal from "../components/BannerModal";
-
 
 type Banner = {
     id: number;
