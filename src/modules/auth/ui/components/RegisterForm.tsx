@@ -144,7 +144,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               />
               <button
                 type="button"
-                className="cursor-pointer text-sm"
+                className="cursor-pointer text-sm font-quicksand"
                 onClick={() => setShowTerms(true)}
               >
                 Acepto los{" "}

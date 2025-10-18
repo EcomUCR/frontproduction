@@ -102,12 +102,13 @@ export default function NavBar() {
                   </Link>
                 ) : (
                   <>
-                    <Link className="flex items-center gap-1" to="/loginRegister">
+                    <Link className="flex items-center gap-1" to="/loginRegister?mode=login">
                       <IconUser className="h-5 w-5" />
                       Iniciar sesión
                     </Link>
                     <span>|</span>
-                    <Link to="/loginRegister">Regístrate</Link>
+                    <Link to="/loginRegister?mode=register">Regístrate</Link>
+
                   </>
                 )}
               </li>
