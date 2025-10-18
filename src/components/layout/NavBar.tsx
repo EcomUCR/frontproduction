@@ -115,9 +115,9 @@ export default function NavBar() {
             </div>
             <div className="flex space-x-2 items-center">
               <li>
-                <li>
-                  <NotificationDropdown />
-                </li>
+
+                <NotificationDropdown />
+
               </li>
               <li>
                 <Link to="/wishlist" className="">
