@@ -1,4 +1,4 @@
-import { IconBuildingStore, IconClipboardText, IconFileCheck, IconLogout2, IconMailOpened, IconTag, IconUser } from "@tabler/icons-react";
+import { IconBuildingStore, IconClipboardText, IconFileCheck, IconLogout2, IconMailOpened, IconPhotoScan, IconTag, IconUser } from "@tabler/icons-react";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -69,7 +69,7 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
             )}
             {type === "ADMIN" && (
                 <div className="space-y-10">
-                    <h1 className="text-center pt-5 text-3xl">Administración</h1>
+                    <h1 className="text-center text-3xl">Administración</h1>
                     <div className="">
                         <ul className="space-y-15 flex flex-col h-full w-full">
                             <div className="space-y-3">
@@ -96,6 +96,14 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
                                 >
                                     <IconMailOpened />
                                     Buzón
+                                </li>
+                                <li
+                                    className={`flex items-center gap-2 cursor-pointer px-3 py-3 rounded-full    
+                                    ${selected === "banners" ? "bg-contrast-secondary text-white translate-x-4 transition-all duration-300" : "text-sm"}`}
+                                    onClick={() => onSelect("banners")}
+                                >
+                                    <IconPhotoScan />
+                                    Banners
                                 </li>
                             </div>
                             <button className="flex items-center gap-2 cursor-pointer w-full px-3 py-3 rounded-full text-sm text-main-dark hover:text-contrast-secondary hover:translate-x-2 transition-all duration-300"

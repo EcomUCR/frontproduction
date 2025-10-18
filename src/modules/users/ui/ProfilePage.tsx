@@ -9,6 +9,8 @@ import { useAuth } from "../../../hooks/context/AuthContext";
 import OrderStatus from "./OrderStatus";
 import { AnimatePresence, motion } from "framer-motion";
 import AdminUsersTable from "../../admin/ui/components/AdminUsersTable";
+import CrudBanners from "../../admin/ui/components/CrudBanners";
+import AdminCoupons from "../../admin/ui/components/AdminCoupons";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
@@ -56,6 +58,8 @@ export default function UserPage() {
               {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
               {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
               {selected === "users" && user.role === "ADMIN" && (<AdminUsersTable />)}
+              {selected === "coupons" && user.role === "ADMIN" && (<AdminCoupons />)}
+              {selected === "banners" && user.role === "ADMIN" && (<CrudBanners />)}
             </motion.div>
           </AnimatePresence>
       </section>

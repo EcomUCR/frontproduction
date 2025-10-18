@@ -31,6 +31,7 @@ import ShoppingCartPage from "./modules/users/ui/ShoppingCartPage";
 import { AlertProvider } from "./hooks/context/AlertContext";
 import AboutUsPage from "./modules/home/ui/AboutUsPage";
 import HelpPage from "./modules/home/ui/HelpPage";
+import WishListPage from "./modules/users/ui/WishListPage";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
               <Route path="/store/:id" element={<SellerPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/shoppingCart" element={<ShoppingCartPage />} />
+              <Route path="/wishlist" element={<WishListPage />} />
               <Route path="/product/:id" element={<ProductPage />} />
               <Route path="/resetPassword" element={<ResetPasswordPage />} />
               <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
