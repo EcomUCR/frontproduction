@@ -18,6 +18,8 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.6",
+    "@stripe/react-stripe-js": "^5.2.0",
+    "@stripe/stripe-js": "^8.1.0",
     "@tabler/icons-react": "^3.34.1",
     "@tailwindcss/vite": "^4.1.7",
     "@vitejs/plugin-react": "^5.0.2",
