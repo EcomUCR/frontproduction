@@ -17,14 +17,14 @@ export default function WishListPage() {
 
         try {
             if (navigator.share) {
-                // 📱 Para móviles y navegadores compatibles
+                //Para móviles y navegadores compatibles
                 await navigator.share({
                     title: "Mi Wishlist en TukiShop 💜",
                     text: "Mira mi lista de deseos en TukiShop y agrega lo que te guste:",
                     url: wishlistUrl,
                 });
             } else {
-                // 💻 Copia el enlace al portapapeles
+                //Copia el enlace al portapapeles
                 await navigator.clipboard.writeText(wishlistUrl);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
