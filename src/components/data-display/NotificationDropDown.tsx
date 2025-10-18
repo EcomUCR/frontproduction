@@ -7,6 +7,8 @@ export default function NotificationDropdown() {
 
     // Ejemplo temporal de notificaciones (mock)
     const notifications = [
+        { id: 1, title: "Nuevo producto publicado", time: "Hace 5 min" },
+        { id: 2, title: "Tu tienda fue verificada", time: "Hace 1 hora" },
         { id: 3, title: "Pedido #482 entregado", time: "Ayer" },
         { id: 3, title: "Pedido #482 entregado", time: "Ayer" },
         { id: 3, title: "Pedido #482 entregado", time: "Ayer" },
