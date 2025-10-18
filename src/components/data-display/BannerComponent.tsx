@@ -8,10 +8,10 @@ interface BannerComponentProps {
     image: string;
     character?: string;
     link?: string;
-    type: "large" | "short";
+    type: "LARGE" | "SHORT" | "SLIDER";
     position?: number;
     is_active?: boolean;
-    orientation?: "1" | "2";
+    orientation?: "LEFT" | "RIGTH";
     btn_text?: string;
     btn_color?: "MORADO" | "AMARILLO" | "NARANJA" | "GRADIENTE";
     edit?: boolean;
@@ -35,7 +35,7 @@ export default function BannerComponent(props: BannerComponentProps) {
     };
 
     //  Banner largo
-    if (props.type === "large" && props.orientation === "1") {
+    if (props.type === "SLIDER") {
         return (
             <img
                 src={props.image}
@@ -44,7 +44,7 @@ export default function BannerComponent(props: BannerComponentProps) {
             />
         );
     }
-    if (props.type === "large" && props.orientation === "2") {
+    if (props.type === "LARGE") {
         return (
             <section>
                 desarrollo el banner de orientacion 2
@@ -53,7 +53,7 @@ export default function BannerComponent(props: BannerComponentProps) {
     }
 
     // Banners cortos
-    if (props.type === "short" && props.orientation === "1") {
+    if (props.type === "SHORT" && props.orientation === "LEFT") {
         return (
             <div className="w-[35rem] h-[17rem] flex items-end rounded-t-3xl rounded-b-2xl overflow-hidden relative">
                 <div className="flex w-full absolute z-1 h-[16rem] ">
@@ -90,7 +90,7 @@ export default function BannerComponent(props: BannerComponentProps) {
         );
     }
 
-    if (props.type === "short" && props.orientation === "2") {
+    if (props.type === "SHORT" && props.orientation === "RIGTH") {
         return (
             <div className="w-[35rem] h-[17rem] flex items-end rounded-t-3xl rounded-b-2xl overflow-hidden relative">
                 <div className="flex w-full absolute z-1 h-[16rem] ">
