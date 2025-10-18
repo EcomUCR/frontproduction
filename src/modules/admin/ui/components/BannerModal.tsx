@@ -4,12 +4,12 @@ import ButtonComponent from "../../../../components/ui/ButtonComponent";
 
 interface BannerModalProps {
     newBanner: any;
-    setNewBanner: React.Dispatch<React.SetStateAction<any>>;
+    setNewBanner: (value: any) => void;
     onClose: () => void;
     onSave: () => void;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-    handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleFileChange: (e: React.ChangeEvent<HTMLInputElement>, field: "image" | "character") => void;
+    handleInputChange: (event: any) => void;
+    handleCheckboxChange: (event: any) => void;
+    handleFileChange: (event: any, field: "image" | "character") => void;
 }
 
 export default function BannerModal({
@@ -106,8 +106,8 @@ export default function BannerModal({
                                     onChange={handleInputChange}
                                     className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-main"
                                 >
-                                    <option value="1">1 (izquierda)</option>
-                                    <option value="2">2 (derecha)</option>
+                                    <option value="1">Izquierda</option>
+                                    <option value="2">Derecha</option>
                                 </select>
                             </div>
                         </div>

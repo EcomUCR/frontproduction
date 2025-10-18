@@ -87,51 +87,53 @@ export default function CrudBanners() {
     ];
 
     return (
-        <section className="mx-10 border-l-2 border-main-dark/20 pl-4 font-quicksand">
-            {/* Header */}
-            <div className="pb-10 flex items-center justify-between">
-                <h1 className="text-2xl">Administración de banners</h1>
-                <ButtonComponent
-                    text="Agregar banner"
-                    style="bg-main-dark text-white rounded-full py-2 px-4 font-quicksand hover:bg-main transition-all duration-400"
-                    onClick={() => setShowModal(true)}
-                />
-            </div>
-            
-            {/*Modal del crud*/}
-            {showModal && (
-                <BannerModal
-                    newBanner={newBanner}
-                    setNewBanner={setNewBanner}
-                    onClose={() => setShowModal(false)}
-                    onSave={handleSave}
-                    handleInputChange={handleInputChange}
-                    handleCheckboxChange={handleCheckboxChange}
-                    handleFileChange={handleFileChange}
-                />
-            )}
-
-            {/* Banners existentes */}
-            <div className="space-y-10">
-                <div>
-                    <h2 className="text-xl font-quicksand mb-4">Large Banners</h2>
-                    <div className="grid grid-cols-2 auto-rows-[10rem] place-items-center gap-6">
-                        {largeBanners.map((b) => (
-                            <div key={b.id} className="w-full h-full">
-                                <BannerComponent {...b} />
-                            </div>
-                        ))}
-                    </div>
+        <section className="border-l-2 border-main-dark/20 pl-4 font-quicksand">
+            <div className="pl-5">
+                {/* Header */}
+                <div className="pb-10 flex items-center justify-between">
+                    <h1 className="text-2xl">Administración de banners</h1>
+                    <ButtonComponent
+                        text="Agregar banner"
+                        style="bg-main-dark text-white rounded-full py-2 px-4 font-quicksand hover:bg-main transition-all duration-400"
+                        onClick={() => setShowModal(true)}
+                    />
                 </div>
 
-                <div>
-                    <h2 className="text-xl font-quicksand mb-4">Short Banners</h2>
-                    <div className="grid grid-cols-2 auto-rows-[12rem] place-items-center gap-6">
-                        {shortBanners.map((b) => (
-                            <div key={b.id} className="scale-[0.7] origin-center w-fit">
-                                <BannerComponent {...b} />
-                            </div>
-                        ))}
+                {/*Modal del crud*/}
+                {showModal && (
+                    <BannerModal
+                        newBanner={newBanner}
+                        setNewBanner={setNewBanner}
+                        onClose={() => setShowModal(false)}
+                        onSave={handleSave}
+                        handleInputChange={handleInputChange}
+                        handleCheckboxChange={handleCheckboxChange}
+                        handleFileChange={handleFileChange}
+                    />
+                )}
+
+                {/* Banners existentes */}
+                <div className="space-y-10">
+                    <div>
+                        <h2 className="text-xl font-quicksand mb-4">Large Banners</h2>
+                        <div className="grid grid-cols-2 auto-rows-[10rem] place-items-center gap-6">
+                            {largeBanners.map((b) => (
+                                <div key={b.id} className="w-full h-full">
+                                    <BannerComponent {...b} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 className="text-xl font-quicksand mb-4">Short Banners</h2>
+                        <div className="grid grid-cols-2 auto-rows-[12rem] place-items-center gap-6">
+                            {shortBanners.map((b) => (
+                                <div key={b.id} className="scale-[0.7] origin-center w-fit">
+                                    <BannerComponent {...b} />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
