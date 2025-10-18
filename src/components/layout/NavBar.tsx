@@ -12,6 +12,7 @@ import { useAuth } from "../../hooks/context/AuthContext";
 import { useProducts } from "../../modules/seller/infrastructure/useProducts";
 import { useEffect, useState } from "react";
 import CategoryDropdown from "../data-display/CategoryDropdown";
+import NotificationDropdown from "../data-display/NotificationDropDown";
 
 type Category = {
   id: number;
@@ -19,7 +20,7 @@ type Category = {
 };
 
 export default function NavBar() {
-  const { user} = useAuth();
+  const { user } = useAuth();
   const { getCategories } = useProducts();
   const navigate = useNavigate();
 
@@ -95,10 +96,10 @@ export default function NavBar() {
             <div className="flex space-x-2 ">
               <li className="flex items-center gap-1">
                 {user ? (
-                    <Link to="/profile" className="flex items-center gap-1">
-                      <IconUser className="h-5 w-5" />
-                      <span>{displayName}</span>
-                    </Link>
+                  <Link to="/profile" className="flex items-center gap-1">
+                    <IconUser className="h-5 w-5" />
+                    <span>{displayName}</span>
+                  </Link>
                 ) : (
                   <>
                     <Link className="flex items-center gap-1" to="/loginRegister">
@@ -112,6 +113,11 @@ export default function NavBar() {
               </li>
             </div>
             <div className="flex space-x-2 items-center">
+              <li>
+                <li>
+                  <NotificationDropdown />
+                </li>
+              </li>
               <li>
                 <Link to="/wishlist" className="">
                   <IconHeart className="h-6 w-6" />
