@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import AdminUsersTable from "../../admin/ui/components/AdminUsersTable";
 import CrudBanners from "../../admin/ui/components/CrudBanners";
 import AdminCoupons from "../../admin/ui/components/AdminCoupons";
+import OrdersList from "./OrdersList";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
@@ -55,6 +56,7 @@ export default function UserPage() {
             >
               {selected === "profile" && (<UserProfile type={user.role} />)}
               {selected === "transactions" && <TransactionHistory />}
+              {selected === "orders" && <OrdersList />}
               {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
               {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
               {selected === "users" && user.role === "ADMIN" && (<AdminUsersTable />)}

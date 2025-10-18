@@ -4,6 +4,7 @@ import {
     IconFileCheck,
     IconLogout2,
     IconMailOpened,
+    IconPackage,
     IconPhotoScan,
     IconTag,
     IconUser,
@@ -62,7 +63,14 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
                                 <IconClipboardText size={18} />
                                 <span>Historial de transacciones</span>
                             </li>
-
+                            <li
+                                className={`${baseItem} ${selected === "orders" ? active : inactive
+                                    }`}
+                                onClick={() => onSelect("orders")}
+                            >
+                                <IconPackage size={18} />
+                                <span>Mis pedidos</span>
+                            </li>
                             {type === "SELLER" && (
                                 <>
                                     <li

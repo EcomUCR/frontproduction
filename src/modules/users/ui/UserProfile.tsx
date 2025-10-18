@@ -23,8 +23,9 @@ export default function UserProfile({ type }: UserProfileProps): JSX.Element {
 
   return (
     <div className=" pl-4">
-      <div className="flex flex-col pl-10 w-70">
-        <h1 className="text-xl font-quicksand border-b-3 border-main">Información de la cuenta</h1>
+      <div className="flex flex-col pl-10">
+        <h1 className="text-3xl font-quicksand font-bold border-b-4 border-main pb-2 w-fit">
+          Información de la cuenta</h1>
       </div>
 
       {type === "CUSTOMER" && (
