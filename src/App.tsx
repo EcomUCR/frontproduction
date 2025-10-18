@@ -58,7 +58,6 @@ function App() {
               <Route path="/about" element={<AboutUsPage />} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/editProduct/:id" element={<CrudProductPage />} />
-             {/* <Route path="/admin" element={<AdminPage />} />*/}
             </Routes>
           </Router>
         </CartProvider>
