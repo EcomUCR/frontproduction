@@ -8,6 +8,7 @@ export function useCartTotals() {
     shipping: 0,
     total: 0,
     currency: "CRC",
+    items_count: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
