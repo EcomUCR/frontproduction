@@ -29,6 +29,11 @@ import {
 } from "../../../components/ui/AllSkeletons";
 import ProductCard from "../../../components/data-display/ProductCard";
 
+import { useAuth } from "../../../hooks/context/AuthContext";
+import axios from "axios";
+import { useAlert } from "../../../hooks/context/AlertContext";
+import { useNavigate } from "react-router-dom";
+
 type BorderColors = {
   description: string;
   reviews: string;
@@ -51,6 +56,10 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<keyof BorderColors>("description");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { token, setCart } = useAuth();
+  const { showAlert } = useAlert();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) return;
@@ -119,6 +128,47 @@ export default function ProductPage() {
       }
     })();
   }, [product]);
+
+  const handleAddToCart = async (productId: number) => {
+    if (!token) {
+      showAlert({
+        title: "Inicia sesión",
+        message: "Debes iniciar sesión para agregar productos al carrito",
+        confirmText: "Ir al login",
+        cancelText: "Cancelar",
+        onConfirm: () => {
+          navigate("/loginRegister");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+      });
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(
+        "/cart/add",
+        { product_id: productId, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setCart(data.cart);
+      showAlert({
+        title: "Producto añadido",
+        message: "El producto fue añadido al carrito correctamente ",
+        type: "success",
+      });
+
+      // 🔁 Refresca totales globales si los escuchas en otro componente
+      window.dispatchEvent(new Event("cartUpdated"));
+    } catch (error) {
+      console.error(error);
+      showAlert({
+        title: "Error al añadir",
+        message: "Hubo un problema al añadir el producto al carrito ",
+        type: "error",
+      });
+    }
+  };
 
 
   return (
@@ -302,7 +352,10 @@ export default function ProductPage() {
 
                   {/* 🔹 Formulario de compra */}
                   <div className="w-3/12">
-                    <FormShopping />
+                    <FormShopping
+                      variant="product"
+                      onAddToCart={() => handleAddToCart(product.id)}
+                    />
                   </div>
                 </section>
 
