@@ -14,7 +14,8 @@ import {
 
 export default function HomeSeller() {
   const { id } = useParams();
-  const { getProductsByStore, getFeaturedProductsByStore } = useProducts();
+  const { getProductsByStore, getFeaturedProductsByStore, getOffersByStore } =
+    useProducts();
   const [visibleCount, setVisibleCount] = useState(10);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -30,14 +31,11 @@ export default function HomeSeller() {
         const storeId = Number(id);
         const allProducts = await getProductsByStore(storeId);
         const featured = await getFeaturedProductsByStore(storeId);
+        const offersData = await getOffersByStore(storeId);
 
         setProducts(allProducts);
         setFeaturedProducts(featured);
-        setOffers(
-          allProducts.filter(
-            (p) => p.discount_price && Number(p.discount_price) > 0
-          )
-        );
+        setOffers(offersData);
       } catch (err) {
         console.error("Error al cargar productos del vendedor:", err);
       } finally {

@@ -20,7 +20,7 @@ export type Product = {
   price: number;
   discount_price?: number;
   stock: number;
-  status: "ACTIVE" | "INACTIVE" | "DRAFT"| "ARCHIVED";
+  status: "ACTIVE" | "INACTIVE" | "DRAFT" | "ARCHIVED";
   categories: number[];
   rating?: number;
   image: File | string | null;
@@ -133,6 +133,38 @@ export function useProducts() {
       setSuccess("¡Producto creado con éxito!");
     } catch (e: any) {
       setError("Error al crear el producto: " + (e.response?.data?.message || e.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+  // 👤 Obtener todos los productos de la tienda (excepto ARCHIVED)
+  const getProductsForOwner = async (store_id: number): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await axios.get(`${BASE_URL}/store/${store_id}/all`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.data.map(normalizeProduct);
+    } catch (e: any) {
+      console.error("❌ Error al cargar productos del dueño:", e);
+      setError("No se pudieron cargar tus productos");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+  // 💸 Obtener productos en oferta por tienda (solo activos, tienda verificada)
+  const getOffersByStore = async (store_id: number): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/store/${store_id}/offers`);
+      return res.data.map(normalizeProduct);
+    } catch (e: any) {
+      setError("No se pudieron cargar las ofertas de esta tienda");
+      return [];
     } finally {
       setLoading(false);
     }
@@ -267,6 +299,8 @@ export function useProducts() {
     getProductsByCategory,
     createProduct,
     updateProduct,
+    getProductsForOwner,
+    getOffersByStore,
     loading,
     error,
     success,
