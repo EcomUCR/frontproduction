@@ -21,12 +21,9 @@ export function useCartTotals() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/cart/totals`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/cart/totals`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setTotals(res.data);
     } catch (err) {
@@ -37,19 +34,26 @@ export function useCartTotals() {
     }
   };
 
-  // 🔹 Limpiar carrito (backend + frontend)
+  // 🔹 Limpiar carrito (intenta POST, si falla usa DELETE)
   const clearCart = async () => {
     try {
-      // 1️⃣ Si tienes endpoint en el backend
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/cart/clear`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
 
-      // 2️⃣ Actualiza estado local
+      try {
+        // 1️⃣ intenta POST primero
+        await axios.post(`${import.meta.env.VITE_API_URL}/cart/clear`, {}, config);
+      } catch (err: any) {
+        // 2️⃣ si el backend no acepta POST (405), intenta DELETE
+        if (err.response?.status === 405) {
+          await axios.delete(`${import.meta.env.VITE_API_URL}/cart/clear`, config);
+        } else {
+          throw err;
+        }
+      }
+
+      // 3️⃣ limpia el estado local
       setTotals({
         subtotal: 0,
         taxes: 0,
@@ -59,7 +63,6 @@ export function useCartTotals() {
         items_count: 0,
       });
 
-      // 3️⃣ Lanza evento global para refrescar otros componentes
       window.dispatchEvent(new Event("cartUpdated"));
       console.log("🧹 Carrito limpiado correctamente");
     } catch (err) {
