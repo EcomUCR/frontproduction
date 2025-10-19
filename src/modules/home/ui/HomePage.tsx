@@ -156,7 +156,7 @@ export default function HomePage() {
         const b = activeBanners[0];
         return (
           <div className="flex justify-center items-center">
-            <div className="scale-[0.9] transition-transform duration-300">
+            <div className="transition-transform duration-300">
               <BannerComponent
                 {...b}
                 image={
