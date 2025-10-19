@@ -8,14 +8,15 @@ import paypal from "../../img/resources/logo_paypal.png";
 import american_express from "../../img/resources/american_express_logo.png";
 import { IconMapPin } from "@tabler/icons-react";
 import { Button } from "../ui/button";
-
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripePaymentForm from "../../components/ui/StripePaymentForm";
+import { OrderDataSaver } from "../../components/data-display/OrderDataSaver";
 
 // ⚙️ Crea la instancia de Stripe una sola vez FUERA del componente
-// Sustituye tu clave de prueba aquí directamente
-const stripePromise = loadStripe("pk_test_51SJQBqLl2yLxOyLIFdLhdGoXjNKpBn2WFxWjMhInw72TUbRe7DVmYLa17tBOfswYlYqe0E3J3bqYWFyuJaEFYMLI00aJOZAoJY");
+const stripePromise = loadStripe(
+  "pk_test_51SJQBqLl2yLxOyLIFdLhdGoXjNKpBn2WFxWjMhInw72TUbRe7DVmYLa17tBOfswYlYqe0E3J3bqYWFyuJaEFYMLI00aJOZAoJY"
+);
 
 interface FormShoppingProps {
   variant?: "checkout" | "product";
@@ -26,7 +27,7 @@ export default function FormShopping({
   variant = "checkout",
   onAddToCart,
 }: FormShoppingProps) {
-  const { getForexRate, rate, /*loading: loadingVisa*/ error: errorVisa } = useVisa();
+  const { getForexRate, rate, error: errorVisa } = useVisa();
   const { processCheckout } = useCheckout();
   const { totals, getTotals, loading, error } = useCartTotals();
 
@@ -39,7 +40,9 @@ export default function FormShopping({
   return (
     <div className="font-quicksand">
       <h2 className="text-xl font-bold mb-4">
-        {variant === "product" ? "Detalles del producto" : "Detalles de la compra"}
+        {variant === "product"
+          ? "Detalles del producto"
+          : "Detalles de la compra"}
       </h2>
 
       {/* 💰 Totales */}
@@ -93,8 +96,16 @@ export default function FormShopping({
                 total={totals?.total || 0}
                 onPaymentSuccess={async (paymentIntent) => {
                   console.log("✅ Pago exitoso:", paymentIntent);
+
+                  // ✅ Guardar la información del carrito antes de borrarlo
+                  OrderDataSaver.saveOrderData({
+                    totals,
+                    paymentIntent,
+                    date: new Date().toISOString(),
+                  });
+
                   await getForexRate("CRC", "USD");
-                  await processCheckout(paymentIntent, totals); // ✅ registra orden + limpia carrito
+                  await processCheckout(paymentIntent, totals); // limpia el carrito
                 }}
               />
             </Elements>
@@ -107,7 +118,11 @@ export default function FormShopping({
               <img className="h-10" src={visa} alt="Visa" />
               <img className="h-10" src={mastercard} alt="Mastercard" />
               <img className="h-10" src={paypal} alt="PayPal" />
-              <img className="h-10" src={american_express} alt="American Express" />
+              <img
+                className="h-10"
+                src={american_express}
+                alt="American Express"
+              />
             </div>
           </div>
 
