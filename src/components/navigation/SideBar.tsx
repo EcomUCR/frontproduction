@@ -1,6 +1,6 @@
 import {
     IconBuildingStore,
-    IconClipboardText,
+    /*IconClipboardText,*/
     IconFileCheck,
     IconMailOpened,
     IconPackage,
