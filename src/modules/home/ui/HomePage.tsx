@@ -189,7 +189,7 @@ export default function HomePage() {
           {activeBanners.map((b) => (
             <div
               key={b.id}
-              className="hover:scale-[1.02] transition-transform duration-300 flex justify-center"
+              className="transition-transform duration-300 flex justify-center"
             >
               <BannerComponent
                 {...b}
