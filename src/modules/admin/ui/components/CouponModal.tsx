@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconX } from "@tabler/icons-react";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import { useCoupons } from "../../infrastructure/useCoupons";
+import {
+  useProducts,
+  type Category,
+} from "../../../seller/infrastructure/useProducts"; // 👈 importa categorías
 
 interface CouponModalProps {
   coupon?: any;
@@ -51,8 +55,17 @@ export default function CouponModal({
   );
 
   const { createCoupon, updateCoupon, loading } = useCoupons();
+  const { getCategories } = useProducts(); // ✅ usamos el hook
+  const [categories, setCategories] = useState<Category[]>([]); // lista local
 
-  // ✅ Cambia valores del formulario
+  // 🌀 Cargar categorías al montar
+  useEffect(() => {
+    (async () => {
+      const data = await getCategories();
+      setCategories(data);
+    })();
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -68,7 +81,6 @@ export default function CouponModal({
     }));
   };
 
-  // ✅ Limpia los datos antes de enviar
   const cleanData = (data: CouponFormData): CouponFormData => {
     const cleaned: any = {};
 
@@ -96,13 +108,11 @@ export default function CouponModal({
       }
     }
 
-    // 🔥 Si el tipo es FREE_SHIPPING, fuerza value = 0
     if (cleaned.type === "FREE_SHIPPING") cleaned.value = 0;
 
     return cleaned as CouponFormData;
   };
 
-  // ✅ Enviar datos al backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanedData = cleanData(formData);
@@ -230,15 +240,22 @@ export default function CouponModal({
               />
             </div>
             <div>
-              <label className="text-sm font-semibold">Categoría (ID)</label>
-              <input
-                type="number"
+              <label className="text-sm font-semibold">Categoría</label>
+              <select
                 name="category_id"
-                value={formData.category_id}
+                value={formData.category_id || ""}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
-              />
+                className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main"
+              >
+                <option value="">Selecciona una categoría</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
+
             <div>
               <label className="text-sm font-semibold">Producto (ID)</label>
               <input
