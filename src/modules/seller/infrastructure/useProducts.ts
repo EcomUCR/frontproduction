@@ -81,54 +81,41 @@ export function useProducts() {
   };
 
   // Crear producto
-  const createProduct = async (product: Product) => {
+  const createProduct = async (product: any) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
       const store = await getStoreByUser(user?.id ?? 0);
-
-      if (!store || !store.id) {
-        throw new Error("No se encontró la tienda asociada al usuario");
-      }
+      if (!store?.id) throw new Error("No se encontró la tienda asociada al usuario");
 
       const store_id = store.id;
 
+      // Subir imágenes (solo las que existan)
+      const uploadIfFile = async (img: any) =>
+        img instanceof File ? await uploadImage(img) : img || null;
 
-      // ⚠️ Validar si se subió imagen antes de continuar
-      if (!product.image || !(product.image instanceof File)) {
-        setError("Debes subir una imagen antes de crear el producto");
-        setLoading(false);
-        return;
-      }
+      const image1Url = await uploadIfFile(product.image);
+      const image2Url = await uploadIfFile(product.image_2);
+      const image3Url = await uploadIfFile(product.image_3);
 
-      // Subir la imagen
-      const imageUrl = await uploadImage(product.image);
-
-      // Payload del producto
-      // Payload del producto
-      const payload: any = {
-        store_id: store_id,
-        sku: `SKU-${Date.now()}`, // ⚙️ genera uno temporal
+      const payload = {
+        store_id,
+        sku: `SKU-${Date.now()}`,
         name: product.name,
         description: product.description || "",
         price: product.price,
-        discount_price: product.discount_price || null,
+        discount_price: product.discount_price ?? 0,
         stock: product.stock,
-        status:
-          product.status === "INACTIVE"
-            ? "INACTIVE"
-            : product.status === "ARCHIVED"
-              ? "ARCHIVED"
-              : "ACTIVE",
+        status: product.status || "ACTIVE", // 🔹 conserva el valor real
         is_featured: product.is_featured,
-        image_1_url: imageUrl,
-        category_ids: product.categories, // ✅ enviar categorías seleccionadas
+        image_1_url: image1Url,
+        image_2_url: image2Url,
+        image_3_url: image3Url,
+        category_ids: product.categories,
       };
 
-
-      // Enviar producto al backend
       await axios.post(`${BASE_URL}/products`, payload);
       setSuccess("¡Producto creado con éxito!");
     } catch (e: any) {
@@ -137,6 +124,7 @@ export function useProducts() {
       setLoading(false);
     }
   };
+
   // 👤 Obtener todos los productos de la tienda (excepto ARCHIVED)
   const getProductsForOwner = async (store_id: number): Promise<Product[]> => {
     setLoading(true);
@@ -198,41 +186,43 @@ export function useProducts() {
   };
 
   // Editar producto
-  const updateProduct = async (id: number, product: Product) => {
+  // Editar producto
+  const updateProduct = async (id: number, product: any) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      let imageUrl = typeof product.image === "string" ? product.image : undefined;
+      // 🔹 Subir imágenes solo si son nuevos archivos
+      const uploadIfFile = async (img: any) =>
+        img instanceof File ? await uploadImage(img) : img || null;
 
-      // 🔹 Si el usuario subió una nueva imagen, súbela a Cloudinary
-      if (product.image && product.image instanceof File) {
-        imageUrl = await uploadImage(product.image);
-      }
+      const image1Url = await uploadIfFile(product.image_1 ?? product.image);
+      const image2Url = await uploadIfFile(product.image_2);
+      const image3Url = await uploadIfFile(product.image_3);
 
-      // 🔹 Construimos el payload con soporte de estados tipo string
+      // 🔹 Construimos el payload con todas las propiedades
       const payload: any = {
         name: product.name,
         description: product.description,
         price: product.price,
-        discount_price: product.discount_price,
+        discount_price: product.discount_price ?? 0,
         stock: product.stock,
+        status: product.status || "ACTIVE",
         is_featured: product.is_featured ?? false,
-        image_1_url: imageUrl,
+        image_1_url: image1Url,
+        image_2_url: image2Url,
+        image_3_url: image3Url,
       };
 
-      // ✅ Solo agregamos status si existe y es string (ACTIVE, INACTIVE, ARCHIVED)
-      if (typeof product.status === "string") {
-        payload.status = product.status;
-      }
-
-      // ✅ Si las categorías existen, se incluyen también
+      // 🔹 Si las categorías existen, se incluyen también
       if (Array.isArray(product.categories) && product.categories.length > 0) {
         payload.category_ids = product.categories;
       }
 
+      // 🔹 Enviamos el update al backend
       await axios.put(`${BASE_URL}/products/${id}`, payload);
+
       setSuccess("¡Producto editado con éxito!");
     } catch (e: any) {
       setError(
@@ -243,6 +233,7 @@ export function useProducts() {
       setLoading(false);
     }
   };
+
 
   const getProducts = async (): Promise<Product[]> => {
     setLoading(true);

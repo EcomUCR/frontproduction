@@ -141,13 +141,9 @@ export default function CrudProductPage() {
       price: Number(form.price),
       discount_price: Number(form.discount_price),
 
-
-
       image_1: form.images[0],
       image_2: form.images[1],
       image_3: form.images[2],
-
-
 
       name: form.name,
       description: form.description,
@@ -162,8 +158,6 @@ export default function CrudProductPage() {
         await updateProduct(Number(id), payload as any);
       } else {
         await createProduct(payload as any);
-
-
 
         setForm({
           name: "",
