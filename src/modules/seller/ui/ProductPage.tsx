@@ -44,6 +44,7 @@ export default function ProductPage() {
   const { id } = useParams();
   const { getProductById, getProductsByCategory, getProductsByStore } = useProducts();
 
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [prodStore, setProdStore] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -247,12 +248,40 @@ export default function ProductPage() {
               <>
                 <section className="flex px-10 pt-5 font-quicksand">
                   <div className="w-3/12 pt-10">
-                    <div className="flex items-center justify-center overflow-hidden rounded-2xl aspect-square mb-10">
-                      <img
-                        src={product.image_1_url}
-                        alt={product.name}
-                        className="w-full h-full object-contain object-center rounded-2xl"
-                      />
+                    <div className="flex flex-col items-center">
+                      {/*Imagen principal */}
+                      <div className="w-full flex justify-center mb-5 pb-4">
+                        <div className="relative w-[18rem] h-[18rem] overflow-hidden rounded-2xl">
+                          <img
+                            src={selectedImage || product.image_1_url || "https://via.placeholder.com/400"}
+                            alt={product.name}
+                            className="absolute inset-0 w-full h-full object-contain transition-all duration-300 rounded-2xl"
+                          />
+                        </div>
+                      </div>
+
+                      {/*Miniaturas */}
+                      <div className="flex gap-3 justify-center flex-wrap pb-5">
+                        {[product.image_1_url, product.image_2_url, product.image_3_url]
+                          .filter(Boolean)
+                          .map((img, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setSelectedImage(img!)}
+                              className={`w-20 h-20 rounded-xl overflow-hidden border-1 transition-all duration-300 ${selectedImage === img
+                                  ? "border-main scale-105"
+                                  : "border-transparent hover:scale-105"
+                                }`}
+                            >
+                              <img
+                                src={img!}
+                                alt={`Miniatura ${index + 1}`}
+                                className="w-full h-full object-cover object-center"
+                              />
+                            </button>
+                          ))}
+                      </div>
+
                     </div>
 
                     {/* 🔹 Botones de acción */}

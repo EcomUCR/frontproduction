@@ -25,6 +25,8 @@ export type Product = {
   rating?: number;
   image: File | string | null;
   image_1_url?: string;
+  image_2_url?: string;
+  image_3_url?: string;
   is_featured: boolean;
   store?: {
     id: number;
