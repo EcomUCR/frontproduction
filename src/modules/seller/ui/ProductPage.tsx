@@ -40,6 +40,19 @@ type BorderColors = {
   details: string;
 };
 
+
+const getProductImages = (product: Product | null): string[] => {
+  if (!product) return [];
+  const images = [
+    product.image_1_url,
+    product.image_2_url,
+    product.image_3_url,
+  ].filter(
+    (url): url is string => !!url 
+  );
+  return images.slice(0, 3);
+};
+
 export default function ProductPage() {
   const { id } = useParams();
   const { getProductById, getProductsByCategory, getProductsByStore } = useProducts();
@@ -49,12 +62,14 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<keyof BorderColors>("description");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState<string | undefined>(undefined);
+
 
   const { token, setCart } = useAuth();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
 
-  // Función para compartir en redes o copiar enlace
+ 
   const handleShare = async (platform: string) => {
     const wishlistUrl = window.location.href;
     const encodedUrl = encodeURIComponent(wishlistUrl);
@@ -126,6 +141,11 @@ export default function ProductPage() {
       try {
         const prod = await getProductById(Number(id));
         setProduct(prod);
+
+      
+        if (prod?.image_1_url) {
+          setActiveImage(prod.image_1_url);
+        }
 
         if (prod?.store_id) {
           const storeProducts = await getProductsByStore(prod.store_id);
@@ -214,12 +234,15 @@ export default function ProductPage() {
     }
   };
 
+  
+  const productImages = getProductImages(product);
+
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
 
       <div className="mx-auto max-w-[80rem] w-full">
-        {/* 🔹 Botón volver */}
+     
         <section className="flex px-10 pt-10 font-quicksand">
           <ButtonComponent
             icon={<IconArrowBackUp />}
@@ -247,15 +270,33 @@ export default function ProductPage() {
               <>
                 <section className="flex px-10 pt-5 font-quicksand">
                   <div className="w-3/12 pt-10">
-                    <div className="flex items-center justify-center overflow-hidden rounded-2xl aspect-square mb-10">
+                   
+                    <div className="flex items-center justify-center overflow-hidden rounded-2xl aspect-square mb-5 border border-contrast-secondary">
                       <img
-                        src={product.image_1_url}
+                        src={activeImage || product.image_1_url}
                         alt={product.name}
                         className="w-full h-full object-contain object-center rounded-2xl"
                       />
                     </div>
 
-                    {/* 🔹 Botones de acción */}
+                   
+                    <div className="flex justify-center gap-4 mb-10">
+                      {productImages.map((imgUrl, index) => (
+                        <div
+                          key={index}
+                          className={`w-1/4 aspect-square rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ${activeImage === imgUrl ? "border-2 border-main" : "border border-gray-300 hover:border-main"
+                            }`}
+                          onClick={() => setActiveImage(imgUrl)}
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={`${product.name} miniatura ${index + 1}`}
+                            className="w-full h-full object-cover object-center"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
                     <div className="border-t-2 border-main pt-10">
                       <div className="flex relative items-center justify-between border border-contrast-secondary rounded-full px-3 py-2">
                         <div className="flex items-center gap-2">
@@ -275,7 +316,7 @@ export default function ProductPage() {
                             onClick={() => setIsModalOpen((prev) => !prev)}
                           />
 
-                          {/* Menú desplegable */}
+                      
                           <div className="absolute right-23 top-25">
                             <ul className="flex gap-3">
                               <li
@@ -321,7 +362,7 @@ export default function ProductPage() {
                     </div>
                   </div>
 
-                  {/* 🔹 Columna Central */}
+                
                   <div className="w-6/12 px-20 border-r-2 border-main mr-5">
                     <div className="flex flex-col gap-5">
                       <h2 className="text-xl font-bold">{product.name}</h2>
@@ -350,7 +391,7 @@ export default function ProductPage() {
                       </div>
                     </div>
 
-                    {/* Tabs */}
+                
                     <div
                       className={`relative flex justify-between items-center my-10 p-2 rounded-full overflow-hidden text-sm font-quicksand transition-colors duration-500 z-0 ${activeTab === "description"
                         ? "border-1 border-main"
@@ -404,7 +445,7 @@ export default function ProductPage() {
                       />
                     </div>
 
-                    {/*Contenido Tabs */}
+                  
 
                     <div className="relative overflow-hidden h-80">
                       <AnimatePresence mode="wait">
@@ -451,7 +492,7 @@ export default function ProductPage() {
 
                   </div>
 
-                  {/* Formulario de compra */}
+                 
                   <div className="w-3/12">
                     <FormShopping
                       variant="product"
@@ -460,7 +501,7 @@ export default function ProductPage() {
                   </div>
                 </section>
 
-                {/* Más productos de la tienda */}
+                
                 <section className="my-10 px-10">
                   <h2 className="text-2xl font-semibold font-quicksand">
                     Más de {product.store?.name || "la tienda"}
@@ -493,7 +534,7 @@ export default function ProductPage() {
                   )}
                 </section>
 
-                {/* Productos similares */}
+               
                 <section className="my-10 px-10">
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-semibold font-quicksand">

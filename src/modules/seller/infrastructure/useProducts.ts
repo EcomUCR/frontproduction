@@ -3,10 +3,10 @@ import axios from "axios";
 import { getStoreByUser } from "./storeService";
 import { useAuth } from "../../../hooks/context/AuthContext";
 
-// ⚠️ Usamos el proxy de Vite en dev: en producción se debe usar VITE_API_URL
+
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-// src/infrastructure/useProducts.ts
+
 export type Category = {
   id: number;
   name: string;
@@ -23,8 +23,13 @@ export type Product = {
   status: "ACTIVE" | "INACTIVE" | "DRAFT" | "ARCHIVED";
   categories: number[];
   rating?: number;
-  image: File | string | null;
+  
+  image_1?: File | string | null;
+  image_2?: File | string | null;
+  image_3?: File | string | null;
   image_1_url?: string;
+  image_2_url?: string;
+  image_3_url?: string;
   is_featured: boolean;
   store?: {
     id: number;
@@ -42,7 +47,7 @@ export function useProducts() {
     store: p.store || (p.store_name ? { id: p.store_id, name: p.store_name } : undefined),
   });
 
-  // Obtener categorías
+ 
   const getCategories = async (): Promise<Category[]> => {
     setLoading(true);
     setError(null);
@@ -56,6 +61,7 @@ export function useProducts() {
       setLoading(false);
     }
   };
+
   const getFeaturedProducts = async (): Promise<Product[]> => {
     setLoading(true);
     setError(null);
@@ -70,7 +76,7 @@ export function useProducts() {
     }
   };
 
-  // Subir imagen y obtener URL de cloudinary
+ 
   const uploadImage = async (imageFile: File): Promise<string> => {
     const formData = new FormData();
     formData.append("image", imageFile);
@@ -80,7 +86,7 @@ export function useProducts() {
     return res.data.url as string;
   };
 
-  // Crear producto
+ 
   const createProduct = async (product: Product) => {
     setLoading(true);
     setError(null);
@@ -95,40 +101,36 @@ export function useProducts() {
 
       const store_id = store.id;
 
-
-      // ⚠️ Validar si se subió imagen antes de continuar
-      if (!product.image || !(product.image instanceof File)) {
-        setError("Debes subir una imagen antes de crear el producto");
-        setLoading(false);
-        return;
+      
+      const uploadedImages: (string | null)[] = [];
+      for (let i = 0; i < 3; i++) {
+        const img = (product as any)[`image_${i + 1}`];
+        if (img && img instanceof File) uploadedImages[i] = await uploadImage(img);
+        else uploadedImages[i] = null;
       }
 
-      // Subir la imagen
-      const imageUrl = await uploadImage(product.image);
-
-      // Payload del producto
-      // Payload del producto
+     
       const payload: any = {
         store_id: store_id,
-        sku: `SKU-${Date.now()}`, // ⚙️ genera uno temporal
+        sku: `SKU-${Date.now()}`,
         name: product.name,
         description: product.description || "",
         price: product.price,
-        discount_price: product.discount_price || null,
+        discount_price: product.discount_price ?? product.price, 
         stock: product.stock,
         status:
           product.status === "INACTIVE"
             ? "INACTIVE"
             : product.status === "ARCHIVED"
-              ? "ARCHIVED"
-              : "ACTIVE",
+            ? "ARCHIVED"
+            : "ACTIVE",
         is_featured: product.is_featured,
-        image_1_url: imageUrl,
-        category_ids: product.categories, // ✅ enviar categorías seleccionadas
+        category_ids: product.categories,
+        image_1_url: uploadedImages[0],
+        image_2_url: uploadedImages[1],
+        image_3_url: uploadedImages[2],
       };
 
-
-      // Enviar producto al backend
       await axios.post(`${BASE_URL}/products`, payload);
       setSuccess("¡Producto creado con éxito!");
     } catch (e: any) {
@@ -137,7 +139,47 @@ export function useProducts() {
       setLoading(false);
     }
   };
-  // 👤 Obtener todos los productos de la tienda (excepto ARCHIVED)
+
+
+  const updateProduct = async (id: number, product: Product) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const uploadedImages: (string | null)[] = [];
+
+      for (let i = 0; i < 3; i++) {
+        const img = (product as any)[`image_${i + 1}`];
+        if (img && img instanceof File) uploadedImages[i] = await uploadImage(img);
+        else if (typeof img === "string") uploadedImages[i] = img;
+        else uploadedImages[i] = null;
+      }
+
+      const payload: any = {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        discount_price: product.discount_price,
+        stock: product.stock,
+        is_featured: product.is_featured ?? false,
+        status: product.status,
+        category_ids: product.categories,
+        image_1_url: uploadedImages[0],
+        image_2_url: uploadedImages[1],
+        image_3_url: uploadedImages[2],
+      };
+
+      await axios.put(`${BASE_URL}/products/${id}`, payload);
+      setSuccess("¡Producto editado con éxito!");
+    } catch (e: any) {
+      setError("Error al editar el producto: " + (e.response?.data?.message || e.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+ 
   const getProductsForOwner = async (store_id: number): Promise<Product[]> => {
     setLoading(true);
     setError(null);
@@ -155,7 +197,8 @@ export function useProducts() {
       setLoading(false);
     }
   };
-  // 💸 Obtener productos en oferta por tienda (solo activos, tienda verificada)
+
+  
   const getOffersByStore = async (store_id: number): Promise<Product[]> => {
     setLoading(true);
     setError(null);
@@ -183,6 +226,7 @@ export function useProducts() {
       setLoading(false);
     }
   };
+
   const getFeaturedProductsByStore = async (store_id: number): Promise<Product[]> => {
     setLoading(true);
     setError(null);
@@ -192,53 +236,6 @@ export function useProducts() {
     } catch (e: any) {
       setError("No se pudieron cargar los productos destacados de la tienda");
       return [];
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Editar producto
-  const updateProduct = async (id: number, product: Product) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      let imageUrl = typeof product.image === "string" ? product.image : undefined;
-
-      // 🔹 Si el usuario subió una nueva imagen, súbela a Cloudinary
-      if (product.image && product.image instanceof File) {
-        imageUrl = await uploadImage(product.image);
-      }
-
-      // 🔹 Construimos el payload con soporte de estados tipo string
-      const payload: any = {
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        discount_price: product.discount_price,
-        stock: product.stock,
-        is_featured: product.is_featured ?? false,
-        image_1_url: imageUrl,
-      };
-
-      // ✅ Solo agregamos status si existe y es string (ACTIVE, INACTIVE, ARCHIVED)
-      if (typeof product.status === "string") {
-        payload.status = product.status;
-      }
-
-      // ✅ Si las categorías existen, se incluyen también
-      if (Array.isArray(product.categories) && product.categories.length > 0) {
-        payload.category_ids = product.categories;
-      }
-
-      await axios.put(`${BASE_URL}/products/${id}`, payload);
-      setSuccess("¡Producto editado con éxito!");
-    } catch (e: any) {
-      setError(
-        "Error al editar el producto: " +
-        (e.response?.data?.message || e.message)
-      );
     } finally {
       setLoading(false);
     }
@@ -258,7 +255,6 @@ export function useProducts() {
     }
   };
 
-
   const getProductById = async (id: number): Promise<Product | null> => {
     setLoading(true);
     setError(null);
@@ -273,7 +269,6 @@ export function useProducts() {
     }
   };
 
-
   const getProductsByStore = async (store_id: number): Promise<Product[]> => {
     setLoading(true);
     setError(null);
@@ -287,7 +282,6 @@ export function useProducts() {
       setLoading(false);
     }
   };
-
 
   return {
     getProductById,
@@ -305,5 +299,4 @@ export function useProducts() {
     error,
     success,
   };
-
 }
