@@ -71,10 +71,16 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
         }`}
     >
       {props.edit && (
-        <div className="absolute top-3 right-3 w-9 h-9  bg-contrast-main/70 rounded-full flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400">
-          <IconEdit />
-        </div>
-      )}
+              <Link
+                to={`/editProduct/${props.id}`}
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
+                <ButtonComponent
+                  style="absolute top-4 right-4 w-9 h-9 bg-contrast-main rounded-xl flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400"
+                  icon={<IconEdit />}
+                />
+              </Link>
+            )}
 
       <Link
         to={`/product/${props.id}`}
