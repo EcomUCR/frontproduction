@@ -4,6 +4,7 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import {
+  IconBuildingStore,
   IconHeart,
   IconLogout2,
   IconSearch,
@@ -141,16 +142,28 @@ export default function NavBar() {
                                 navigate("/profile");
                                 setShowUserMenu(false);
                               }}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer items-center"
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer gap-1 flex items-center"
                             >
                               <IconUser className="h-5 w-5 inline-block mr-2" /> Ver perfil
                             </li>
+                            {user.role === "SELLER" && (
+                              <li
+                                onClick={() => {
+                                  navigate("/store/" + user.store?.id);
+                                  setShowUserMenu(false);
+                                }}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer gap-1 flex items-center"
+                              >
+                                <IconBuildingStore className="h-5 w-5 inline-block mr-2" /> Mi tienda
+                              </li>
+                              )}
+
                             <li
                               onClick={() => {
                                 handleLogout();
                                 setShowUserMenu(false);
                               }}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-contrast-secondary"
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-1 text-contrast-secondary"
                             >
                               <IconLogout2 className="h-5 w-5 inline-block mr-2" /> Cerrar sesión
                             </li>
