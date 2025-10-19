@@ -27,7 +27,7 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
         "text-gray-700 hover:bg-main-dark/5 hover:text-main-dark hover:translate-x-1";
 
     return (
-        <aside className="flex flex-col justify-between bg-white/90 backdrop-blur-sm border-r border-main-dark/10 shadow-sm font-quicksand p-6 rounded-r-3xl h-full w-[16rem]">
+        <aside className="flex flex-col justify-between bg-white/90 backdrop-blur-sm border-r border-main-dark/10 shadow-sm font-quicksand p-6 rounded-r-3xl h-full w-[18rem]">
             {/* Header */}
             <div>
                 <h2 className="text-2xl font-bold text-main-dark mb-6 text-center">
@@ -47,14 +47,14 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
                                 <span>Información de la cuenta</span>
                             </li>
 
-                            <li
+                            {/*<li
                                 className={`${baseItem} ${selected === "transactions" ? active : inactive
                                     }`}
                                 onClick={() => onSelect("transactions")}
                             >
                                 <IconClipboardText size={18} />
                                 <span>Historial de transacciones</span>
-                            </li>
+                            </li>*/}
                             <li
                                 className={`${baseItem} ${selected === "orders" ? active : inactive
                                     }`}
