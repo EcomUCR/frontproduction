@@ -2,15 +2,13 @@ import {
     IconBuildingStore,
     IconClipboardText,
     IconFileCheck,
-    IconLogout2,
     IconMailOpened,
     IconPackage,
     IconPhotoScan,
     IconTag,
     IconUser,
 } from "@tabler/icons-react";
-import { useAuth } from "../../hooks/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+
 
 interface SideBarProps {
     type: "SELLER" | "CUSTOMER" | "ADMIN" | null | undefined;
@@ -19,13 +17,7 @@ interface SideBarProps {
 }
 
 export default function SideBar({ type, onSelect, selected }: SideBarProps) {
-    const { logout } = useAuth();
-    const navigate = useNavigate();
-
-    const handleLogout = async () => {
-        await logout();
-        navigate("/loginRegister", { replace: true });
-    };
+    
 
     const baseItem =
         "flex items-center gap-3 px-5 py-3 rounded-xl cursor-pointer transition-all duration-300 font-medium text-sm relative";
@@ -136,17 +128,6 @@ export default function SideBar({ type, onSelect, selected }: SideBarProps) {
                         </>
                     )}
                 </ul>
-            </div>
-
-            {/* Logout */}
-            <div className="pt-4 border-t border-main-dark/10 mt-4">
-                <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm text-main-dark font-semibold hover:text-contrast-secondary hover:bg-main-dark/5 hover:translate-x-1 transition-all duration-300"
-                >
-                    <IconLogout2 size={18} />
-                    <span>Cerrar sesión</span>
-                </button>
             </div>
         </aside>
     );

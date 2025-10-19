@@ -1,7 +1,11 @@
-// Comentarios agregados por Raul
+// ============================================================
+// 🛍️ NavBar - TukiShop
+// ============================================================
+
 import { Link, useNavigate } from "react-router-dom";
 import {
   IconHeart,
+  IconLogout2,
   IconSearch,
   IconShoppingBag,
   IconUser,
@@ -13,6 +17,7 @@ import { useProducts } from "../../modules/seller/infrastructure/useProducts";
 import { useEffect, useState } from "react";
 import CategoryDropdown from "../data-display/CategoryDropdown";
 import NotificationDropdown from "../data-display/NotificationDropDown";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Category = {
   id: number;
@@ -20,12 +25,13 @@ type Category = {
 };
 
 export default function NavBar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { getCategories } = useProducts();
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -40,7 +46,7 @@ export default function NavBar() {
     fetchCategories();
   }, []);
 
-  // Nombre a mostrar del usuario
+  // Nombre del usuario a mostrar
   let displayName;
   if (user) {
     if (user.first_name || user.last_name) {
@@ -51,18 +57,33 @@ export default function NavBar() {
     }
   }
 
-
-  //Función para realizar búsqueda
+  // Función para realizar búsqueda
   const handleSearch = () => {
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
+  const handleLogout = async () => {
+        await logout();
+        navigate("/loginRegister", { replace: true });
+    };
+
+  // Cerrar dropdown si se hace clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".user-dropdown")) setShowUserMenu(false);
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
   return (
-    <nav className="bg-main px-10 pt-2 lg:px-35 ">
-      {/*Parte superior del navbar*/}
-      <div className="flex justify-between items-center ">
+    <nav className="bg-main px-10 pt-2 lg:px-35 font-quicksand relative z-50">
+      {/* Parte superior del navbar */}
+      <div className="flex justify-between items-center">
+        {/* Logo */}
         <div className="w-1/3">
           <Link
             to="/"
@@ -90,40 +111,87 @@ export default function NavBar() {
           />
         </div>
 
-        {/* Sección derecha (usuario y carrito) */}
-        <div className="w-1/3 flex justify-end">
-          <ul className="flex gap-5 p-2 text-white font-medium">
-            <div className="flex space-x-2 ">
-              <li className="flex items-center gap-1">
+        {/* Sección derecha */}
+        <div className="w-1/3 flex justify-end relative">
+          <ul className="flex gap-5 p-2 text-white font-medium items-center">
+            <div className="flex space-x-2 items-center relative">
+              {/* Usuario */}
+              <li className="relative">
                 {user ? (
-                  <Link to="/profile" className="flex items-center gap-1">
+                  <div
+                    className="flex items-center gap-1 cursor-pointer select-none user-dropdown relative"
+                    onClick={() => setShowUserMenu((prev) => !prev)}
+                  >
                     <IconUser className="h-5 w-5" />
                     <span>{displayName}</span>
-                  </Link>
+
+                    {/* Mini Dropdown */}
+                    <AnimatePresence>
+                      {showUserMenu && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute right-0 top-8 bg-white text-main-dark rounded-lg shadow-lg w-44 overflow-hidden"
+                        >
+                          <ul className="flex flex-col text-sm">
+                            <li
+                              onClick={() => {
+                                navigate("/profile");
+                                setShowUserMenu(false);
+                              }}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer items-center"
+                            >
+                              <IconUser className="h-5 w-5 inline-block mr-2" /> Ver perfil
+                            </li>
+                            <li
+                              onClick={() => {
+                                handleLogout();
+                                setShowUserMenu(false);
+                              }}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-contrast-secondary"
+                            >
+                              <IconLogout2 className="h-5 w-5 inline-block mr-2" /> Cerrar sesión
+                            </li>
+                          </ul>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 ) : (
-                  <>
-                    <Link className="flex items-center gap-1" to="/loginRegister?mode=login">
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/loginRegister?mode=login"
+                      className="flex items-center gap-1 hover:font-semibold"
+                    >
                       <IconUser className="h-5 w-5" />
                       Iniciar sesión
                     </Link>
                     <span>|</span>
-                    <Link to="/loginRegister?mode=register">Regístrate</Link>
-
-                  </>
+                    <Link
+                      to="/loginRegister?mode=register"
+                      className="hover:font-semibold"
+                    >
+                      Regístrate
+                    </Link>
+                  </div>
                 )}
               </li>
-            </div>
-            <div className="flex space-x-2 items-center">
-              <li>
 
+              {/* Notificaciones */}
+              <li>
                 <NotificationDropdown />
-
               </li>
+
+              {/* Lista de deseos */}
               <li>
-                <Link to="/wishlist" className="">
+                <Link to="/wishlist">
                   <IconHeart className="h-6 w-6" />
                 </Link>
               </li>
+
+              {/* Carrito */}
               <li>
                 <Link to="/shoppingCart">
                   <IconShoppingBag className="h-6 w-6" />
@@ -134,14 +202,12 @@ export default function NavBar() {
         </div>
       </div>
 
-      {/*Parte inferior del navbar*/}
+      {/* Parte inferior del navbar */}
       <div>
         <ul className="flex justify-center gap-10 p-3 text-white text-sm font-light">
           <li className="flex relative z-20 items-center transform transition-all duration-300">
             <CategoryDropdown categories={categories} navigate={navigate} />
           </li>
-
-          {/* Enlaces inferiores */}
           <li
             className="hover:-translate-y-1 transform transition-all duration-300 hover:cursor-pointer"
             onClick={() => navigate("/search?mode=explore")}
@@ -170,7 +236,7 @@ export default function NavBar() {
             <Link to="/beSellerPage">Vender</Link>
           </li>
           <li className="hover:-translate-y-1 transform transition-all duration-300">
-            <a href="/about">Conócenos</a>
+            <Link to="/about">Conócenos</Link>
           </li>
         </ul>
       </div>
