@@ -158,7 +158,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
 
             {/* Botón deshabilitado si no se aceptan los TYC */}
             <button
-              className={`bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand transition ${
+              className={`bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand cursor-pointer transition ${
                 !acceptedTerms || loading ? "opacity-60 cursor-not-allowed" : ""
               }`}
               type="submit"

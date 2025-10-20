@@ -55,7 +55,7 @@ export default function LoginRegisterPage() {
                         {/* Botón login */}
                         <li className="relative flex items-center">
                             <button
-                                className={`z-10 text-xl font-semibold py-5 rounded-full transition ${
+                                className={`z-10 text-xl font-semibold py-5 rounded-full transition cursor-pointer ${
                                     mode === "login"
                                         ? "text-contrast-secondary"
                                         : "text-white"
@@ -69,7 +69,7 @@ export default function LoginRegisterPage() {
                         {/* Botón register */}
                         <li className="relative flex items-center font-quicksand">
                             <button
-                                className={`z-10 text-xl font-semibold py-5 rounded-full transition ${
+                                className={`z-10 text-xl font-semibold py-5 rounded-full cursor-pointer transition ${
                                     mode === "register"
                                         ? "text-contrast-secondary"
                                         : "text-white"

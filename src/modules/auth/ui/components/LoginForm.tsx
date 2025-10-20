@@ -55,7 +55,7 @@ export default function LoginForm() {
             required
           />
           <button
-            className="bg-contrast-secondary text-white rounded-full py-3 px-4 w-[30%] font-quicksand"
+            className="bg-contrast-secondary text-white rounded-full py-3 px-4 w-[30%] font-quicksand cursor-pointer"
             type="submit"
             disabled={loading}
           >

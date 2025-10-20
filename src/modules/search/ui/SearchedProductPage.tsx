@@ -6,6 +6,8 @@ import ProductCard from "../../../components/data-display/ProductCard";
 import { useProducts } from "../../seller/infrastructure/useProducts";
 import type { Product } from "../../seller/infrastructure/useProducts";
 import { SkeletonProduct } from "../../../components/ui/AllSkeletons";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../../../components/ui/pagination";
+
 
 
 
@@ -91,7 +93,6 @@ export default function SearchedProductPage() {
   }, [categoryId, query, mode]);
 
   const paginated = products.slice((page - 1) * limit, page * limit);
-  const hasNext = products.length > page * limit;
 
   // 🔹 Título dinámico
   const getTitle = () => {
@@ -137,16 +138,59 @@ export default function SearchedProductPage() {
               ))}
             </div>
 
-            {hasNext && (
-              <div className="flex justify-center mt-6">
-                <button
-                  className="bg-main text-white px-6 py-2 rounded-full hover:bg-opacity-80"
-                  onClick={() => setPage(page + 1)}
-                >
-                  Siguiente página
-                </button>
-              </div>
+            {products.length > limit && (
+              <Pagination className="mt-10">
+                <PaginationContent className="flex items-center justify-center gap-1 font-quicksand">
+                  {/* Prev */}
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setPage(page - 1)}
+                      className={`${page === 1
+                        ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
+                        : "hover:bg-main-dark/10 hover:text-main-dark cursor-pointer"
+                        } rounded-full px-3 py-2 transition-all duration-300`}
+                    />
+                  </PaginationItem>
+
+                  {/* Números */}
+                  {Array.from({ length: Math.ceil(products.length / limit) }).map((_, index) => {
+                    const current = index + 1;
+                    const isActive = current === page;
+                    return (
+                      <PaginationItem key={current}>
+                        <PaginationLink
+                          onClick={() => {
+                            setPage(current);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          isActive={isActive}
+                          className={`rounded-full w-9 h-9 flex items-center justify-center text-sm font-semibold transition-all duration-300 ${isActive
+                            ? "bg-contrast-secondary text-white shadow-md scale-105 cursor-pointer"
+                            : "bg-main-dark/10 text-main-dark hover:bg-main-dark/20 cursor-pointer"
+                            }`}
+                        >
+                          {current}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                  {/* Next */}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setPage(page + 1)}
+                      className={`${page >= Math.ceil(products.length / limit)
+                        ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
+                        : "hover:bg-main-dark/10 hover:text-main-dark cursor-pointer"
+                        } rounded-full px-3 py-2 transition-all duration-300`}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             )}
+
+
+
           </>
         ) : (
           <p className="text-center text-gray-500">

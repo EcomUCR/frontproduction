@@ -84,7 +84,7 @@ export default function NavBarSeller({
           <li>
             <button
               onClick={() => setView("home")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
+              className={`text-main-dark hover:-translate-y-1 transform transition-all cursor-pointer duration-300 hover:text-contrast-secondary ${
                 currentView === "home" ? "font-bold" : ""
               }`}
             >
@@ -94,7 +94,7 @@ export default function NavBarSeller({
           <li>
             <button
               onClick={() => setView("offers")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
+              className={`text-main-dark hover:-translate-y-1 transform cursor-pointer transition-all duration-300 hover:text-contrast-secondary ${
                 currentView === "offers" ? "font-bold" : ""
               }`}
             >
@@ -104,7 +104,7 @@ export default function NavBarSeller({
           <li>
             <button
               onClick={() => setView("contact")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
+              className={`text-main-dark hover:-translate-y-1 transform cursor-pointer transition-all duration-300 hover:text-contrast-secondary ${
                 currentView === "contact" ? "font-bold" : ""
               }`}
             >
@@ -114,7 +114,7 @@ export default function NavBarSeller({
           <li>
             <button
               onClick={() => setView("reviews")}
-              className={`text-main-dark hover:-translate-y-1 transform transition-all duration-300 hover:text-contrast-secondary ${
+              className={`text-main-dark hover:-translate-y-1 transform cursor-pointer transition-all duration-300 hover:text-contrast-secondary ${
                 currentView === "reviews" ? "font-bold" : ""
               }`}
             >
@@ -132,7 +132,7 @@ export default function NavBarSeller({
           placeholder={`Buscar en ${store.name || "la tienda"}`}
         />
         <button className="bg-gradient-to-br from-contrast-main to-contrast-secondary rounded-full w-15 h-9 flex items-center justify-center">
-          <IconSearch className="text-white h-6 w-auto stroke-3" />
+          <IconSearch className="text-white h-6 w-auto stroke-3 cursor-pointer" />
         </button>
       </div>
     </nav>
