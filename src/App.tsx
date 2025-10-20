@@ -32,6 +32,8 @@ import { AlertProvider } from "./hooks/context/AlertContext";
 import AboutUsPage from "./modules/home/ui/AboutUsPage";
 import HelpPage from "./modules/home/ui/HelpPage";
 import WishListPage from "./modules/users/ui/WishListPage";
+import OrderStatus from "./modules/users/ui/OrderStatus";
+import NotFound from "./components/navigation/NotFound";
 
 function App() {
   return (
@@ -58,6 +60,7 @@ function App() {
               <Route path="/about" element={<AboutUsPage />} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/editProduct/:id" element={<CrudProductPage />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Router>
         </CartProvider>
