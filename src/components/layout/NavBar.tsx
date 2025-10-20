@@ -217,7 +217,7 @@ export default function NavBar() {
 
       {/* Parte inferior del navbar */}
       <div>
-        <ul className="flex justify-center gap-10 p-3 text-white text-sm font-light">
+        <ul className="flex justify-center gap-10 p-3 text-white text-sm">
           <li className="flex relative z-20 items-center transform transition-all duration-300">
             <CategoryDropdown categories={categories} navigate={navigate} />
           </li>

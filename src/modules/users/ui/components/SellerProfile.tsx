@@ -256,7 +256,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       value={editableStore.name || ""}
                       onChange={handleChange}
                       rows={2}
-                      className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
                     />
                   </label>
                   <label className="flex flex-col w-full">
@@ -264,7 +264,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     <input
                       type="text"
                       placeholder={user?.email || "Correo de la tienda"}
-                      className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
                       disabled
                     />
                   </label>
@@ -273,7 +273,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                 <section className="flex gap-10">
                   <div className="w-full">
                     Número telefónico
-                    <label className="bg-main-dark/10 rounded-xl px-3 flex items-center gap-2 w-full">
+                    <label className="bg-main-dark/20 rounded-xl px-3 flex items-center gap-2 w-full">
                       <IconPhone className="text-contrast-secondary" />
                       <input
                         name="support_phone"
@@ -292,7 +292,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       name="support_email"
                       value={editableStore.support_email || ""}
                       onChange={handleChange}
-                      className="bg-main-dark/10 rounded-xl px-3 py-2 w-full"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
                     />
                   </label>
                 </section>
@@ -319,7 +319,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                           key={index}
                           text={link.text}
                           icon={iconMap[link.type]}
-                          style="text-main-dark flex gap-2 bg-main-dark/10 py-3 px-2 rounded-xl font-semibold"
+                          style="text-main-dark flex gap-2 bg-main-dark/20 py-3 px-2 rounded-xl font-semibold"
                           iconStyle="text-contrast-secondary"
                         />
                       ))}
@@ -366,7 +366,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       value={editableStore.description || ""}
                       onChange={handleChange}
                       rows={4}
-                      className="bg-main-dark/10 rounded-xl px-3 py-2"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2"
                     />
                   </label>
                   <label className="flex flex-col w-full">
@@ -376,7 +376,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       value={editableStore.registered_address || ""}
                       onChange={handleChange}
                       rows={4}
-                      className="bg-main-dark/10 rounded-xl px-3 py-2"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2"
                     />
                   </label>
                 </div>
