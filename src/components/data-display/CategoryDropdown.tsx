@@ -84,8 +84,7 @@ export default function CategoryDropdown({
             </button>
 
             {open && (
-                <div
-                    className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-lg py-2 z-50 animate-fadeIn border border-gray-200
+                <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-lg py-2 z-50 animate-fadeIn border border-gray-200
                 max-h-90 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
                 >
                     {categories.map((category) => {
