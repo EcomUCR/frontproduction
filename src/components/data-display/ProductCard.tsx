@@ -11,8 +11,8 @@ interface ProductCardProps {
   id: number;
   shop: string;
   title: string;
-  price: string;
-  discountPrice?: string;
+  price: number;
+  discountPrice?: number;
   img?: string;
   edit: boolean;
 }
@@ -21,6 +21,12 @@ export default function ProductCard(props: ProductCardProps) {
   const { token, setCart } = useAuth();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
+
+  const formatPrice = (value?: number) => {
+  const num = Number(value) || 0;
+  return num.toLocaleString("es-CR").replace(/\s/g, ".");
+};
+
 
   // 👇 Maneja añadir al carrito
   const handleAddToCart = async () => {
@@ -115,13 +121,18 @@ export default function ProductCard(props: ProductCardProps) {
                 {Number(props.discountPrice) > 0 ? (
                   <>
                     <p className="line-through font-comme text-xs text-black/30">
-                      ₡ {props.price}
+                      ₡ {formatPrice(props.price)}
                     </p>
-                    <p className="font-comme">₡ {props.discountPrice}</p>
+                    <p className="font-comme">
+                      ₡ {formatPrice(props.discountPrice)}
+                    </p>
                   </>
                 ) : (
-                  <p className="font-comme pt-4">₡ {props.price}</p>
+                  <p className="font-comme pt-4">
+                    ₡ {formatPrice(props.price)}
+                  </p>
                 )}
+
               </div>
             </div>
 
@@ -143,14 +154,20 @@ export default function ProductCard(props: ProductCardProps) {
           <div className="text-center flex flex-col relative w-full gap-3">
             <p className="font-poiret text-sm">{props.shop}</p>
             <div className="flex flex-col">
-              {(props.discountPrice && (
-                <p className="line-through font-comme text-xs text-black/30">
-                  ₡ {props.price}
-                </p>
-              )) || <p>₡ {props.price}</p>}
-              {props.discountPrice && (
-                <p className="font-comme">₡ {props.discountPrice}</p>
-              )}
+              {Number(props.discountPrice) > 0 ? (
+                  <>
+                    <p className="line-through font-comme text-xs text-black/30">
+                      ₡ {formatPrice(props.price)}
+                    </p>
+                    <p className="font-comme">
+                      ₡ {formatPrice(props.discountPrice)}
+                    </p>
+                  </>
+                ) : (
+                  <p className="font-comme pt-4">
+                    ₡ {formatPrice(props.price)}
+                  </p>
+                )}
             </div>
           </div>
         )}
