@@ -425,4 +425,62 @@ export const SkeletonSimilarProducts = ({
       ))}
     </div>
   </FadeWrapper>
+
+  
+);
+export const SkeletonHeaderSlider: React.FC<{ show?: boolean }> = ({
+  show = true,
+}) => (
+  <FadeWrapper show={show}>
+    <div className="relative mx-10 h-[30rem] flex items-center justify-center animate-pulse">
+      {/* 🔹 Rectángulo principal simulando el banner */}
+      <Skeleton className="w-[90%] h-[80%] rounded-3xl bg-gray-300/70 shadow-md" />
+
+      {/* 🔹 Botón izquierdo (simulación de CarouselPrevious) */}
+      <div className="absolute left-6 flex items-center justify-center">
+        <Skeleton className="w-[44px] h-[44px] rounded-full bg-gray-300/70 shadow" />
+      </div>
+
+      {/* 🔹 Botón derecho (simulación de CarouselNext) */}
+      <div className="absolute right-6 flex items-center justify-center">
+        <Skeleton className="w-[44px] h-[44px] rounded-full bg-gray-300/70 shadow" />
+      </div>
+    </div>
+  </FadeWrapper>
+);
+
+export const SkeletonPersonalProduct = ({
+  count = 5,
+  show = true,
+}: {
+  count?: number;
+  show?: boolean;
+}) => (
+  <FadeWrapper show={show}>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-10 gap-6 px-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="flex flex-col h-[340px] w-full p-3 bg-light-gray rounded-2xl shadow-md animate-pulse"
+        >
+          <Skeleton className="w-full h-[180px] rounded-2xl mb-4 bg-gray-300/70" />
+          <Skeleton className="w-4/5 h-[16px] mx-auto mb-2 rounded-md bg-gray-300/70" />
+          <Skeleton className="w-1/2 h-[12px] mx-auto mb-3 rounded-md bg-gray-300/70" />
+          <div className="flex flex-col items-center gap-1">
+            <Skeleton className="w-1/2 h-[14px] rounded-md bg-gray-300/70" />
+            <Skeleton className="w-2/3 h-[14px] rounded-md bg-gray-300/70" />
+          </div>
+        </div>
+      ))}
+    </div>
+  </FadeWrapper>
+);
+export const SkeletonStoreHeader: React.FC<{ show?: boolean }> = ({
+  show = true,
+}) => (
+  <FadeWrapper show={show}>
+    <div className="w-full h-[15rem] px-5 animate-pulse">
+      <Skeleton className="w-full h-full rounded-2xl bg-gray-300/70" />
+    </div>
+  </FadeWrapper>
 );

@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { IconBrandWhatsapp, IconExclamationCircle, IconSearch } from "@tabler/icons-react";
+import {
+  IconBrandWhatsapp,
+  IconExclamationCircle,
+  IconSearch,
+} from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import ProductCard from "../../../../components/data-display/ProductCard";
-//import FeaturedProductCard from "../../../../components/data-display/FeaturedProductCard";
+import { SkeletonPersonalProduct } from "../../../../components/ui/AllSkeletons";
 import { useProducts, type Product } from "../../infrastructure/useProducts";
 import { useAuth } from "../../../../hooks/context/AuthContext";
 import { getStoreByUser } from "../../infrastructure/storeService";
@@ -34,7 +38,6 @@ export default function SellerProductsList() {
   const { user } = useAuth();
   const { getProductsByStore, loading, error } = useProducts();
   const [store, setStore] = useState<Store | null>(null);
-
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
 
@@ -46,8 +49,6 @@ export default function SellerProductsList() {
           setStore(store);
           if (store?.id) {
             const data = await getProductsByStore(store.id);
-            console.log("🛍️ store:", store);
-            console.log("📦 productos recibidos:", data);
             setProducts(data);
           }
         }
@@ -63,19 +64,23 @@ export default function SellerProductsList() {
   );
 
   return (
-    <div className=" pl-4">
+    <div className="pl-4">
       {/* Header */}
       {store?.is_verified === false && (
         <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-12 ml-10 shadow-lg border border-main/20">
           <div className="flex items-center justify-center w-14 h-14 bg-contrast-secondary/20 rounded-full">
-            <IconExclamationCircle size={30} className="text-contrast-secondary" />
+            <IconExclamationCircle
+              size={30}
+              className="text-contrast-secondary"
+            />
           </div>
 
           <p className="text-xl font-semibold text-main">
             Tu tienda está en verificación
           </p>
           <p className="text-center text-main-dark/70 max-w-md">
-            El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda. Si tienes dudas, contacta con soporte.
+            El equipo de TukiShop se pondrá en contacto contigo para verificar
+            tu tienda. Si tienes dudas, contacta con soporte.
           </p>
           <a
             href="https://wa.me/50687355629"
@@ -88,10 +93,14 @@ export default function SellerProductsList() {
           </a>
         </div>
       )}
+
       {store?.is_verified === true && (
         <>
+          {/* 🔹 HEADER SUPERIOR */}
           <section className="flex justify-between font-quicksand items-center px-10">
-            <h1 className="text-2xl font-semibold border-b-3 border-main">Lista de productos</h1>
+            <h1 className="text-2xl font-semibold border-b-3 border-main">
+              Lista de productos
+            </h1>
             <div className="bg-main-dark/10 flex items-center gap-2 px-1 py-1 rounded-full">
               <input
                 type="text"
@@ -114,40 +123,52 @@ export default function SellerProductsList() {
             </Link>
           </section>
 
-          {/* Lista de productos */}
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center py-10 border-b-2 border-main space-y-3">
+          {/* 🔹 LISTA DE PRODUCTOS */}
+          <section className="py-10 border-b-2 border-main space-y-3">
             {loading && (
-              <p className="col-span-3 text-gray-500">Cargando productos...</p>
+              <div className="px-10">
+                <SkeletonPersonalProduct count={9} /> {/* ✅ se ve en rejilla correcta */}
+              </div>
             )}
+
             {error && <p className="col-span-3 text-red-500">{error}</p>}
-            {filteredProducts.length > 0
-              ? filteredProducts
-                .filter((p) => !p.is_featured)
-                .map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    shop={store?.name || product.store?.name || "Sin vendedor"}
-                    title={product.name}
-                    price={product.price.toString()}
-                    discountPrice={
-                      product.discount_price?.toString() || undefined
-                    }
-                    img={product.image_1_url ? product.image_1_url : audifonos}
-                    edit
-                    id={product.id ?? 0}
-                  />
-                ))
-              : !loading && (
-                <p className="col-span-3 text-gray-500">No hay productos</p>
-              )}
+
+            {!loading && filteredProducts.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center gap-6 px-10">
+                {filteredProducts
+                  .filter((p) => !p.is_featured)
+                  .map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      shop={store?.name || product.store?.name || "Sin vendedor"}
+                      title={product.name}
+                      price={product.price.toString()}
+                      discountPrice={
+                        product.discount_price?.toString() || undefined
+                      }
+                      img={
+                        product.image_1_url ? product.image_1_url : audifonos
+                      }
+                      edit
+                      id={product.id ?? 0}
+                    />
+                  ))}
+              </div>
+            )}
+
+            {!loading && filteredProducts.length === 0 && (
+              <p className="col-span-3 text-gray-500 px-10">
+                No hay productos
+              </p>
+            )}
           </section>
 
-          {/* Productos destacados */}
-          <section className="my-10">
-            <h2 className="text-2xl font-semibold font-quicksand">
+          {/* 🔹 PRODUCTOS DESTACADOS */}
+          <section className="my-10 px-10">
+            <h2 className="text-2xl font-semibold font-quicksand mb-6">
               Productos destacados
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 justify-items-center py-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 justify-items-center">
               {filteredProducts
                 .filter((p) => p.is_featured)
                 .map((product) => (

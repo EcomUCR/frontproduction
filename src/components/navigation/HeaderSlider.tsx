@@ -8,6 +8,7 @@ import {
 import BannerComponent from "../data-display/BannerComponent";
 import { useBanner } from "../../modules/admin/infrastructure/useBanner"; // ✅ usa el hook
 import { useEffect } from "react";
+import { SkeletonHeaderSlider } from "../ui/AllSkeletons";
 
 export default function HeaderSlider() {
   const { banners, fetchBanners, loading } = useBanner();
@@ -24,7 +25,7 @@ export default function HeaderSlider() {
   return (
     <header>
       {loading ? (
-        <p className="text-gray-500 text-center my-10">Cargando banners...</p>
+        <SkeletonHeaderSlider />
       ) : sliderBanners.length > 0 ? (
         <Carousel className="mx-10">
           <CarouselContent className="h-[30rem]">
