@@ -12,6 +12,8 @@ interface AlertComponentProps {
     type?: "info" | "success" | "warning" | "error"; // opcional por compatibilidad
 }
 
+console.log("Hola");
+
 export default function AlertComponent({
     show,
     title = "¿Estás seguro?",
