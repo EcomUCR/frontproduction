@@ -220,7 +220,7 @@ export default function ProductPage() {
       <NavBar />
 
       <div className="mx-auto max-w-[80rem] w-full">
-        {/* 🔹 Botón volver */}
+        {/* Botón volver */}
         <section className="flex px-10 pt-10 font-quicksand">
           <ButtonComponent
             icon={<IconArrowBackUp />}
@@ -284,7 +284,7 @@ export default function ProductPage() {
 
                     </div>
 
-                    {/* 🔹 Botones de acción */}
+                    {/* Botones de acción */}
                     <div className="border-t-2 border-main pt-10">
                       <div className="flex relative items-center justify-between border border-contrast-secondary rounded-full px-3 py-2">
                         <div className="flex items-center gap-2">
@@ -350,7 +350,7 @@ export default function ProductPage() {
                     </div>
                   </div>
 
-                  {/* 🔹 Columna Central */}
+                  {/* Columna Central */}
                   <div className="w-6/12 px-20 border-r-2 border-main mr-5">
                     <div className="flex flex-col gap-5">
                       <h2 className="text-xl font-bold">{product.name}</h2>
