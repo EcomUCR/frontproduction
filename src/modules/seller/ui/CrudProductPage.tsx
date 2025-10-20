@@ -530,13 +530,12 @@ export default function CrudProductPage() {
                   onClick={() => window.history.back()}
                 />
                 <ButtonComponent
-                  text="Archivar producto"
-
+                  text="Eliminar producto"
                   style="text-white text-lg p-2 items-center rounded-full bg-red-600 w-2/3 hover:bg-red-700 transition-all duration-400 cursor-pointer"
                   onClick={async () => {
                     if (!id) return;
                     const confirm = window.confirm(
-                      "¿Estás seguro de archivar este producto? Podrás restaurarlo más tarde."
+                      "¿Estás seguro de eliminar este producto?"
                     );
                     if (!confirm) return;
 
@@ -547,7 +546,7 @@ export default function CrudProductPage() {
                       image: mainImageFile || null,
                       price: Number(form.price),
                       discount_price: Number(form.discount_price),
-                      status: "DRAFT",
+                      status: "ARCHIVED",
                       image_1: form.images[0],
                       image_2: form.images[1],
                       image_3: form.images[2],
