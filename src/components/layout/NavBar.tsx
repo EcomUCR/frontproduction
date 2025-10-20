@@ -88,7 +88,7 @@ export default function NavBar() {
         <div className="w-1/3">
           <Link
             to="/"
-            className="text-white font-fugaz text-3xl flex items-center gap-3 p-2"
+            className="text-white font-fugaz text-3xl flex items-center gap-3 p-2 w-20"
           >
             <img src={logo} alt="Logo" className="h-10 w-auto" />
             TukiShop
