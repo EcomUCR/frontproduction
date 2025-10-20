@@ -132,7 +132,7 @@ export default function ProductCard(props: ProductCardProps) {
             >
               <IconShoppingBag />
               <ButtonComponent
-                style="w-full text-xs"
+                style="w-full text-xs cursor-pointer"
                 text="Añadir al carrito"
               />
             </div>

@@ -68,7 +68,7 @@ export default function NavBarSeller({
   }
 
   return (
-    <nav className="w-full h-20 bg-main-dark/10 text-main-dark px-10 flex justify-between items-center rounded-xl font-quicksand">
+    <nav className="w-full h-20 bg-main-dark/20 text-main-dark px-10 flex justify-between items-center rounded-xl font-quicksand">
       {/* Logo */}
       <div className="w-1/3">
         <img
