@@ -143,12 +143,12 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
             <ButtonComponent
               text="Cancelar"
               onClick={handleCancel}
-              style="w-full p-3 rounded-full text-white bg-main mt-10"
+              style="w-[48%] p-3 rounded-full text-white bg-main mt-10 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
             />
             <ButtonComponent
               text={saving ? "Guardando..." : "Guardar cambios"}
               onClick={handleSave}
-              style="w-full p-3 rounded-full text-white bg-contrast-secondary mt-10"
+              style="w-[48%] p-3 rounded-full text-white bg-contrast-secondary mt-10 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
             />
           </div>
         </div>
