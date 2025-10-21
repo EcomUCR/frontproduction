@@ -126,10 +126,10 @@ export default function SearchedProductPage() {
                   id={prod.id!}
                   shop={prod.store?.name || "Sin tienda"}
                   title={prod.name}
-                  price={prod.price.toLocaleString("es-CRC")}
+                  price={prod.price}
                   discountPrice={
                     prod.discount_price
-                      ? prod.discount_price.toLocaleString("es-CRC")
+                      ? prod.discount_price
                       : undefined
                   }
                   img={prod.image_1_url || "https://via.placeholder.com/200"}

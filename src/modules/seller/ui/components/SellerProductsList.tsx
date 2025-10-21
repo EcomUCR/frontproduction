@@ -142,9 +142,9 @@ export default function SellerProductsList() {
                       key={product.id}
                       shop={store?.name || product.store?.name || "Sin vendedor"}
                       title={product.name}
-                      price={product.price.toString()}
+                      price={product.price}
                       discountPrice={
-                        product.discount_price?.toString() || undefined
+                        product.discount_price || undefined
                       }
                       img={
                         product.image_1_url ? product.image_1_url : audifonos

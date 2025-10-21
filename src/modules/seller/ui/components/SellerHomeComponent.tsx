@@ -77,8 +77,8 @@ export default function HomeSeller() {
                   id={prod.id!}
                   shop={prod.store?.name || "Tienda"}
                   title={prod.name}
-                  price={prod.price.toLocaleString("es-CRC")}
-                  discountPrice={prod.discount_price?.toLocaleString("es-CRC")}
+                  price={prod.price}
+                  discountPrice={prod.discount_price}
                   img={prod.image_1_url || audifonos}
                   edit={false}
                 />
@@ -149,8 +149,8 @@ export default function HomeSeller() {
                   id={prod.id!}
                   shop={prod.store?.name || "Tienda"}
                   title={prod.name}
-                  price={prod.price.toLocaleString("es-CRC")}
-                  discountPrice={prod.discount_price?.toLocaleString("es-CRC")}
+                  price={prod.price}
+                  discountPrice={prod.discount_price}
                   img={prod.image_1_url || audifonos}
                   edit={false}
                 />

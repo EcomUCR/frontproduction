@@ -126,10 +126,10 @@ export default function HomePage() {
                   id={prod.id!}
                   shop={prod.store?.name || "No hay tienda"}
                   title={prod.name}
-                  price={prod.price.toLocaleString("es-CRC")}
+                  price={prod.price}
                   discountPrice={
                     prod.discount_price != null && prod.discount_price !== 0
-                      ? prod.discount_price.toLocaleString("es-CRC")
+                      ? prod.discount_price
                       : undefined
                   }
                   img={prod.image_1_url ? prod.image_1_url : audifonos}
@@ -239,10 +239,10 @@ export default function HomePage() {
                   id={prod.id!}
                   shop={prod.store?.name || "No hay tienda"}
                   title={prod.name}
-                  price={prod.price.toLocaleString("es-CRC")}
+                  price={prod.price}
                   discountPrice={
                     prod.discount_price != null && prod.discount_price !== 0
-                      ? prod.discount_price.toLocaleString("es-CRC")
+                      ? prod.discount_price
                       : undefined
                   }
                   img={prod.image_1_url ? prod.image_1_url : audifonos}

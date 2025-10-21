@@ -503,11 +503,9 @@ export default function CrudProductPage() {
                 <ProductCard
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
-                  price={form.price ? form.price.toString() : "0"}
+                  price={Number(form.price) || 0}
                   discountPrice={
-                    form.discount_price
-                      ? form.discount_price.toString()
-                      : undefined
+                    Number(form.discount_price) || undefined
                   }
                   img={mainPreview}
                   edit={false}
@@ -515,7 +513,7 @@ export default function CrudProductPage() {
                 />
               )}
 
-            
+
               <div className="flex flex-col items-center gap-5 py-10 w-full">
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
@@ -541,7 +539,7 @@ export default function CrudProductPage() {
 
                     const mainImageFile = form.images[0];
 
-                    
+
                     const payload: ProductPayload = {
                       image: mainImageFile || null,
                       price: Number(form.price),
