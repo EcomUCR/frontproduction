@@ -23,12 +23,10 @@ export default function ProductCard(props: ProductCardProps) {
   const navigate = useNavigate();
 
   const formatPrice = (value?: number) => {
-  const num = Number(value) || 0;
-  return num.toLocaleString("es-CR").replace(/\s/g, ".");
-};
+    const num = Number(value) || 0;
+    return num.toLocaleString("es-CR").replace(/\s/g, ".");
+  };
 
-
-  // 👇 Maneja añadir al carrito
   const handleAddToCart = async () => {
     if (!token) {
       showAlert({
@@ -49,8 +47,6 @@ export default function ProductCard(props: ProductCardProps) {
         { product_id: props.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      // Actualiza el carrito global con la respuesta del backend
       setCart(data.cart);
       showAlert({
         title: "Producto añadido",
@@ -68,30 +64,42 @@ export default function ProductCard(props: ProductCardProps) {
   };
 
   return (
-    <figure className="relative flex flex-col h-90 w-55 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group">
+    <figure
+      className="relative flex flex-col w-44 sm:w-55 h-70 sm:h-90 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group transition-all duration-300">
+      {/*Botón editar (solo modo edición) */}
       {props.edit && (
         <Link
           to={`/editProduct/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
           <ButtonComponent
-            style="absolute top-4 right-4 w-9 h-9 bg-contrast-main rounded-xl flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400"
+            style="absolute top-3 right-3 w-8 h-8 sm:w-9 sm:h-9 bg-contrast-main rounded-xl flex items-center justify-center hover:bg-contrast-secondary
+            hover:text-white transition-all duration-400"
             icon={<IconEdit />}
           />
         </Link>
       )}
 
+      {/*Favorito (solo visible en hover, escritorio) */}
       {!props.edit && (
-        <div className="group-hover:opacity-100 opacity-0 transition-all duration-300 ease-in-out">
-          {/* Botón con animación */}
+        <div className="hidden sm:block group-hover:opacity-100 opacity-0 transition-all duration-300 ease-in-out">
           <div className="absolute top-3 right-3">
             <AnimatedHeartButton productId={props.id} variant="filled" />
           </div>
-
-
         </div>
       )}
 
+      {/*Carrito (solo visible en mobile) */}
+      {!props.edit && (
+        <button
+          onClick={handleAddToCart}
+          className="sm:hidden absolute top- right-3 bg-gradient-to-br from-contrast-main to-contrast-secondary text-white p-2 rounded-xl hover:bg-gradient-to-br
+            transition-all duration-300 active:scale-95">
+          <IconShoppingBag size={18} className="stroke-[2.5]" />
+        </button>
+      )}
+
+      {/*Imagen del producto */}
       <Link
         to={`/product/${props.id}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -104,44 +112,46 @@ export default function ProductCard(props: ProductCardProps) {
         />
       </Link>
 
-      <div className="flex flex-col gap-3 h-[45%]">
+      {/*Detalles del producto */}
+      <div className="flex flex-col gap-2 sm:gap-3 h-[45%]">
         <Link
           to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="h-[33%]"
         >
-          <p className="font-semibold text-center text-sm">{props.title}</p>
+          <p className="font-semibold text-center text-xs sm:text-sm line-clamp-2">
+            {props.title}
+          </p>
         </Link>
 
         {!props.edit && (
           <div className="relative w-full flex pt-2 h-[66%]">
-            <div className="text-center flex flex-col relative w-full gap-3 group-hover:transition-all group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
-              <p className="font-poiret text-sm">{props.shop}</p>
+            <div className="text-center flex flex-col relative w-full gap-2 sm:gap-3 group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
+              <p className="font-poiret text-xs sm:text-sm">{props.shop}</p>
               <div className="flex flex-col">
                 {Number(props.discountPrice) > 0 ? (
                   <>
-                    <p className="line-through font-comme text-xs text-black/30">
+                    <p className="line-through font-comme text-[10px] sm:text-xs text-black/30">
                       ₡ {formatPrice(props.price)}
                     </p>
-                    <p className="font-comme">
+                    <p className="font-comme text-sm sm:text-base">
                       ₡ {formatPrice(props.discountPrice)}
                     </p>
                   </>
                 ) : (
-                  <p className="font-comme pt-4">
+                  <p className="font-comme pt-2 text-sm sm:text-base">
                     ₡ {formatPrice(props.price)}
                   </p>
                 )}
-
               </div>
             </div>
 
-            {/* Botón añadir al carrito */}
+            {/*Botón hover (solo escritorio) */}
             <div
-              className="absolute flex flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 bg-contrast-main text-white font-semibold p-2 rounded-xl hover:bg-gradient-to-br from-contrast-main to-contrast-secondary items-center transition-all duration-300 cursor-pointer"
-              onClick={handleAddToCart} // evento
+              className="hidden sm:flex absolute flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 bg-contrast-main text-white font-semibold p-2 rounded-xl hover:bg-gradient-to-br from-contrast-main to-contrast-secondary items-center transition-all duration-300 cursor-pointer"
+              onClick={handleAddToCart}
             >
-              <IconShoppingBag />
+              <IconShoppingBag className="w-5 h-5" />
               <ButtonComponent
                 style="w-full text-xs cursor-pointer"
                 text="Añadir al carrito"
@@ -151,23 +161,23 @@ export default function ProductCard(props: ProductCardProps) {
         )}
 
         {props.edit && (
-          <div className="text-center flex flex-col relative w-full gap-3">
-            <p className="font-poiret text-sm">{props.shop}</p>
+          <div className="text-center flex flex-col relative w-full gap-2 sm:gap-3">
+            <p className="font-poiret text-xs sm:text-sm">{props.shop}</p>
             <div className="flex flex-col">
               {Number(props.discountPrice) > 0 ? (
-                  <>
-                    <p className="line-through font-comme text-xs text-black/30">
-                      ₡ {formatPrice(props.price)}
-                    </p>
-                    <p className="font-comme">
-                      ₡ {formatPrice(props.discountPrice)}
-                    </p>
-                  </>
-                ) : (
-                  <p className="font-comme pt-4">
+                <>
+                  <p className="line-through font-comme text-[10px] sm:text-xs text-black/30">
                     ₡ {formatPrice(props.price)}
                   </p>
-                )}
+                  <p className="font-comme text-sm sm:text-base">
+                    ₡ {formatPrice(props.discountPrice)}
+                  </p>
+                </>
+              ) : (
+                <p className="font-comme pt-2 text-sm sm:text-base">
+                  ₡ {formatPrice(props.price)}
+                </p>
+              )}
             </div>
           </div>
         )}

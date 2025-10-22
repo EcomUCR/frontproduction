@@ -42,8 +42,8 @@ export default function FeaturedProductsSlider(props: FeaturedProductsSliderProp
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious className="scale-80 sm:scale-100 -translate-x-5 sm:translate-x-0" />
-            <CarouselNext className="scale-80 sm:scale-100 translate-x-5 sm:translate-x-0" />
+            <CarouselPrevious className="scale-80 sm:scale-100 -translate-x-2 sm:translate-x-0" />
+            <CarouselNext className="scale-80 sm:scale-100 translate-x-2 sm:translate-x-0" />
         </Carousel>
     );
 }
