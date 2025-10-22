@@ -46,8 +46,6 @@ export default function AdminUsersTable() {
   const itemsPerPage = 6;
 
   // ✅ Estado para controlar que solo se abra una vez
-  const [hasOpenedStore, setHasOpenedStore] = useState(false);
-
   // 🔹 Cargar usuarios y abrir tienda si aplica
   // 🔹 Cargar usuarios una sola vez al montar
 // 🔹 1️⃣ Cargar usuarios una sola vez

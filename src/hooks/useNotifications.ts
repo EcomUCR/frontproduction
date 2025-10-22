@@ -52,7 +52,7 @@ export function useNotifications() {
     fetchNotifications();
 
     // 🔁 refrescar cada 30 segundos
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
   }, []);
 
