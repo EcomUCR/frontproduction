@@ -119,56 +119,53 @@ export default function HomePage() {
           </div>
 
           {loadingOffers ? (
-  <SkeletonProduct count={5} />
-) : (
-  <>
-    {/* Mobile: muestra solo 6 productos */}
-    <div className="grid grid-cols-2 gap-4 my-6 sm:hidden">
-      {offerProducts.slice(0, 6).map((prod) => (
-        <ProductCard
-          key={prod.id}
-          id={prod.id!}
-          shop={prod.store?.name || "No hay tienda"}
-          title={prod.name}
-          price={prod.price}
-          discountPrice={
-            prod.discount_price != null && prod.discount_price !== 0
-              ? prod.discount_price
-              : undefined
-          }
-          img={prod.image_1_url ? prod.image_1_url : audifonos}
-          edit={false}
-        />
-      ))}
-    </div>
+            <SkeletonProduct count={5} />
+          ) : (
+            <>
+              {/* Mobile: muestra solo 6 productos */}
+              <div className="grid grid-cols-2 gap-4 my-6 sm:hidden">
+                {offerProducts.slice(0, 6).map((prod) => (
+                  <ProductCard
+                    key={prod.id}
+                    id={prod.id!}
+                    shop={prod.store?.name || "No hay tienda"}
+                    title={prod.name}
+                    price={prod.price}
+                    discountPrice={
+                      prod.discount_price != null && prod.discount_price !== 0
+                        ? prod.discount_price
+                        : undefined
+                    }
+                    img={prod.image_1_url ? prod.image_1_url : audifonos}
+                    edit={false}
+                  />
+                ))}
+              </div>
 
-    {/* Escritorio: diseño original */}
-    <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-10 gap-5">
-      {offerProducts.slice(0,5).map((prod) => (
-        <ProductCard
-          key={prod.id}
-          id={prod.id!}
-          shop={prod.store?.name || "No hay tienda"}
-          title={prod.name}
-          price={prod.price}
-          discountPrice={
-            prod.discount_price != null && prod.discount_price !== 0
-              ? prod.discount_price
-              : undefined
-          }
-          img={prod.image_1_url ? prod.image_1_url : audifonos}
-          edit={false}
-        />
-      ))}
-    </div>
-  </>
-)}
-
+              {/* Escritorio: diseño original */}
+              <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-10 gap-5">
+                {offerProducts.slice(0, 5).map((prod) => (
+                  <ProductCard
+                    key={prod.id}
+                    id={prod.id!}
+                    shop={prod.store?.name || "No hay tienda"}
+                    title={prod.name}
+                    price={prod.price}
+                    discountPrice={
+                      prod.discount_price != null && prod.discount_price !== 0
+                        ? prod.discount_price
+                        : undefined
+                    }
+                    img={prod.image_1_url ? prod.image_1_url : audifonos}
+                    edit={false}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </section>
-
-
         {/* 🔹 BANNERS desde la BD */}
-        <section className="mx-10 sm:my-10">
+        <section className="mx-4 sm:mx-10 sm:my-10 my-6">
           {loadingBanners ? (
             <p className="text-gray-500 text-center">Cargando banners...</p>
           ) : banners.length > 0 ? (
@@ -181,7 +178,7 @@ export default function HomePage() {
                 // 🟡 Solo 1 → centrado
                 const b = activeBanners[0];
                 return (
-                  <div className="flex justify-center items-center">
+                  <div className="flex justify-center items-center ">
                     <div className="transition-transform duration-300">
                       <BannerComponent
                         {...b}
@@ -203,14 +200,9 @@ export default function HomePage() {
                 );
               }
 
-              // 🟢 2 o más → grid centrado sin padding lateral
+              // 🟢 2 o más → grid centrado sin tocar el diseño original
               return (
-                <div
-                  className={`grid ${activeBanners.length === 2
-                      ? "grid-cols-2 gap-10 justify-center"
-                      : "grid-cols-2 gap-8 justify-center"
-                    } items-end`}
-                >
+                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10 justify-center items-end`}>
                   {activeBanners.map((b) => (
                     <div
                       key={b.id}
@@ -243,52 +235,52 @@ export default function HomePage() {
 
 
         {/* 🔹 EXPLORAR */}
-       <section className="mx-5 sm:mx-10 my-6 sm:my-10">
-  <div className="flex justify-between items-center">
-    <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
-      Explorar
-    </h2>
-    <div className="flex items-center gap-1 text-sm sm:text-base">
-      <a
-        href="/search?mode=explore"
-        className="font-quicksand font-semibold cursor-pointer"
-      >
-        Ver todo
-      </a>
-      <IconChevronRight className="inline w-4 h-4 sm:w-5 sm:h-5" />
-    </div>
-  </div>
+        <section className="mx-5 sm:mx-10 my-6 sm:my-10">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
+              Explorar
+            </h2>
+            <div className="flex items-center gap-1 text-sm sm:text-base">
+              <a
+                href="/search?mode=explore"
+                className="font-quicksand font-semibold cursor-pointer"
+              >
+                Ver todo
+              </a>
+              <IconChevronRight className="inline w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+          </div>
 
-  {loadingExplore ? (
-    <SkeletonProduct count={10} />
-  ) : (
-    <div
-      className="
+          {loadingExplore ? (
+            <SkeletonProduct count={10} />
+          ) : (
+            <div
+              className="
         grid 
         grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 
         my-6 sm:my-10 
         gap-4 sm:gap-5
       "
-    >
-      {exploreProducts.slice(0, 10).map((prod) => (
-        <ProductCard
-          key={prod.id}
-          id={prod.id!}
-          shop={prod.store?.name || 'No hay tienda'}
-          title={prod.name}
-          price={prod.price}
-          discountPrice={
-            prod.discount_price != null && prod.discount_price !== 0
-              ? prod.discount_price
-              : undefined
-          }
-          img={prod.image_1_url ? prod.image_1_url : audifonos}
-          edit={false}
-        />
-      ))}
-    </div>
-  )}
-</section>
+            >
+              {exploreProducts.slice(0, 10).map((prod) => (
+                <ProductCard
+                  key={prod.id}
+                  id={prod.id!}
+                  shop={prod.store?.name || 'No hay tienda'}
+                  title={prod.name}
+                  price={prod.price}
+                  discountPrice={
+                    prod.discount_price != null && prod.discount_price !== 0
+                      ? prod.discount_price
+                      : undefined
+                  }
+                  img={prod.image_1_url ? prod.image_1_url : audifonos}
+                  edit={false}
+                />
+              ))}
+            </div>
+          )}
+        </section>
 
       </div>
 
