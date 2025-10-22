@@ -27,7 +27,7 @@ export default function FeaturedProductsSlider(props: FeaturedProductsSliderProp
                     <CarouselItem
                         key={product.id}
                         // 🔹 Solo añadimos este responsive breakpoint
-                        className="basis-full sm:basis-[50%] flex justify-center items-center pl-0 my-8"
+                        className="basis-full sm:basis-[50%] flex justify-center items-center pl-0 my-4 sm:my-8"
                     >
                         <FeaturedProductCard
                             id={product.id}

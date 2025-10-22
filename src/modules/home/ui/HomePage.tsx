@@ -67,7 +67,7 @@ export default function HomePage() {
 
         {/* 🔹 PRODUCTOS DESTACADOS */}
         <section className="mx-10">
-          <h2 className="text-2xl font-semibold font-quicksand">
+          <h2 className="text-xl sm:text-2xl font-semibold font-quicksand">
             Productos destacados
           </h2>
           <div>
@@ -92,8 +92,9 @@ export default function HomePage() {
         </section>
 
         {/* 🔹 CATEGORÍAS */}
-        <section className="mx-10 my-10">
-          <h2 className="text-2xl font-semibold font-quicksand">Categorías</h2>
+        <section className="mx-10 sm:my-10">
+          <h2 className="text-xl sm:text-2xl font-semibold font-quicksand">
+            Categorías</h2>
           {loadingCategories && <SkeletonCategory count={4} />}
           <div
             className={`${
@@ -107,7 +108,8 @@ export default function HomePage() {
         {/* 🔹 OFERTAS */}
         <section className="mx-10 my-10">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold font-quicksand">Ofertas</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold font-quicksand">
+              Ofertas</h2>
             <div>
               <a href="#" className="font-semibold">
                 Ver todo
@@ -220,7 +222,8 @@ export default function HomePage() {
         {/* 🔹 EXPLORAR */}
         <section className="mx-10 my-10">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold font-quicksand">Explorar</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold font-quicksand">
+              Explorar</h2>
             <div>
               <a href="/search?mode=explore" className="font-semibold cursor-pointer">
                 Ver todo
