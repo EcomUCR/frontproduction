@@ -1,3 +1,6 @@
+// ============================================================
+// 🛍️ NavBar - TukiShop (Responsive + Carrito y Wishlist fuera del menú)
+// ============================================================
 
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -61,7 +64,6 @@ export default function NavBar() {
     navigate("/loginRegister", { replace: true });
   };
 
-  // cerrar menú al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -160,29 +162,55 @@ export default function NavBar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link to="/loginRegister?mode=login">Iniciar sesión</Link>
+                <Link
+                  to="/loginRegister?mode=login"
+                  className="flex items-center gap-1 hover:font-semibold"
+                >
+                  <IconUser className="h-5 w-5" />
+                  Iniciar sesión
+                </Link>
                 <span>|</span>
-                <Link to="/loginRegister?mode=register">Regístrate</Link>
+                <Link
+                  to="/loginRegister?mode=register"
+                  className="hover:font-semibold"
+                >
+                  Regístrate
+                </Link>
               </div>
             )}
           </div>
 
-          <NotificationDropdown />
+          {/* Notificaciones */}
+          {user && <NotificationDropdown />}
+
+          {/* Lista de deseos */}
           <Link to="/wishlist">
             <IconHeart className="h-6 w-6" />
           </Link>
+
+          {/* Carrito */}
           <Link to="/shoppingCart">
             <IconShoppingBag className="h-6 w-6" />
           </Link>
         </div>
 
-        {/* 🔹 Mobile Menu Button */}
-        <button
-          className="md:hidden text-white"
-          onClick={() => setMenuOpen((prev) => !prev)}
-        >
-          {menuOpen ? <IconX size={26} /> : <IconMenu2 size={26} />}
-        </button>
+        {/* 🔹 Mobile Icons + Menu */}
+        <div className="flex md:hidden items-center gap-4 text-white">
+          {/* ❤️ Lista de deseos */}
+          <Link to="/wishlist">
+            <IconHeart className="h-6 w-6" />
+          </Link>
+
+          {/* 🛍️ Carrito */}
+          <Link to="/shoppingCart">
+            <IconShoppingBag className="h-6 w-6" />
+          </Link>
+
+          {/* ☰ Botón de menú */}
+          <button onClick={() => setMenuOpen((prev) => !prev)}>
+            {menuOpen ? <IconX size={26} /> : <IconMenu2 size={26} />}
+          </button>
+        </div>
       </div>
 
       {/* 🔻 Desktop Bottom Menu */}
@@ -234,7 +262,7 @@ export default function NavBar() {
             transition={{ duration: 0.25 }}
             className="md:hidden bg-white text-main-dark rounded-2xl shadow-xl mt-3 p-4 space-y-3 font-medium"
           >
-            {/* Search */}
+            {/* 🔍 Search */}
             <div className="flex bg-gray-100 rounded-full px-2 py-1">
               <input
                 type="text"
@@ -250,7 +278,7 @@ export default function NavBar() {
               />
             </div>
 
-            {/* Links */}
+            {/* 🧭 Links */}
             <div className="flex flex-col gap-2 text-sm">
               <Link to="/" onClick={() => setMenuOpen(false)}>
                 Inicio
@@ -278,7 +306,7 @@ export default function NavBar() {
               </Link>
             </div>
 
-            {/* Usuario */}
+            {/* 👤 Usuario */}
             <div className="border-t pt-2 mt-2">
               {user ? (
                 <div className="flex flex-col gap-2">
@@ -308,10 +336,16 @@ export default function NavBar() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-1 text-sm">
-                  <Link to="/loginRegister?mode=login" onClick={() => setMenuOpen(false)}>
+                  <Link
+                    to="/loginRegister?mode=login"
+                    onClick={() => setMenuOpen(false)}
+                  >
                     Iniciar sesión
                   </Link>
-                  <Link to="/loginRegister?mode=register" onClick={() => setMenuOpen(false)}>
+                  <Link
+                    to="/loginRegister?mode=register"
+                    onClick={() => setMenuOpen(false)}
+                  >
                     Regístrate
                   </Link>
                 </div>
