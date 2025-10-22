@@ -1,19 +1,19 @@
 import axios from "axios";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useAlert } from "../../hooks/context/AlertContext";
-import { useCartTotals } from "../../components/forms/useCartTotals"; // ajusta el path según tu estructura
+import { useCart } from "../../hooks/context/CartContext";
+import { useCartTotals } from "../../components/forms/useCartTotals";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 export function useCheckout() {
   const { token, user } = useAuth();
   const { showAlert } = useAlert();
-  const { clearCart } = useCartTotals(); // 🧹 función que limpia el carrito
+  const { cart, clearCart, refreshCart } = useCart();
+  const { clearCart: clearTotals } = useCartTotals();
 
   /**
-   * Procesa el checkout luego de un pago exitoso con Stripe.
-   * @param paymentIntent objeto retornado por stripe.confirmCardPayment()
-   * @param totals datos calculados del carrito
+   * 💳 Procesa todo el checkout luego del pago exitoso.
    */
   const processCheckout = async (paymentIntent: any, totals: any) => {
     if (!token || !user) {
@@ -26,54 +26,109 @@ export function useCheckout() {
     }
 
     try {
-      const payload = {
-        user_id: user.id,
-        status: paymentIntent?.status === "succeeded" ? "PAID" : "FAILED",
-        subtotal: totals?.subtotal || 0,
-        shipping: totals?.shipping || 0,
-        taxes: totals?.taxes || 0,
-        total: totals?.total || 0,
-        payment_method: paymentIntent?.payment_method_types?.[0] || "card",
-        payment_id: paymentIntent?.id || "N/A",
-        currency: paymentIntent?.currency?.toUpperCase() || "CRC",
-        street: "Dirección de ejemplo",
-        city: "Puntarenas",
-        state: "Puntarenas",
-        zip_code: "60101",
-        country: "Costa Rica",
-      };
+      // 🔄 Asegurar que el carrito esté actualizado
+      await refreshCart();
 
-      console.log(" Enviando checkout:", payload);
+      if (!cart || cart.items.length === 0) {
+        showAlert({
+          title: "Carrito vacío",
+          message: "No hay productos para procesar el pago 🛒",
+          type: "warning",
+        });
+        return;
+      }
 
-      // 🔹 Enviar orden al backend
-      const { data } = await axios.post("/checkout", payload, {
-        headers: { Authorization: `Bearer ${token}` },
+      // 1️⃣ Crear orden inicial
+      const initRes = await axios.post(
+        "/checkout/init",
+        {
+          subtotal: totals?.subtotal || 0,
+          shipping: totals?.shipping || 0,
+          taxes: totals?.taxes || 0,
+          total: totals?.total || 0,
+          city: "Puntarenas",
+          country: "Costa Rica",
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const orderId = initRes.data.order?.id;
+      console.log("🧾 Orden inicial creada:", orderId);
+
+      // 2️⃣ Agregar items del carrito
+      const items = cart.items.map((item) => {
+        const basePrice = Number(item.product.price);
+        const discountPrice =
+          item.product.discount_price !== null
+            ? Number(item.product.discount_price)
+            : null;
+
+        return {
+          product_id: item.product.id,
+          store_id: item.product.store?.id || null,
+          quantity: Number(item.quantity),
+          unit_price: discountPrice ?? basePrice,
+          discount_pct:
+            discountPrice && basePrice > 0
+              ? Math.round(((basePrice - discountPrice) / basePrice) * 100)
+              : 0,
+        };
       });
 
-      console.log("✅ Checkout registrado:", data);
+      await axios.post(
+        "/checkout/items",
+        {
+          order_id: orderId,
+          items,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("📦 Items añadidos correctamente");
 
-      // 🧹 Vaciar carrito tras pago exitoso
+      // 3️⃣ Confirmar pago
+      const confirmRes = await axios.post(
+        "/checkout/confirm",
+        {
+          order_id: orderId,
+          status: paymentIntent?.status === "succeeded" ? "PAID" : "FAILED",
+          payment_id: paymentIntent?.id || "N/A",
+          payment_method:
+            paymentIntent?.payment_method_types?.[0]?.toUpperCase() || "CARD",
+          currency: paymentIntent?.currency?.toUpperCase() || "CRC",
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      console.log("✅ Pago confirmado:", confirmRes.data);
+
+      // 🧹 Limpiar carrito tras pago exitoso
       if (paymentIntent?.status === "succeeded") {
         try {
-          await clearCart(); // Limpia el carrito (backend + local)
-          console.log(" Carrito vaciado correctamente tras pago.");
+          await clearCart();
+          await clearTotals();
+          console.log("🧹 Carrito vaciado correctamente tras pago.");
         } catch (cartErr) {
-          console.warn(" No se pudo limpiar el carrito:", cartErr);
+          console.warn("⚠️ No se pudo limpiar el carrito:", cartErr);
         }
       }
 
-      // 🟢 Mostrar alerta de éxito
+      // 🎉 Mostrar alerta de éxito
       showAlert({
-        title: "Pago exitoso ",
-        message: "Tu orden fue procesada correctamente ",
+        title: "Pago exitoso 💳",
+        message: "Tu orden fue procesada correctamente 🧾",
         type: "success",
       });
 
-      return data;
+      return confirmRes.data;
     } catch (err: any) {
       console.error("❌ Error en checkout:", err.response?.data || err);
 
-      // 🔴 Mostrar alerta de error
       showAlert({
         title: "Error del servidor",
         message:
