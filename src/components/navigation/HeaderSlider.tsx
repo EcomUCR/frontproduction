@@ -56,8 +56,8 @@ export default function HeaderSlider() {
           </CarouselContent>
 
           {/* Botones del carrusel */}
-          <CarouselPrevious className="hidden sm:flex left-2 sm:left-4" />
-          <CarouselNext className="hidden sm:flex right-2 sm:right-4" />
+          <CarouselPrevious className="scale-80 sm:scale-100 sm:flex left-0 sm:left-4" />
+          <CarouselNext className="scale-80 sm:scale-100 sm:flex right-0 sm:right-4" />
         </Carousel>
       ) : (
         <p className="text-gray-500 text-center my-10">

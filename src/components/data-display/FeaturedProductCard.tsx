@@ -1,14 +1,12 @@
 // FeaturedProductCard.tsx
-import { IconEdit} from "@tabler/icons-react";
+import { IconEdit } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import RaitingComponent from "../ui/StarRatingComponent";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/context/AuthContext";
 import axios from "axios";
 import { useAlert } from "../../hooks/context/AlertContext";
-import { useNavigate } from "react-router-dom";
 import AnimatedHeartButton from "./AnimatedHeartButton";
-
 
 interface FeaturedProductCardProps {
   id: number;
@@ -25,7 +23,6 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
   const { token, setCart } = useAuth();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
-
 
   const handleAddToCart = async () => {
     if (!token) {
@@ -48,7 +45,6 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
         { product_id: props.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setCart(data.cart);
       showAlert({
         title: "Producto añadido",
@@ -65,71 +61,102 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
     }
   };
 
+  const hasDiscount = !!props.discountPrice && props.discountPrice !== "0";
+
   return (
-    <figure
-      className={`relative w-full max-w-lg p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden flex font-quicksand transition-all duration-300 ${props.edit ? "" : "hover:scale-105"
-        }`}
-    >
+   <figure
+  className={`relative w-[95%] max-w-lg h-[15rem] sm:h-full p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden
+  flex flex-col sm:flex-row font-quicksand transition-all duration-300 ${props.edit ? "" : "hover:scale-105"}`}
+>
+
+      {/* Botón de edición */}
       {props.edit && (
-              <Link
-                to={`/editProduct/${props.id}`}
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              >
-                <ButtonComponent
-                  style="absolute top-4 right-4 w-9 h-9 bg-contrast-main rounded-xl flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400"
-                  icon={<IconEdit />}
-                />
-              </Link>
-            )}
+        <Link
+          to={`/editProduct/${props.id}`}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <ButtonComponent
+            style="absolute top-4 right-4 w-9 h-9 bg-contrast-main rounded-xl flex items-center cursor-pointer justify-center hover:bg-contrast-secondary hover:text-white transition-all duration-400"
+            icon={<IconEdit />}
+          />
+        </Link>
+      )}
 
-      <Link
-        to={`/product/${props.id}`}
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="w-1/2 h-60 flex items-center justify-center"
-      >
-        <img
-          className="flex items-center w-auto h-60 object-contain rounded-2xl"
-          src={props.img}
-          alt={props.title}
-        />
-      </Link>
-
-      <div className="flex flex-col justify-between w-1/2 pl-6 py-1">
-        <p className="font-light font-poiret">{props.shop}</p>
+      {/* Contenedor principal: IMG + INFO */}
+      <div className="flex flex-row sm:flex-row w-full">
+        {/* Columna izquierda: Imagen */}
         <Link
           to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="w-1/2 sm:w-1/2 h-40 sm:h-60 flex items-center justify-center"
         >
-          <h3 className="font-semibold text-md">{props.title}</h3>
+          <img
+            className="flex items-center w-auto h-full object-contain rounded-2xl"
+            src={props.img}
+            alt={props.title}
+            loading="lazy"
+          />
         </Link>
 
-        <RaitingComponent value={props.rating} size={12} />
+        {/* Columna derecha: Información */}
+        <div className="flex flex-col justify-between w-1/2 sm:w-1/2 pl-4 sm:pl-6 py-1">
+          <p className="font-light font-poiret text-xs sm:text-base line-clamp-1">
+            {props.shop}
+          </p>
 
-        <div>
-          {Number(props.discountPrice) > 0 ? (
-            <>
-              <p className="line-through font-comme text-xs text-black/30">₡ {props.price}</p>
-              <p className="font-comme">₡ {props.discountPrice}</p>
-            </>
-          ) : (
-            <p className="font-comme">₡ {props.price}</p>
-          )}
-        </div>
+          <Link
+            to={`/product/${props.id}`}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <h3 className="font-semibold text-xs sm:text-base leading-snug line-clamp-3">
+              {props.title}
+            </h3>
+          </Link>
 
-        {!props.edit && (
-          <div className="flex gap-2 w-full text-white">
-            <ButtonComponent
-              style="bg-contrast-secondary cursor-pointer w-full rounded-full text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 shadow-md"
-              text={"Añadir al carrito"}
-              onClick={handleAddToCart}
-            />
-            <div className="">
+          <RaitingComponent value={props.rating} size={12} />
+
+          <div className="mt-1">
+            {hasDiscount ? (
+              <>
+                <p className="line-through font-comme text-xs sm:text-sm text-black/30">
+                  ₡ {props.price}
+                </p>
+                <p className="font-comme text-base sm:text-lg font-semibold">
+                  ₡ {props.discountPrice}
+                </p>
+              </>
+            ) : (
+              <p className="font-comme text-base sm:text-lg font-semibold">
+                ₡ {props.price}
+              </p>
+            )}
+          </div>
+
+          {/* 🔹 Botones desktop (dentro del bloque) */}
+          {!props.edit && (
+            <div className="hidden sm:flex gap-2 w-full text-white mt-2">
+              <ButtonComponent
+                style="bg-contrast-secondary cursor-pointer rounded-full text-sm sm:text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 px-6 shadow-md"
+                text={"Añadir al carrito"}
+                onClick={handleAddToCart}
+              />
               <AnimatedHeartButton productId={props.id} variant="filled" />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+
+      {/* 🔹 Barra inferior solo para mobile */}
+      {!props.edit && (
+        <div className="flex sm:hidden justify-between items-center w-full mt-3 gap-3">
+          <ButtonComponent
+            style="bg-contrast-secondary w-full text-white cursor-pointer rounded-full text-sm sm:text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 px-6 shadow-md"
+            text={"Añadir al carrito"}
+            onClick={handleAddToCart}
+          />
+          <AnimatedHeartButton productId={props.id} variant="filled" />
+        </div>
+      )}
     </figure>
   );
 }
-
