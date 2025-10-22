@@ -106,7 +106,7 @@ export default function HomePage() {
         </section>
 
         {/* 🔹 OFERTAS */}
-        <section className="mx-10 my-10">
+        <section className="mx-10 sm:my-10">
           <div className="flex justify-between items-center">
           <h2 className="text-xl sm:text-2xl font-semibold font-quicksand">
               Ofertas</h2>
@@ -144,7 +144,7 @@ export default function HomePage() {
 
         {/* 🔹 BANNERS desde la BD */}
         {/* 🔹 BANNERS desde la BD */}
-<section className="mx-10 my-10">
+        <section className="mx-10 sm:my-10">
   {loadingBanners ? (
     <p className="text-gray-500 text-center">Cargando banners...</p>
   ) : banners.length > 0 ? (
