@@ -7,6 +7,7 @@ import {
 } from "@tabler/icons-react";
 import { useNotifications } from "../../hooks/useNotifications";
 import { useNavigate } from "react-router-dom";
+import { useNotificationContext } from "../../hooks/context/NotificationContext"; // 👈 nuevo import
 
 export default function NotificationDropdown() {
   const [open, setOpen] = useState(false);
@@ -15,7 +16,7 @@ export default function NotificationDropdown() {
   const navigate = useNavigate();
 
   const { notifications, loading } = useNotifications();
-
+  const { setStoreToOpen } = useNotificationContext(); // 👈 acceso al contexto
 
   // Cierra al hacer clic fuera
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function NotificationDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Detecta si es móvil
+  // Detectar si es móvil
   const isMobile = window.innerWidth < 768;
 
   return (
@@ -53,6 +54,7 @@ export default function NotificationDropdown() {
       {/* Desktop dropdown */}
       {!isMobile && open && (
         <div className="absolute right-0 mt-2 w-80 bg-white border border-main/10 shadow-2xl rounded-2xl overflow-hidden z-50 animate-fadeIn">
+          {/* Header */}
           <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
             <h3 className="text-main font-semibold">Notificaciones</h3>
             <button onClick={() => setOpen(false)}>
@@ -63,6 +65,7 @@ export default function NotificationDropdown() {
             </button>
           </div>
 
+          {/* Lista */}
           <ul className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent">
             {loading ? (
               <p className="text-center text-gray-400 py-6 text-sm">
@@ -74,8 +77,9 @@ export default function NotificationDropdown() {
                 return (
                   <li
                     key={n.id}
-                    className={`px-4 py-3 border-b border-gray-100 transition-all duration-300 ${isExpanded ? "bg-main/5" : "hover:bg-main/5"
-                      }`}
+                    className={`px-4 py-3 border-b border-gray-100 transition-all duration-300 ${
+                      isExpanded ? "bg-main/5" : "hover:bg-main/5"
+                    }`}
                   >
                     <div
                       onClick={() => setExpandedId(isExpanded ? null : n.id)}
@@ -109,32 +113,34 @@ export default function NotificationDropdown() {
 
                         {n.priority && (
                           <span
-                            className={`inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full font-semibold ${n.priority === "HIGH"
+                            className={`inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                              n.priority === "HIGH"
                                 ? "bg-red-100 text-red-600"
                                 : n.priority === "NORMAL"
-                                  ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-green-100 text-green-700"
-                              }`}
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-green-100 text-green-700"
+                            }`}
                           >
                             Prioridad: {n.priority}
                           </span>
                         )}
 
-                        {/* 🚀 Nuevo: botón para ir al perfil/tienda */}
-                        {n.related_type === "store" && n.data?.store_id && (
-                          <button
-                            onClick={() => {
-                              const storeId = n.data?.store_id;
-                              if (storeId) {
-                                navigate(`/profile?store=${storeId}`);
+                        {/* 🚀 Botón para ir al perfil/tienda */}
+                        {n.related_type === "store" &&
+                          n.data &&
+                          n.data.store_id && (
+                            <button
+                              onClick={() => {
+                                const storeId = n.data!.store_id; // el "!" ya es seguro aquí
+                                setStoreToOpen(storeId ?? null);
+                                navigate("/profile");
                                 setOpen(false);
-                              }
-                            }}
-                            className="mt-3 text-xs text-white bg-main px-3 py-1.5 rounded-full hover:bg-contrast-secondary transition-all duration-200"
-                          >
-                            Ver tienda
-                          </button>
-                        )}
+                              }}
+                              className="mt-3 text-xs text-white bg-main px-3 py-1.5 rounded-full hover:bg-contrast-secondary transition-all duration-200"
+                            >
+                              Ver tienda
+                            </button>
+                          )}
                       </div>
                     )}
                   </li>
@@ -148,6 +154,7 @@ export default function NotificationDropdown() {
           </ul>
         </div>
       )}
+
       {/* Mobile overlay */}
       {isMobile && open && (
         <div
@@ -161,20 +168,34 @@ export default function NotificationDropdown() {
             <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
               <h3 className="text-main font-semibold">Notificaciones</h3>
               <button onClick={() => setOpen(false)}>
-                <IconX size={20} className="text-gray-500 hover:text-main transition" />
+                <IconX
+                  size={20}
+                  className="text-gray-500 hover:text-main transition"
+                />
               </button>
             </div>
 
             <ul className="max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent">
               {loading ? (
-                <p className="text-center text-gray-400 py-6 text-sm">Cargando...</p>
+                <p className="text-center text-gray-400 py-6 text-sm">
+                  Cargando...
+                </p>
               ) : notifications.length > 0 ? (
                 notifications.map((n) => (
                   <li
                     key={n.id}
                     className="px-4 py-3 hover:bg-main/5 cursor-pointer border-b border-gray-100 transition"
+                    onClick={() => {
+                      if (n.related_type === "store" && n.data?.store_id) {
+                        setStoreToOpen(n.data.store_id);
+                        navigate("/profile");
+                        setOpen(false);
+                      }
+                    }}
                   >
-                    <p className="text-sm text-gray-800 font-medium">{n.title}</p>
+                    <p className="text-sm text-gray-800 font-medium">
+                      {n.title}
+                    </p>
                     <span className="text-xs text-gray-500">
                       {new Date(n.created_at).toLocaleString("es-CR")}
                     </span>
@@ -189,7 +210,6 @@ export default function NotificationDropdown() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

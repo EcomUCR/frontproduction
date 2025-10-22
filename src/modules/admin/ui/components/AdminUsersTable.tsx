@@ -14,12 +14,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../../../components/ui/pagination";
+import { useNotificationContext } from "../../../../hooks/context/NotificationContext";
 
-interface AdminUsersTableProps {
-  storeToOpen?: number | null;
-}
-
-export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
+export default function AdminUsersTable() {
   const {
     getUsers,
     updateUserStatus,
@@ -29,6 +26,8 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
     loading,
     error,
   } = useAdmin();
+
+  const { storeToOpen, clearStoreToOpen } = useNotificationContext();
 
   const [users, setUsers] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -42,48 +41,61 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Paginación
+  // 🔹 Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // Cargar usuarios una sola vez al montar
-  useEffect(() => {
-    let isMounted = true;
-    const load = async () => {
+  // ✅ Estado para controlar que solo se abra una vez
+  const [hasOpenedStore, setHasOpenedStore] = useState(false);
+
+  // 🔹 Cargar usuarios y abrir tienda si aplica
+  // 🔹 Cargar usuarios una sola vez al montar
+// 🔹 1️⃣ Cargar usuarios una sola vez
+useEffect(() => {
+  (async () => {
+    try {
       const data = await getUsers();
-      const sortedUsers = data.sort((a, b) => a.id - b.id);
-      if (isMounted) setUsers(sortedUsers);
-    };
-    load();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-  // 🧠 Abrir automáticamente la tienda si viene desde la URL (ej: ?store=5)
-  useEffect(() => {
-    if (storeToOpen && users.length > 0) {
-      const userWithStore = users.find(
-        (u) => u.store && u.store.id === storeToOpen
-      );
-
-      if (userWithStore) {
-        handleEditStore(userWithStore); // ✅ ya existe esta función en tu componente
+      if (Array.isArray(data)) {
+        setUsers(data.sort((a, b) => a.id - b.id));
       } else {
-        console.warn(
-          "⚠️ No se encontró ninguna tienda con el ID:",
-          storeToOpen
-        );
+        console.error("⚠️ getUsers() no devolvió un array:", data);
       }
+    } catch (err) {
+      console.error("❌ Error cargando usuarios:", err);
     }
-  }, [storeToOpen, users]);
+  })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
-  // Abrir modal de usuario
+// 🔹 2️⃣ Observar cuando haya usuarios + storeToOpen (desde notificación)
+useEffect(() => {
+  if (!storeToOpen || users.length === 0) return; // espera a que ambos estén listos
+
+  const userWithStore = users.find(
+    (u) => u.store && u.store.id === storeToOpen
+  );
+
+  if (userWithStore) {
+    console.log("✅ Abriendo modal automáticamente:", storeToOpen);
+    // pequeño delay para asegurar render estable
+    setTimeout(() => {
+      handleEditStore(userWithStore);
+      clearStoreToOpen();
+    }, 300);
+  } else {
+    console.warn("⚠️ No se encontró tienda con ID:", storeToOpen);
+  }
+}, [storeToOpen, users]); // 👈 dependencias combinadas
+
+
+
+  // 🔹 Editar usuario
   const handleEditUser = (user: any) => {
     setSelectedUser(user);
     setShowModal(true);
   };
 
-  //Guardar cambios de usuario
+  // 🔹 Guardar usuario
   const handleSaveUser = async (updatedData: any) => {
     const cleanedData = { ...updatedData };
     delete cleanedData.id;
@@ -103,20 +115,21 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
     }
   };
 
-  //Abrir modal de tienda
+  // 🔹 Editar tienda
   const handleEditStore = async (user: any) => {
-    if (user.role !== "SELLER") return;
-
     const storeData = await getStoreByUserId(user.id);
     if (storeData) {
       setSelectedStore(storeData);
       setShowStoreModal(true);
     } else {
-      console.warn("No se encontró una tienda asociada a este vendedor");
+      console.warn(
+        "⚠️ No se encontró una tienda asociada al usuario:",
+        user.id
+      );
     }
   };
 
-  // Guardar tienda
+  // 🔹 Guardar tienda
   const handleSaveStore = async (updatedStore: any) => {
     const cleanedData = { ...updatedStore };
     delete cleanedData.user;
@@ -132,7 +145,7 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
     }
   };
 
-  // Filtrar usuarios
+  // 🔹 Filtrar y paginar
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.username?.toLowerCase().includes(search.toLowerCase()) ||
@@ -143,11 +156,12 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
     return matchesSearch && matchesRole;
   });
 
-  // Paginación lógica
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+  const paginatedUsers = filteredUsers.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -156,14 +170,13 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
     }
   };
 
-  // Loading y error
   if (loading)
     return (
       <p className="text-center text-gray-500 py-10">Cargando usuarios...</p>
     );
   if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
 
-  // Render principal
+  // ✅ Render principal
   return (
     <div className="pl-4">
       <div className="pl-10">
@@ -172,9 +185,10 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
             Lista de usuarios
           </h1>
         </div>
-        {/* Búsqueda y Filtros */}
+
+        {/* 🔍 Búsqueda y filtros */}
         <div className="flex justify-between pt-10">
-          <div className="flex items-center bg-white border border-main-dark/10 rounded-full shadow-sm px-2 py-1.5 transition-all duration-300 focus-within:ring-2 focus-within:ring-main">
+          <div className="flex items-center bg-white border border-main-dark/10 rounded-full shadow-sm px-2 py-1.5">
             <input
               placeholder="Buscar usuario..."
               type="text"
@@ -207,17 +221,15 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
           </div>
 
           {/* Crear usuario */}
-          <div>
-            <ButtonComponent
-              text="Agregar usuario"
-              style="bg-main text-white rounded-full py-3 px-4 font-quicksand hover:bg-contrast-secondary transition-all duration-400"
-            />
-          </div>
+          <ButtonComponent
+            text="Agregar usuario"
+            style="bg-main text-white rounded-full py-3 px-4 font-quicksand hover:bg-contrast-secondary transition-all duration-400"
+          />
         </div>
 
         {/* Tabla */}
         <div className="pt-8 space-y-4">
-          <div className="flex items-center justify-between w-full bg-main backdrop-blur-sm text-white font-quicksand font-semibold rounded-2xl px-6 py-4 shadow-md">
+          <div className="flex items-center justify-between w-full bg-main text-white font-quicksand font-semibold rounded-2xl px-6 py-4 shadow-md">
             <p className="w-24 text-sm tracking-wide uppercase opacity-90">
               UUID
             </p>
@@ -270,7 +282,6 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
         {totalPages > 1 && (
           <Pagination className="mt-10">
             <PaginationContent className="flex items-center justify-center gap-1 font-quicksand">
-              {/* Prev */}
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -282,7 +293,6 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
                 />
               </PaginationItem>
 
-              {/* Números */}
               {Array.from({ length: totalPages }).map((_, index) => {
                 const page = index + 1;
                 const isActive = page === currentPage;
@@ -303,7 +313,6 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
                 );
               })}
 
-              {/* Next */}
               <PaginationItem>
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
@@ -319,79 +328,32 @@ export default function AdminUsersTable({ storeToOpen }: AdminUsersTableProps) {
         )}
       </div>
 
-      {/* Modal de usuario */}
+      {/* Modales */}
       <AnimatePresence>
         {showModal && selectedUser && (
-          <>
-            <motion.div
-              key="overlay"
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => setShowModal(false)}
+          <motion.div className="fixed inset-0 z-50 flex items-center justify-center">
+            <UserEditModal
+              user={selectedUser}
+              onClose={() => setShowModal(false)}
+              onSave={handleSaveUser}
+              onEditStore={handleEditStore}
             />
-            <motion.div
-              key="modal"
-              className="fixed inset-0 z-50 flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.85, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{
-                type: "spring",
-                stiffness: 250,
-                damping: 20,
-                duration: 0.35,
-              }}
-            >
-              <UserEditModal
-                user={selectedUser}
-                onClose={() => setShowModal(false)}
-                onSave={handleSaveUser}
-                onEditStore={handleEditStore}
-              />
-            </motion.div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Modal de tienda */}
       <AnimatePresence>
         {showStoreModal && selectedStore && (
-          <>
-            <motion.div
-              key="overlay-store"
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => setShowStoreModal(false)}
+          <motion.div className="fixed inset-0 z-50 flex items-center justify-center">
+            <StoreEditModal
+              store={selectedStore}
+              onClose={() => setShowStoreModal(false)}
+              onSave={handleSaveStore}
+              onViewProducts={(storeId) =>
+                console.log("🛒 Ver productos de la tienda:", storeId)
+              }
             />
-            <motion.div
-              key="store-modal"
-              className="fixed inset-0 z-50 flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.85, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{
-                type: "spring",
-                stiffness: 250,
-                damping: 20,
-                duration: 0.35,
-              }}
-            >
-              <StoreEditModal
-                store={selectedStore}
-                onClose={() => setShowStoreModal(false)}
-                onSave={handleSaveStore}
-                onViewProducts={(storeId) => {
-                  console.log("🛒 Ver productos de la tienda:", storeId);
-                }}
-              />
-            </motion.div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

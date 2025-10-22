@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import SellerProductsList from "../../seller/ui/components/SellerProductsList";
@@ -13,12 +12,13 @@ import AdminUsersTable from "../../admin/ui/components/AdminUsersTable";
 import CrudBanners from "../../admin/ui/components/CrudBanners";
 import AdminCoupons from "../../admin/ui/components/AdminCoupons";
 import OrdersList from "./OrdersList";
+import { useNotificationContext } from "../../../hooks/context/NotificationContext";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
   const { user, loading } = useAuth();
-  const [searchParams] = useSearchParams();
-  const storeId = searchParams.get("store");
+  const { storeToOpen } = useNotificationContext();
+
   useEffect(() => {
     if (user?.role === "ADMIN") {
       setSelected("users");
@@ -26,15 +26,15 @@ export default function UserPage() {
       setSelected("profile");
     }
   }, [user]);
+
   useEffect(() => {
-    if (user?.role === "ADMIN" && storeId) {
+    if (user?.role === "ADMIN" && storeToOpen) {
       setSelected("users");
     }
-  }, [storeId, user]);
-  // Si está cargando, muestra loader
+  }, [storeToOpen, user]);
+
   if (loading) return <div>Cargando...</div>;
 
-  // Si no hay usuario autenticado o su rol no es válido
   if (
     !user ||
     (user.role !== "SELLER" &&
@@ -44,8 +44,7 @@ export default function UserPage() {
     return <div>No autorizado</div>;
   }
 
-  // Ahora TS ya sabe que `user` no es null y su rol es correcto
-    return (
+  return (
     <div>
       <NavBar />
       <section className="flex px-10 py-10 mx-auto max-w-[80rem]">
@@ -69,14 +68,21 @@ export default function UserPage() {
             {selected === "profile" && <UserProfile type={user.role} />}
             {selected === "transactions" && <TransactionHistory />}
             {selected === "orders" && <OrdersList />}
-            {selected === "products" && user.role === "SELLER" && <SellerProductsList />}
-            {selected === "orderStatus" && user.role === "SELLER" && <OrderStatus />}
-            
-            {/* ✅ Pasa el storeId si existe */}
-            {selected === "users" && user.role === "ADMIN" && (
-              <AdminUsersTable storeToOpen={storeId ? Number(storeId) : null} />
+            {selected === "products" && user.role === "SELLER" && (
+              <SellerProductsList />
             )}
-            {selected === "coupons" && user.role === "ADMIN" && <AdminCoupons />}
+            {selected === "orderStatus" && user.role === "SELLER" && (
+              <OrderStatus />
+            )}
+
+            {/* ✅ Ya no pasamos props, AdminUsersTable usa NotificationContext */}
+            {selected === "users" && user.role === "ADMIN" && (
+              <AdminUsersTable />
+            )}
+
+            {selected === "coupons" && user.role === "ADMIN" && (
+              <AdminCoupons />
+            )}
             {selected === "banners" && user.role === "ADMIN" && <CrudBanners />}
           </motion.div>
         </AnimatePresence>

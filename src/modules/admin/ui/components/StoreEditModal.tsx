@@ -72,48 +72,52 @@ export default function StoreEditModal({
     setBannerFile(null);
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    setUploading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setUploading(true);
 
-    // Copia el formData actualizado
-    const updatedData: Store = {
-      ...formData,
-      is_verified: !!formData.is_verified, // 👈 fuerza el booleano correcto
-    };
+      // Copia el formData actualizado
+      const updatedData: Store = {
+        ...formData,
+        is_verified: !!formData.is_verified, // 👈 fuerza el booleano correcto
+      };
 
-    if (logoFile) {
-      const uploadedLogo = await uploadImage(logoFile);
-      updatedData.image = uploadedLogo;
+      if (logoFile) {
+        const uploadedLogo = await uploadImage(logoFile);
+        updatedData.image = uploadedLogo;
+      }
+
+      if (bannerFile) {
+        const uploadedBanner = await uploadImage(bannerFile);
+        updatedData.banner = uploadedBanner;
+      }
+
+      console.log("Datos enviados:", updatedData); // 🔎 útil para debug
+      await onSave(updatedData);
+      onClose();
+    } catch (error) {
+      console.error("Error al subir imágenes o guardar tienda:", error);
+    } finally {
+      setUploading(false);
     }
-
-    if (bannerFile) {
-      const uploadedBanner = await uploadImage(bannerFile);
-      updatedData.banner = uploadedBanner;
-    }
-
-    console.log("Datos enviados:", updatedData); // 🔎 útil para debug
-    await onSave(updatedData);
-    onClose();
-  } catch (error) {
-    console.error("Error al subir imágenes o guardar tienda:", error);
-  } finally {
-    setUploading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
-    const scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.overflowY = "scroll";
+    // Bloquear scroll sin romper el layout
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    const originalStyle = {
+      overflow: document.body.style.overflow,
+      paddingRight: document.body.style.paddingRight,
+    };
+
+    document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+
     return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.overflowY = "";
-      window.scrollTo(0, scrollY);
+      document.body.style.overflow = originalStyle.overflow;
+      document.body.style.paddingRight = originalStyle.paddingRight;
     };
   }, []);
 

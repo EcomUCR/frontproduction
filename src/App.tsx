@@ -33,35 +33,47 @@ import AboutUsPage from "./modules/home/ui/AboutUsPage";
 import HelpPage from "./modules/home/ui/HelpPage";
 import WishListPage from "./modules/users/ui/WishListPage";
 import NotFound from "./components/navigation/NotFound";
+import { NotificationProvider } from "./hooks/context/NotificationContext";
 
 function App() {
   return (
     <AuthProvider>
       <AlertProvider>
         <CartProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/loginRegister" element={<LoginRegisterPage />} />
-              <Route path="/registerSeller" element={<RegisterSellerPage />} />
-              <Route path="/beSellerPage" element={<BeSellerPage />} />
-              <Route path="/store/:id" element={<SellerPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/shoppingCart" element={<ShoppingCartPage />} />
-              <Route path="/wishlist" element={<WishListPage />} />
-              <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/resetPassword" element={<ResetPasswordPage />} />
-              <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
-              <Route path="/crudProduct" element={<CrudProductPage />} />
-              <Route path="/search/:categoryId" element={<SearchedProductPage />} />
-              <Route path="/search" element={<SearchedProductPage />} />
-              <Route path="/search/stores" element={<SearchedStores />} />
-              <Route path="/about" element={<AboutUsPage />} />
-              <Route path="/help" element={<HelpPage />} />
-              <Route path="/editProduct/:id" element={<CrudProductPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Router>
+          <NotificationProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/loginRegister" element={<LoginRegisterPage />} />
+                <Route
+                  path="/registerSeller"
+                  element={<RegisterSellerPage />}
+                />
+                <Route path="/beSellerPage" element={<BeSellerPage />} />
+                <Route path="/store/:id" element={<SellerPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/shoppingCart" element={<ShoppingCartPage />} />
+                <Route path="/wishlist" element={<WishListPage />} />
+                <Route path="/product/:id" element={<ProductPage />} />
+                <Route path="/resetPassword" element={<ResetPasswordPage />} />
+                <Route
+                  path="/forgotPassword"
+                  element={<ForgotPasswordPage />}
+                />
+                <Route path="/crudProduct" element={<CrudProductPage />} />
+                <Route
+                  path="/search/:categoryId"
+                  element={<SearchedProductPage />}
+                />
+                <Route path="/search" element={<SearchedProductPage />} />
+                <Route path="/search/stores" element={<SearchedStores />} />
+                <Route path="/about" element={<AboutUsPage />} />
+                <Route path="/help" element={<HelpPage />} />
+                <Route path="/editProduct/:id" element={<CrudProductPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Router>
+          </NotificationProvider>
         </CartProvider>
       </AlertProvider>
     </AuthProvider>
