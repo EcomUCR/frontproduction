@@ -5,18 +5,20 @@ import {
   IconBrandX,
 } from "@tabler/icons-react";
 import logo from "../../img/TukiLogo.png";
-import useContactForm from "../../hooks/useContactForm"; // Ajusta la ruta si necesario
+import useContactForm from "../../hooks/useContactForm";
 
 export default function Footer() {
   const { fields, handleChange, handleSubmit, loading, sent, error } =
     useContactForm();
 
   return (
-    <footer className="h-auto py-10 bg-main text-white flex flex-col items-center font-quicksand px-10 space-y-10">
-      <div className="flex w-[90%] justify-between">
-        <div className="space-y-15 w-[33%]">
-          <div className="flex justify-center mx-10 pt-10 gap-10 text-sm font-light">
-            <ul className="mr-10 space-y-4">
+    <footer className="h-auto py-10 bg-main text-white flex flex-col items-center font-quicksand px-6 sm:px-10 space-y-10">
+      {/* Contenedor principal */}
+      <div className="flex flex-col sm:flex-row w-full sm:w-[90%] justify-between items-center sm:items-start gap-15 sm:gap-0">
+        {/* 🔹 Columna izquierda: enlaces + redes */}
+        <div className="space-y-15 w-full sm:w-[33%] flex flex-col items-center order-2 sm:order-1">
+          <div className="flex justify-center sm:justify-center mx-0 sm:mx-10 pt-0 sm:pt-10 gap-6 sm:gap-10 text-sm font-light text-center sm:text-left">
+            <ul className="space-y-3 sm:mr-10">
               <li>
                 <a href="/search?mode=offers">Ofertas</a>
               </li>
@@ -27,7 +29,7 @@ export default function Footer() {
                 <a href="/search?mode=explore">Explorar</a>
               </li>
             </ul>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               <li>
                 <a href="/about">Conócenos</a>
               </li>
@@ -38,21 +40,17 @@ export default function Footer() {
                 <a href="/search?mode=best-sellers">Lo más vendido</a>
               </li>
             </ul>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               <li>
                 <a href="/help">Ayuda</a>
               </li>
-              <li>
-                <a href=""></a>
-              </li>
-              <li>
-                <a href=""></a>
-              </li>
             </ul>
           </div>
+
+          {/* Sigue dentro de la misma columna */}
           <div className="flex flex-col gap-3 items-center">
             <p className="font-semibold text-xl">Síguenos en</p>
-            <div className="flex gap-4">
+            <div className="flex gap-5">
               <a
                 href="https://www.facebook.com/share/17QLNhZePP/"
                 target="_blank"
@@ -91,15 +89,22 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-2 w-[33%]">
-          <img src={logo} alt="TucaShop" className="h-15 w-auto" />
-          <a className="text-3xl font-fugaz" href="">
+
+        {/* 🔹 Columna central: logo */}
+        <div className="flex flex-col items-center gap-2 w-full sm:w-[33%] order-1 sm:order-2">
+          <img src={logo} alt="TukiShop" className="h-15 w-auto" />
+          <a className="text-3xl font-fugaz" href="/">
             TukiShop
           </a>
         </div>
-        <div className="flex flex-col gap-3 text-xs w-[33%] items-center pt-8">
+
+        {/* 🔹 Columna derecha: formulario */}
+        <div className="flex flex-col gap-3 text-xs w-full sm:w-[33%] items-center pt-4 sm:pt-8 order-3 sm:order-3">
           <p className="font-semibold text-xl">Contáctanos</p>
-          <form className="flex flex-col gap-4 w-[80%]" onSubmit={handleSubmit}>
+          <form
+            className="flex flex-col gap-4 w-[90%] sm:w-[80%]"
+            onSubmit={handleSubmit}
+          >
             <label className="flex flex-col gap-1">
               <p className="pl-3 font-semibold">Nombre</p>
               <input
@@ -108,10 +113,11 @@ export default function Footer() {
                 value={fields.name}
                 onChange={handleChange}
                 placeholder="Ingresa tu nombre"
-                className="rounded-full p-2 text-white border border-white w-full"
+                className="rounded-full p-2 text-white border border-white w-full bg-transparent"
                 required
               />
             </label>
+
             <label className="flex flex-col gap-1">
               <p className="pl-3 font-semibold">Asunto</p>
               <input
@@ -120,10 +126,11 @@ export default function Footer() {
                 value={fields.subject}
                 onChange={handleChange}
                 placeholder="Escribe el asunto de tu mensaje"
-                className="rounded-full p-2 text-white border border-white w-full"
+                className="rounded-full p-2 text-white border border-white w-full bg-transparent"
                 required
               />
             </label>
+
             <label className="flex flex-col gap-1">
               <p className="pl-3 font-semibold">Email</p>
               <input
@@ -132,10 +139,11 @@ export default function Footer() {
                 value={fields.email}
                 onChange={handleChange}
                 placeholder="Ingresa tu email"
-                className="rounded-full p-2 text-white border border-white w-full"
+                className="rounded-full p-2 text-white border border-white w-full bg-transparent"
                 required
               />
             </label>
+
             <label className="flex flex-col gap-1">
               <p className="pl-3 font-semibold">Mensaje</p>
               <textarea
@@ -143,10 +151,11 @@ export default function Footer() {
                 value={fields.message}
                 onChange={handleChange}
                 placeholder="Ingresa tu mensaje"
-                className="rounded-2xl p-2 text-white border border-white w-full h-20"
+                className="rounded-2xl p-2 text-white border border-white w-full h-20 bg-transparent"
                 required
               />
             </label>
+
             <button
               type="submit"
               disabled={loading}
@@ -155,6 +164,7 @@ export default function Footer() {
             >
               {loading ? "Enviando..." : "Enviar"}
             </button>
+
             {sent && (
               <p className="text-green-400 text-center">
                 ¡Mensaje enviado correctamente!
@@ -164,7 +174,9 @@ export default function Footer() {
           </form>
         </div>
       </div>
-      <p className="text-xs">
+
+      {/* Derechos reservados */}
+      <p className="text-xs text-center px-4">
         © 2025 Ecom. Todos los derechos reservados. Todas las marcas son
         propiedad de sus respectivos dueños.
       </p>

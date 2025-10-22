@@ -115,14 +115,14 @@ export default function CategorySlider({ onLoaded }: CategorySliderProps) {
   }, []);
 
   return (
-    <Carousel className="mx-10">
+    <Carousel className="sm:mx-10">
       <CarouselContent>
         {categories.map((category) => {
           const IconComponent = categoryIcons[category.name] || IconDots;
           const img = categoryImages[category.name] || bg; // 👈 usa imagen única o fallback
           return (
             <CarouselItem
-              className="basis-[22%] flex justify-center items-center pl-0 my-8 transition-transform duration-300 hover:scale-105"
+              className="basis-[38%] sm:basis-[22%] flex justify-center items-center pl-0 my-8 transition-transform duration-300 hover:scale-105"
               key={category.id}
             >
               <Link to={`/search/${category.id}`}>
@@ -130,15 +130,14 @@ export default function CategorySlider({ onLoaded }: CategorySliderProps) {
                   title={category.name}
                   img={img}
                   icon={IconComponent}
-                  url="#"
                 />
               </Link>
             </CarouselItem>
           );
         })}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="scale-80 sm:scale-100 -translate-x-2 sm:translate-x-0" />
+      <CarouselNext className="scale-80 sm:scale-100 translate-x-2 sm:translate-x-0" />
     </Carousel>
   );
 }

@@ -33,7 +33,7 @@ export default function BannerComponent(props: BannerComponentProps) {
     }
   };
 
-  //  Banner largo
+  // 🔹 Banner SLIDER (no se toca)
   if (props.type === "SLIDER") {
     return (
       <img
@@ -43,20 +43,22 @@ export default function BannerComponent(props: BannerComponentProps) {
       />
     );
   }
+
+  // 🔹 Banner LARGE (no se toca)
   if (props.type === "LARGE") {
     return <section>desarrollo el banner de orientacion 2</section>;
   }
 
-  // Banners cortos
+  // 🔹 Banner corto LEFT
   if (props.type === "SHORT" && props.orientation === "LEFT") {
     return (
-      <div className="w-[35rem] h-[17rem] flex items-end rounded-t-3xl rounded-b-2xl overflow-hidden relative">
-        <div className="flex w-full absolute z-1 h-[16rem] ">
-          <div className="w-[50%] h-full flex flex-col justify-between py-8 pl-5">
-            <div className="text-left text-white text-3xl font-quicksand font-bold">
+      <div className="w-[35rem] h-[12rem] sm:h-[17rem] flex items-end rounded-t-3xl rounded-b-2xl overflow-hidden relative transform sm:scale-100 max-w-full mx-auto">
+        <div className="flex w-full absolute z-1 h-full sm:h-[16rem]">
+          <div className="w-[50%] h-full flex flex-col justify-between py-3 sm:py-8 pl-5">
+            <div className="text-left text-white text-lg sm:text-3xl font-quicksand font-bold">
               {props.title ?? "Todo, a un click de distancia"}
             </div>
-            <div className=" text-left text-white text-base font-quicksand ">
+            <div className="text-left text-white text-xs sm:text-base font-quicksand">
               {props.subtitle ??
                 "Explora la gran cantidad de productos de tiendas nacionales."}
             </div>
@@ -64,10 +66,9 @@ export default function BannerComponent(props: BannerComponentProps) {
               <div>
                 <ButtonComponent
                   text={props.btn_text ?? "Ver Productos"}
-                  style={`px-2 truncate font-quicksand cursor-pointer text-white font-medium w-45 py-2 rounded-b-lg rounded-t-3xl shadow-lg hover:scale-105 transition-transform duration-300 ${getButtonColor()}`}
+                  style={`px-2 truncate font-quicksand cursor-pointer text-sm sm:text-base text-white font-medium w-35 sm:w-45 py-2 rounded-b-lg rounded-t-3xl shadow-lg hover:scale-105 transition-transform duration-300 ${getButtonColor()}`}
                   onClick={() => {
                     if (props.link) {
-                      // Si empieza con http(s), abre en nueva pestaña; si no, navega interna
                       if (props.link.startsWith("http")) {
                         window.open(props.link, "_blank");
                       } else {
@@ -79,14 +80,16 @@ export default function BannerComponent(props: BannerComponentProps) {
               </div>
             )}
           </div>
+
           <div className="relative w-[50%] flex justify-center items-end overflow-visible">
             <img
               src={props.character}
               alt={props.title ?? `Banner ${props.id}`}
-              className="absolute w-full h-[17.5rem] object-contain -bottom-2 z-0"
+              className="absolute w-full sm:h-[17.5rem] object-contain -bottom-2 z-0"
             />
           </div>
         </div>
+
         <img
           src={props.image}
           alt={props.title ?? `Banner ${props.id}`}
@@ -96,33 +99,35 @@ export default function BannerComponent(props: BannerComponentProps) {
     );
   }
 
+  // 🔹 Banner corto RIGHT
   if (props.type === "SHORT" && props.orientation === "RIGTH") {
     return (
-      <div className="w-[35rem] h-[17rem] flex items-end rounded-t-3xl rounded-b-2xl overflow-hidden relative">
-        <div className="flex w-full absolute z-1 h-[16rem] ">
+      <div className="w-[35rem] h-[12rem] sm:h-[17rem] flex items-end rounded-t-3xl rounded-b-2xl overflow-hidden relative transform sm:scale-100 max-w-full mx-auto">
+        <div className="flex w-full absolute z-1 h-full sm:h-[16rem]">
           <div className="relative w-[50%] flex justify-center items-end overflow-visible">
             <img
               src={props.character}
               alt={props.title ?? `Banner ${props.id}`}
-              className="absolute w-full h-[17.5rem] object-contain -bottom-2 z-0"
+              className="absolute w-full sm:h-[17.5rem] object-contain -bottom-4 z-0"
             />
           </div>
-          <div className="w-[55%] h-full flex flex-col justify-between py-8 px-5">
-            <div className="text-left text-white text-3xl font-quicksand font-bold">
+
+          <div className="w-[50%] h-full flex flex-col justify-between py-3 sm:py-8 pl-5">
+            <div className="text-left text-white text-lg sm:text-3xl font-quicksand font-bold">
               {props.title ?? "Encuentra todo para tu perro."}
             </div>
-            <div className=" text-left text-white text-base font-quicksand ">
+            <div className="text-left text-white text-xs sm:text-base font-quicksand">
               {props.subtitle ??
                 "Alimentos, juguetes, premios y más para su bienestar."}
             </div>
+
             {props.btn_text && (
               <div>
                 <ButtonComponent
                   text={props.btn_text ?? "Ver Productos"}
-                  style={`px-2 truncate font-quicksand cursor-pointer text-white font-medium w-45 py-2 rounded-b-lg rounded-t-3xl shadow-lg hover:scale-105 transition-transform duration-300 ${getButtonColor()}`}
+                  style={`px-2 truncate font-quicksand cursor-pointer text-sm sm:text-base text-white font-medium w-35 sm:w-45 py-2 rounded-b-lg rounded-t-3xl shadow-lg hover:scale-105 transition-transform duration-300 ${getButtonColor()}`}
                   onClick={() => {
                     if (props.link) {
-                      // Si empieza con http(s), abre en nueva pestaña; si no, navega interna
                       if (props.link.startsWith("http")) {
                         window.open(props.link, "_blank");
                       } else {
@@ -135,6 +140,7 @@ export default function BannerComponent(props: BannerComponentProps) {
             )}
           </div>
         </div>
+
         <img
           src={props.image}
           alt={props.title ?? `Banner ${props.id}`}

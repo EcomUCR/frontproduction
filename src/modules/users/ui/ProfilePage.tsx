@@ -12,10 +12,12 @@ import AdminUsersTable from "../../admin/ui/components/AdminUsersTable";
 import CrudBanners from "../../admin/ui/components/CrudBanners";
 import AdminCoupons from "../../admin/ui/components/AdminCoupons";
 import OrdersList from "./OrdersList";
+import { useNotificationContext } from "../../../hooks/context/NotificationContext";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
   const { user, loading } = useAuth();
+  const { storeToOpen } = useNotificationContext();
 
   useEffect(() => {
     if (user?.role === "ADMIN") {
@@ -25,15 +27,23 @@ export default function UserPage() {
     }
   }, [user]);
 
-  // Si está cargando, muestra loader
+  useEffect(() => {
+    if (user?.role === "ADMIN" && storeToOpen) {
+      setSelected("users");
+    }
+  }, [storeToOpen, user]);
+
   if (loading) return <div>Cargando...</div>;
 
-  // Si no hay usuario autenticado o su rol no es válido
-  if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER" && user.role !== "ADMIN")) {
+  if (
+    !user ||
+    (user.role !== "SELLER" &&
+      user.role !== "CUSTOMER" &&
+      user.role !== "ADMIN")
+  ) {
     return <div>No autorizado</div>;
   }
 
-  // Ahora TS ya sabe que `user` no es null y su rol es correcto
   return (
     <div>
       <NavBar />
@@ -45,25 +55,37 @@ export default function UserPage() {
             selected={selected}
           />
         </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selected}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="w-[75%]"
-            >
-              {selected === "profile" && (<UserProfile type={user.role} />)}
-              {selected === "transactions" && <TransactionHistory />}
-              {selected === "orders" && <OrdersList />}
-              {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
-              {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
-              {selected === "users" && user.role === "ADMIN" && (<AdminUsersTable />)}
-              {selected === "coupons" && user.role === "ADMIN" && (<AdminCoupons />)}
-              {selected === "banners" && user.role === "ADMIN" && (<CrudBanners />)}
-            </motion.div>
-          </AnimatePresence>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selected}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-[75%]"
+          >
+            {selected === "profile" && <UserProfile type={user.role} />}
+            {selected === "transactions" && <TransactionHistory />}
+            {selected === "orders" && <OrdersList />}
+            {selected === "products" && user.role === "SELLER" && (
+              <SellerProductsList />
+            )}
+            {selected === "orderStatus" && user.role === "SELLER" && (
+              <OrderStatus />
+            )}
+
+            {/* ✅ Ya no pasamos props, AdminUsersTable usa NotificationContext */}
+            {selected === "users" && user.role === "ADMIN" && (
+              <AdminUsersTable />
+            )}
+
+            {selected === "coupons" && user.role === "ADMIN" && (
+              <AdminCoupons />
+            )}
+            {selected === "banners" && user.role === "ADMIN" && <CrudBanners />}
+          </motion.div>
+        </AnimatePresence>
       </section>
       <Footer />
     </div>
