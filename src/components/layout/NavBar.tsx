@@ -70,37 +70,37 @@ export default function NavBar() {
   }, []);
 
   return (
-    <nav className="bg-main px-4 sm:px-6 py-2 font-quicksand relative z-50">
-      {/* Topbar */}
-      <div className="flex justify-between items-center">
+    <nav className="bg-main px-4 sm:px-30 py-2 font-quicksand relative z-50">
+      {/* Barra superior */}
+      <div className="flex w-full justify-between items-center">
         {/* Logo */}
         <Link
           to="/"
-          className="text-white font-fugaz text-2xl flex items-center gap-2 p-1"
+          className="text-white font-fugaz w-1/3 text-2xl flex items-center gap-2 p-1"
         >
           <img src={logo} alt="Logo" className="h-9 w-auto" />
           <span className="sm:block">TukiShop</span>
         </Link>
 
-        {/* Search bar*/}
+        {/* Barra de búsqueda */}
         <div className="hidden md:flex items-center bg-white rounded-full px-0.5 w-1/3">
           <input
             type="text"
-            className="w-full h-9 p-3 rounded-full focus:outline-none"
+            className="w-full h-10 p-3 rounded-full focus:outline-none"
             placeholder="Buscar productos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
           <ButtonComponent
-            style="bg-gradient-to-br cursor-pointer from-contrast-main to-contrast-secondary rounded-full w-10 h-9 flex items-center justify-center"
-            icon={<IconSearch className="text-white h-5 w-auto stroke-3" />}
+            style="bg-gradient-to-br cursor-pointer from-contrast-main to-contrast-secondary rounded-full w-12 h-9 flex items-center justify-center"
+            icon={<IconSearch className="text-white h-5 w-5 stroke-3" />}
             onClick={handleSearch}
           />
         </div>
 
-        {/* Desktop Icons */}
-        <div className="hidden md:flex gap-5 text-white items-center">
+        {/* Íconos desktop */}
+        <div className="hidden md:flex text-white items-center w-1/3 justify-end">
           {/* Usuario */}
           <div className="relative user-dropdown">
             {user ? (
@@ -157,7 +157,7 @@ export default function NavBar() {
                 </AnimatePresence>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 pr-5">
                 <Link
                   to="/loginRegister?mode=login"
                   className="flex items-center gap-1 hover:font-semibold"
@@ -180,7 +180,7 @@ export default function NavBar() {
           {user && <NotificationDropdown />}
 
           {/* Lista de deseos */}
-          <Link to="/wishlist">
+          <Link to="/wishlist" className="pr-2">
             <IconHeart className="h-6 w-6" />
           </Link>
 
@@ -190,26 +190,22 @@ export default function NavBar() {
           </Link>
         </div>
 
-        {/* Mobile Icons + Menu */}
-        <div className="flex md:hidden items-center gap-4 text-white">
-          {/* ❤️ Lista de deseos */}
+        {/* Íconos móviles y botón menú */}
+        <div className="flex md:hidden items-center gap-3 text-white">
+          {user && <NotificationDropdown />} {/* Notificaciones móviles */}
           <Link to="/wishlist">
             <IconHeart className="h-6 w-6" />
           </Link>
-
-          {/*  Carrito */}
           <Link to="/shoppingCart">
             <IconShoppingBag className="h-6 w-6" />
           </Link>
-
-          {/*  Botón de menú */}
           <button onClick={() => setMenuOpen((prev) => !prev)}>
             {menuOpen ? <IconX size={26} /> : <IconMenu2 size={26} />}
           </button>
         </div>
       </div>
 
-      {/* Desktop Bottom Menu */}
+      {/* Menú inferior desktop */}
       <div className="hidden md:block">
         <ul className="flex justify-center gap-10 p-3 text-white text-sm">
           <li>
@@ -248,7 +244,7 @@ export default function NavBar() {
         </ul>
       </div>
 
-      {/* Mobile Menu (Dropdown) */}
+      {/* Desplegable menú hamburguesas */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -258,7 +254,7 @@ export default function NavBar() {
             transition={{ duration: 0.25 }}
             className="md:hidden bg-white text-main-dark rounded-2xl shadow-xl mt-3 p-4 space-y-3 font-medium"
           >
-            {/* Search */}
+            {/* Buscador */}
             <div className="flex bg-gray-100 rounded-full px-2 py-1">
               <input
                 type="text"
@@ -274,8 +270,13 @@ export default function NavBar() {
               />
             </div>
 
-            {/* Links */}
+
+            {/* Enlaces */}
             <div className="flex flex-col gap-2 text-sm">
+              {/* Categorías */}
+              <div className="pt-2 border-t-2">
+                <CategoryDropdown categories={categories} navigate={navigate} />
+              </div>
               <Link to="/" onClick={() => setMenuOpen(false)}>
                 Inicio
               </Link>

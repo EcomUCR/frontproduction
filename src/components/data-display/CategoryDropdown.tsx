@@ -73,10 +73,10 @@ export default function CategoryDropdown({
         <div className="relative " ref={dropdownRef}>
             <button
                 onClick={() => setOpen((prev) => !prev)}
-                className="flex items-center gap-2 hover:-translate-y-1 text-white transform transition-all duration-300 hover:cursor-pointer"
+                className="flex items-center sm:gap-2 hover:-translate-y-1 text-main-dark sm:text-white transform transition-all duration-300 hover:cursor-pointer"
             >
-                <IconMenu2 className="h-5 w-5" />
-                <span className="font-light">Categorías</span>
+                <IconMenu2 className="h-5 w-5 hidden sm:block" />
+                <span className="sm:font-light text-sm">Categorías</span>
                 <IconChevronDown
                     className={`h-4 w-4 transition-transform duration-300 ${open ? "rotate-180" : ""
                         }`}
@@ -85,7 +85,7 @@ export default function CategoryDropdown({
 
             {open && (
                 <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-lg py-2 z-50 animate-fadeIn border border-gray-200
-                max-h-90 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+                max-h-79 sm:max-h-98 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
                 >
                     {categories.map((category) => {
                         const IconComponent = categoryIcons[category.name] || IconDots;
