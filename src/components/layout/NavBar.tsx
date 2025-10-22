@@ -1,7 +1,3 @@
-// ============================================================
-// 🛍️ NavBar - TukiShop (Responsive + Carrito y Wishlist fuera del menú)
-// ============================================================
-
 import { Link, useNavigate } from "react-router-dom";
 import {
   IconBuildingStore,
@@ -75,7 +71,7 @@ export default function NavBar() {
 
   return (
     <nav className="bg-main px-4 sm:px-6 py-2 font-quicksand relative z-50">
-      {/* 🔹 Topbar */}
+      {/* Topbar */}
       <div className="flex justify-between items-center">
         {/* Logo */}
         <Link
@@ -86,7 +82,7 @@ export default function NavBar() {
           <span className="sm:block">TukiShop</span>
         </Link>
 
-        {/* 🔍 Search bar (hidden on mobile) */}
+        {/* Search bar*/}
         <div className="hidden md:flex items-center bg-white rounded-full px-0.5 w-1/3">
           <input
             type="text"
@@ -103,7 +99,7 @@ export default function NavBar() {
           />
         </div>
 
-        {/* 🔸 Desktop Icons */}
+        {/* Desktop Icons */}
         <div className="hidden md:flex gap-5 text-white items-center">
           {/* Usuario */}
           <div className="relative user-dropdown">
@@ -194,26 +190,26 @@ export default function NavBar() {
           </Link>
         </div>
 
-        {/* 🔹 Mobile Icons + Menu */}
+        {/* Mobile Icons + Menu */}
         <div className="flex md:hidden items-center gap-4 text-white">
           {/* ❤️ Lista de deseos */}
           <Link to="/wishlist">
             <IconHeart className="h-6 w-6" />
           </Link>
 
-          {/* 🛍️ Carrito */}
+          {/*  Carrito */}
           <Link to="/shoppingCart">
             <IconShoppingBag className="h-6 w-6" />
           </Link>
 
-          {/* ☰ Botón de menú */}
+          {/*  Botón de menú */}
           <button onClick={() => setMenuOpen((prev) => !prev)}>
             {menuOpen ? <IconX size={26} /> : <IconMenu2 size={26} />}
           </button>
         </div>
       </div>
 
-      {/* 🔻 Desktop Bottom Menu */}
+      {/* Desktop Bottom Menu */}
       <div className="hidden md:block">
         <ul className="flex justify-center gap-10 p-3 text-white text-sm">
           <li>
@@ -252,7 +248,7 @@ export default function NavBar() {
         </ul>
       </div>
 
-      {/* 📱 Mobile Menu (Dropdown) */}
+      {/* Mobile Menu (Dropdown) */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -262,7 +258,7 @@ export default function NavBar() {
             transition={{ duration: 0.25 }}
             className="md:hidden bg-white text-main-dark rounded-2xl shadow-xl mt-3 p-4 space-y-3 font-medium"
           >
-            {/* 🔍 Search */}
+            {/* Search */}
             <div className="flex bg-gray-100 rounded-full px-2 py-1">
               <input
                 type="text"
@@ -278,7 +274,7 @@ export default function NavBar() {
               />
             </div>
 
-            {/* 🧭 Links */}
+            {/* Links */}
             <div className="flex flex-col gap-2 text-sm">
               <Link to="/" onClick={() => setMenuOpen(false)}>
                 Inicio
@@ -306,7 +302,7 @@ export default function NavBar() {
               </Link>
             </div>
 
-            {/* 👤 Usuario */}
+            {/* Usuario */}
             <div className="border-t pt-2 mt-2">
               {user ? (
                 <div className="flex flex-col gap-2">
