@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCartTotals } from "./useCartTotals";
 import { useVisa } from "../../modules/payments/useVisa";
 import { useCheckout } from "../../modules/payments/useCheckout";
@@ -14,8 +14,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import StripePaymentForm from "../../components/ui/StripePaymentForm";
 
 // ⚙️ Crea la instancia de Stripe una sola vez FUERA del componente
-// Sustituye tu clave de prueba aquí directamente
-const stripePromise = loadStripe("pk_test_51SJQBqLl2yLxOyLIFdLhdGoXjNKpBn2WFxWjMhInw72TUbRe7DVmYLa17tBOfswYlYqe0E3J3bqYWFyuJaEFYMLI00aJOZAoJY");
+const stripePromise = loadStripe(
+  "pk_test_51SJQBqLl2yLxOyLIFdLhdGoXjNKpBn2WFxWjMhInw72TUbRe7DVmYLa17tBOfswYlYqe0E3J3bqYWFyuJaEFYMLI00aJOZAoJY"
+);
 
 interface FormShoppingProps {
   variant?: "checkout" | "product";
@@ -29,12 +30,18 @@ export default function FormShopping({
   const { getForexRate, rate, /*loading: loadingVisa*/ error: errorVisa } = useVisa();
   const { processCheckout } = useCheckout();
   const { totals, getTotals, loading, error } = useCartTotals();
+  const [direcciones, setDirecciones] = useState([1]); // lista de formularios de dirección
 
   useEffect(() => {
     getTotals();
   }, []);
 
   const format = (n: number) => (n ?? 0).toLocaleString("es-CR");
+
+  // función para agregar otro formulario
+  const agregarDireccion = () => {
+    setDirecciones((prev) => [...prev, prev.length + 1]);
+  };
 
   return (
     <div className="font-quicksand">
@@ -77,14 +84,45 @@ export default function FormShopping({
         </div>
       )}
 
+
+
       {/*  Checkout Mode */}
       {variant === "checkout" && (
         <>
+
           {/* Dirección */}
-          <div className="pt-10 flex gap-2 text-contrast-main">
-            <IconMapPin />
-            <p>Enviar a Andrés</p>
+          <div className="pt-10 flex flex-col gap-6 w-full">
+            <div className="flex items-center gap-2"></div>
+
+            {direcciones.map((num) => (
+              <div key={num} className="flex flex-col gap-4 bg-main-dark/5 p-4 rounded-xl">
+                <span className="font-medium flex items-center gap-2 text-black">
+                  <IconMapPin className="text-yellow-400" />
+                  Dirección de entrega
+                </span>
+
+                <textarea
+                  rows={4}
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 resize-y w-full focus:outline-none focus:ring-2 focus:ring-main-dark/40"
+                  placeholder="Escribe la dirección aquí..."
+                />
+
+               
+                <div className="flex gap-3">
+                  <button className="flex-1 bg-contrast-secondary hover:bg-main text-white rounded-full py-2 text-sm transition">
+                    Guardar dirección
+                  </button>
+                  <button
+                    onClick={agregarDireccion}
+                    className="flex-1 bg-contrast-secondary hover:bg-main text-white rounded-full py-2 text-sm transition"
+                  >
+                    Guardar otra dirección
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
+
 
           {/* Formulario con Stripe */}
           <div className="pt-10">
