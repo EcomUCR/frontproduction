@@ -121,7 +121,7 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
                 <p className="line-through font-comme text-xs sm:text-sm text-black/30">
                   ₡ {props.price}
                 </p>
-                <p className="font-comme text-base sm:text-lg font-semibold">
+                <p className="font-comme text-base sm:text-lg">
                   ₡ {props.discountPrice}
                 </p>
               </>
