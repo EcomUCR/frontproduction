@@ -28,7 +28,7 @@ export default function HeaderSlider() {
         <SkeletonHeaderSlider />
       ) : sliderBanners.length > 0 ? (
         <Carousel className="mx-3 sm:mx-6 md:mx-10">
-          <CarouselContent className="h-[10rem] sm:h-[22rem] md:h-[28rem] lg:h-[30rem]">
+          <CarouselContent className="h-[12rem] sm:h-[22rem] md:h-[28rem] lg:h-[30rem]">
             {sliderBanners.map((b) => (
               <CarouselItem
                 key={b.id}
