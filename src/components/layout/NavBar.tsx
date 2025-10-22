@@ -66,9 +66,9 @@ export default function NavBar() {
   };
 
   const handleLogout = async () => {
-        await logout();
-        navigate("/loginRegister", { replace: true });
-    };
+    await logout();
+    navigate("/loginRegister", { replace: true });
+  };
 
   // Cerrar dropdown si se hace clic fuera
   useEffect(() => {
@@ -144,7 +144,8 @@ export default function NavBar() {
                               }}
                               className="px-4 py-2 hover:bg-gray-100 cursor-pointer gap-1 flex items-center"
                             >
-                              <IconUser className="h-5 w-5 inline-block mr-2" /> Ver perfil
+                              <IconUser className="h-5 w-5 inline-block mr-2" />{" "}
+                              Ver perfil
                             </li>
                             {user.role === "SELLER" && (
                               <li
@@ -154,9 +155,10 @@ export default function NavBar() {
                                 }}
                                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer gap-1 flex items-center"
                               >
-                                <IconBuildingStore className="h-5 w-5 inline-block mr-2" /> Mi tienda
+                                <IconBuildingStore className="h-5 w-5 inline-block mr-2" />{" "}
+                                Mi tienda
                               </li>
-                              )}
+                            )}
 
                             <li
                               onClick={() => {
@@ -165,7 +167,8 @@ export default function NavBar() {
                               }}
                               className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-1 text-contrast-secondary"
                             >
-                              <IconLogout2 className="h-5 w-5 inline-block mr-2" /> Cerrar sesión
+                              <IconLogout2 className="h-5 w-5 inline-block mr-2" />{" "}
+                              Cerrar sesión
                             </li>
                           </ul>
                         </motion.div>
@@ -193,9 +196,11 @@ export default function NavBar() {
               </li>
 
               {/* Notificaciones */}
-              <li>
-                <NotificationDropdown />
-              </li>
+              {user && (
+                <li>
+                  <NotificationDropdown />
+                </li>
+              )}
 
               {/* Lista de deseos */}
               <li>
