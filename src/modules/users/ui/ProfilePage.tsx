@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import SellerProductsList from "../../seller/ui/components/SellerProductsList";
@@ -16,7 +17,8 @@ import OrdersList from "./OrdersList";
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
   const { user, loading } = useAuth();
-
+  const [searchParams] = useSearchParams();
+  const storeId = searchParams.get("store");
   useEffect(() => {
     if (user?.role === "ADMIN") {
       setSelected("users");
@@ -24,17 +26,26 @@ export default function UserPage() {
       setSelected("profile");
     }
   }, [user]);
-
+  useEffect(() => {
+    if (user?.role === "ADMIN" && storeId) {
+      setSelected("users");
+    }
+  }, [storeId, user]);
   // Si está cargando, muestra loader
   if (loading) return <div>Cargando...</div>;
 
   // Si no hay usuario autenticado o su rol no es válido
-  if (!user || (user.role !== "SELLER" && user.role !== "CUSTOMER" && user.role !== "ADMIN")) {
+  if (
+    !user ||
+    (user.role !== "SELLER" &&
+      user.role !== "CUSTOMER" &&
+      user.role !== "ADMIN")
+  ) {
     return <div>No autorizado</div>;
   }
 
   // Ahora TS ya sabe que `user` no es null y su rol es correcto
-  return (
+    return (
     <div>
       <NavBar />
       <section className="flex px-10 py-10 mx-auto max-w-[80rem]">
@@ -45,25 +56,30 @@ export default function UserPage() {
             selected={selected}
           />
         </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selected}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="w-[75%]"
-            >
-              {selected === "profile" && (<UserProfile type={user.role} />)}
-              {selected === "transactions" && <TransactionHistory />}
-              {selected === "orders" && <OrdersList />}
-              {selected === "products" && user.role === "SELLER" && (<SellerProductsList />)}
-              {selected === "orderStatus" && user.role === "SELLER" && (<OrderStatus />)}
-              {selected === "users" && user.role === "ADMIN" && (<AdminUsersTable />)}
-              {selected === "coupons" && user.role === "ADMIN" && (<AdminCoupons />)}
-              {selected === "banners" && user.role === "ADMIN" && (<CrudBanners />)}
-            </motion.div>
-          </AnimatePresence>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selected}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-[75%]"
+          >
+            {selected === "profile" && <UserProfile type={user.role} />}
+            {selected === "transactions" && <TransactionHistory />}
+            {selected === "orders" && <OrdersList />}
+            {selected === "products" && user.role === "SELLER" && <SellerProductsList />}
+            {selected === "orderStatus" && user.role === "SELLER" && <OrderStatus />}
+            
+            {/* ✅ Pasa el storeId si existe */}
+            {selected === "users" && user.role === "ADMIN" && (
+              <AdminUsersTable storeToOpen={storeId ? Number(storeId) : null} />
+            )}
+            {selected === "coupons" && user.role === "ADMIN" && <AdminCoupons />}
+            {selected === "banners" && user.role === "ADMIN" && <CrudBanners />}
+          </motion.div>
+        </AnimatePresence>
       </section>
       <Footer />
     </div>
