@@ -16,7 +16,7 @@ export default function NotificationDropdown() {
 
   const { notifications, loading } = useNotifications();
 
-  
+
   // Cierra al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -74,9 +74,8 @@ export default function NotificationDropdown() {
                 return (
                   <li
                     key={n.id}
-                    className={`px-4 py-3 border-b border-gray-100 transition-all duration-300 ${
-                      isExpanded ? "bg-main/5" : "hover:bg-main/5"
-                    }`}
+                    className={`px-4 py-3 border-b border-gray-100 transition-all duration-300 ${isExpanded ? "bg-main/5" : "hover:bg-main/5"
+                      }`}
                   >
                     <div
                       onClick={() => setExpandedId(isExpanded ? null : n.id)}
@@ -110,13 +109,12 @@ export default function NotificationDropdown() {
 
                         {n.priority && (
                           <span
-                            className={`inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                              n.priority === "HIGH"
+                            className={`inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full font-semibold ${n.priority === "HIGH"
                                 ? "bg-red-100 text-red-600"
                                 : n.priority === "NORMAL"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-green-100 text-green-700"
-                            }`}
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-green-100 text-green-700"
+                              }`}
                           >
                             Prioridad: {n.priority}
                           </span>
@@ -150,6 +148,48 @@ export default function NotificationDropdown() {
           </ul>
         </div>
       )}
+      {/* Mobile overlay */}
+      {isMobile && open && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-xs z-50 animate-fadeIn"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="absolute top-[4.5rem] left-0 right-0 mx-auto w-[92%] bg-white rounded-2xl shadow-xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
+              <h3 className="text-main font-semibold">Notificaciones</h3>
+              <button onClick={() => setOpen(false)}>
+                <IconX size={20} className="text-gray-500 hover:text-main transition" />
+              </button>
+            </div>
+
+            <ul className="max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent">
+              {loading ? (
+                <p className="text-center text-gray-400 py-6 text-sm">Cargando...</p>
+              ) : notifications.length > 0 ? (
+                notifications.map((n) => (
+                  <li
+                    key={n.id}
+                    className="px-4 py-3 hover:bg-main/5 cursor-pointer border-b border-gray-100 transition"
+                  >
+                    <p className="text-sm text-gray-800 font-medium">{n.title}</p>
+                    <span className="text-xs text-gray-500">
+                      {new Date(n.created_at).toLocaleString("es-CR")}
+                    </span>
+                  </li>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-6 text-sm">
+                  No hay notificaciones
+                </p>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
