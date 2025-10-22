@@ -145,7 +145,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // ============================
   const clearCart = async () => {
     try {
-      await axios.delete("/cart/clear", {
+      await axios.post("/cart/clear", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart({ id: 0, items: [], total: 0 });
