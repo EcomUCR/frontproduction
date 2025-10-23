@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
         <div>
             <NavBar />
             <section className="flex flex-col lg:flex-row justify-center items-center font-quicksand">
-                {/* 🟣 Panel decorativo (solo visible en desktop) */}
+                {/* Panel decorativo (solo visible en desktop) */}
                 <div className="hidden lg:flex relative flex-col justify-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[90vh] w-[35%] gap-4">
                     <div
                         className={`bg-white absolute right-0 top-40 z-1 h-30 w-80 rounded-l-full transform transition-all duration-300`}
@@ -35,15 +35,14 @@ export default function ForgotPasswordPage() {
                         </p>
                     </div>
                 </div>
-
-                {/* 🧾 Panel de formulario (visible siempre) */}
+                {/* Panel de formulario (visible siempre) */}
                 <div className="flex flex-col items-center justify-center w-full h-[80vh] lg:w-[65%] px-6 sm:px-10 py-10 bg-white">
                     <div className="flex flex-col items-center w-full justify-center">
                         <img className="h-20" src={logo} alt="TukiShop" />
                         <p className="font-fugaz text-2xl mt-2">TukiShop</p>
 
                         <div className="flex flex-col w-full items-center space-y-5 mt-10">
-                            {/* 📨 Formulario de recuperación */}
+                            {/* Formulario de recuperación */}
                             <form
                                 className="flex flex-col items-center w-full space-y-5"
                                 onSubmit={handleSubmit}
