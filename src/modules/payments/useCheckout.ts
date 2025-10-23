@@ -12,9 +12,6 @@ export function useCheckout() {
   const { cart, clearCart, refreshCart } = useCart();
   const { clearCart: clearTotals } = useCartTotals();
 
-  /**
-   * 💳 Procesa todo el checkout luego del pago exitoso.
-   */
   const processCheckout = async (paymentIntent: any, totals: any) => {
     if (!token || !user) {
       showAlert({
@@ -38,7 +35,7 @@ export function useCheckout() {
         return;
       }
 
-      // 1️⃣ Crear orden inicial
+      // 🧾 1️⃣ Crear la orden en la tabla "orders"
       const initRes = await axios.post(
         "/checkout/init",
         {
@@ -46,7 +43,10 @@ export function useCheckout() {
           shipping: totals?.shipping || 0,
           taxes: totals?.taxes || 0,
           total: totals?.total || 0,
+          street: "Dirección de ejemplo",
           city: "Puntarenas",
+          state: "Puntarenas",
+          zip_code: "60101",
           country: "Costa Rica",
         },
         {
@@ -54,16 +54,15 @@ export function useCheckout() {
         }
       );
 
-      const orderId = initRes.data.order?.id;
+      const orderId = initRes.data?.order?.id;
       console.log("🧾 Orden inicial creada:", orderId);
 
-      // 2️⃣ Agregar items del carrito
+      // 🧩 2️⃣ Insertar los productos en "order_items"
       const items = cart.items.map((item) => {
         const basePrice = Number(item.product.price);
-        const discountPrice =
-          item.product.discount_price !== null
-            ? Number(item.product.discount_price)
-            : null;
+        const discountPrice = item.product.discount_price
+          ? Number(item.product.discount_price)
+          : null;
 
         return {
           product_id: item.product.id,
@@ -87,9 +86,10 @@ export function useCheckout() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log("📦 Items añadidos correctamente");
 
-      // 3️⃣ Confirmar pago
+      console.log("📦 Productos agregados correctamente a order_items");
+
+      // 💳 3️⃣ Confirmar el pago en la orden
       const confirmRes = await axios.post(
         "/checkout/confirm",
         {
@@ -98,16 +98,15 @@ export function useCheckout() {
           payment_id: paymentIntent?.id || "N/A",
           payment_method:
             paymentIntent?.payment_method_types?.[0]?.toUpperCase() || "CARD",
-          currency: paymentIntent?.currency?.toUpperCase() || "CRC",
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      console.log("✅ Pago confirmado:", confirmRes.data);
+      console.log("✅ Orden confirmada:", confirmRes.data);
 
-      // 🧹 Limpiar carrito tras pago exitoso
+      // 🧹 4️⃣ Limpiar carrito tras pago exitoso
       if (paymentIntent?.status === "succeeded") {
         try {
           await clearCart();
@@ -118,10 +117,9 @@ export function useCheckout() {
         }
       }
 
-      // 🎉 Mostrar alerta de éxito
       showAlert({
         title: "Pago exitoso 💳",
-        message: "Tu orden fue procesada correctamente 🧾",
+        message: "Tu orden fue registrada correctamente 🧾",
         type: "success",
       });
 
