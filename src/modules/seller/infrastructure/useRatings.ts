@@ -58,8 +58,32 @@ export function useRatings(storeId?: number) {
   }, [storeId]);
 
   const createReview = useCallback(async (payload: CreateReviewPayload) => {
-    await api.post(`/store-reviews`, payload);
-  }, []);
+    try {
+      const res = await api.post(`/store-reviews`, payload, {
+        validateStatus: () => true, // ✅ acepta cualquier status como válido
+      });
+
+      // ⚠️ Algunos backends pueden devolver HTML o vacío
+      if (res.status >= 200 && res.status < 300 && typeof res.data === "object") {
+        await refreshSummary();
+        return res.data;
+      }
+
+      // Si la respuesta no es JSON válido pero el status fue 201, lo asumimos correcto
+      if (res.status === 201 && typeof res.data !== "object") {
+        console.warn("⚠️ Respuesta no JSON, pero status 201: reseña creada correctamente.");
+        await refreshSummary();
+        return { message: "created" };
+      }
+
+      throw new Error("Error inesperado al crear la reseña");
+    } catch (error: any) {
+      console.error("Error al crear reseña:", error.response?.data || error.message);
+      throw error;
+    }
+  }, [refreshSummary]);
+
+
 
   useEffect(() => {
     if (storeId) refreshSummary();
