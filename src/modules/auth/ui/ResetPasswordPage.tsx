@@ -48,7 +48,7 @@ export default function ResetPasswordPage() {
   return (
     <div>
       <section className="flex flex-col lg:flex-row justify-center items-center font-quicksand">
-        {/* 🟣 Columna izquierda (solo visible en desktop) */}
+        {/* Columna izquierda (solo visible en desktop) */}
         <div className="hidden lg:flex relative flex-col justify-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[100vh] w-[35%] gap-4">
           <div className="bg-white absolute right-0 top-40 z-1 h-30 w-75 rounded-l-full transform transition-all duration-300">
             <div className="-rotate-90 absolute w-10 h-10 -top-6 -right-4 bg-transparent flex items-center justify-center rounded-2xl">
@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
           </div>
         </div>
 
-        {/* 🧾 Columna derecha (visible siempre) */}
+        {/* Columna derecha (visible siempre) */}
         <div className="flex flex-col items-center justify-center w-full lg:w-[65%] h-auto lg:h-[100vh] px-6 sm:px-10 py-10 bg-white">
           <div className="flex flex-col items-center w-full justify-center">
             <img className="h-20" src={logo} alt="TukiShop" />
