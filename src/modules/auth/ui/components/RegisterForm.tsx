@@ -69,9 +69,9 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
           onSubmit={handleSubmit}
         >
           {/* Nombre y apellido */}
-          <div className="flex justify-center gap-5 w-[80%]">
+          <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:gap-5 sm:w-[80%]">
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 sm:w-[45%] font-quicksand"
               placeholder="Nombre"
               type="text"
               name="first_name"
@@ -80,7 +80,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               required
             />
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 sm:w-[45%] font-quicksand"
               placeholder="Apellido"
               type="text"
               name="last_name"
@@ -91,9 +91,9 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
           </div>
 
           {/* Email y username */}
-          <div className="flex justify-center items-center flex-col space-y-5 w-[80%]">
+          <div className="flex justify-center items-center flex-col space-y-5 w-full sm:w-[80%]">
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[94%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[94%] font-quicksand"
               placeholder="Correo electrónico"
               type="email"
               name="email"
@@ -102,7 +102,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               required
             />
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[94%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[94%] font-quicksand"
               placeholder="Nombre de usuario"
               type="text"
               name="username"
@@ -112,9 +112,9 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
           </div>
 
           {/* Contraseña y confirmación */}
-          <div className="flex justify-center gap-5 w-[80%]">
+          <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:w-[80%]">
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[45%] font-quicksand"
               placeholder="Contraseña"
               type="password"
               name="password"
@@ -123,7 +123,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               required
             />
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-[45%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[45%] font-quicksand"
               placeholder="Confirmar contraseña"
               type="password"
               name="password_confirmation"

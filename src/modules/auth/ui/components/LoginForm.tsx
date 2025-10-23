@@ -14,12 +14,12 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
 
-    
+
     const emailLower = email.toLowerCase();
 
     console.log("Email:", emailLower, "Password:", password);
 
-   
+
     const success = await login(emailLower, password);
     if (!success) {
       setError("Usuario o contraseña incorrectos.");
@@ -39,7 +39,7 @@ export default function LoginForm() {
           onSubmit={handleSubmit}
         >
           <input
-            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[65%] font-quicksand"
+            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-full sm:w-[65%] font-quicksand"
             placeholder="Correo electrónico"
             type="email"
             value={email}
@@ -47,7 +47,7 @@ export default function LoginForm() {
             required
           />
           <input
-            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[65%] font-quicksand"
+            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-full sm:w-[65%] font-quicksand"
             placeholder="Contraseña"
             type="password"
             value={password}
@@ -55,7 +55,7 @@ export default function LoginForm() {
             required
           />
           <button
-            className="bg-contrast-secondary text-white rounded-full py-3 px-4 w-[30%] font-quicksand cursor-pointer"
+            className="bg-contrast-secondary text-white rounded-full py-3 px-4 w-full sm:w-[30%] font-quicksand cursor-pointer"
             type="submit"
             disabled={loading}
           >

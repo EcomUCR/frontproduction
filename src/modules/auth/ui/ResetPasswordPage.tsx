@@ -47,9 +47,9 @@ export default function ResetPasswordPage() {
 
   return (
     <div>
-      <section className="flex justify-center items-center">
-        {/* Columna izquierda */}
-        <div className="relative flex flex-col justify-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[100vh] w-[35%] gap-4">
+      <section className="flex flex-col lg:flex-row justify-center items-center font-quicksand">
+        {/* 🟣 Columna izquierda (solo visible en desktop) */}
+        <div className="hidden lg:flex relative flex-col justify-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[100vh] w-[35%] gap-4">
           <div className="bg-white absolute right-0 top-40 z-1 h-30 w-75 rounded-l-full transform transition-all duration-300">
             <div className="-rotate-90 absolute w-10 h-10 -top-6 -right-4 bg-transparent flex items-center justify-center rounded-2xl">
               <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
@@ -63,11 +63,12 @@ export default function ResetPasswordPage() {
           </div>
         </div>
 
-        {/* Columna derecha */}
-        <div className="flex flex-col items-center justify-center h-[100vh] w-[65%]">
+        {/* 🧾 Columna derecha (visible siempre) */}
+        <div className="flex flex-col items-center justify-center w-full lg:w-[65%] h-auto lg:h-[100vh] px-6 sm:px-10 py-10 bg-white">
           <div className="flex flex-col items-center w-full justify-center">
-            <img className="h-20" src={logo} alt="" />
-            <p className="font-fugaz text-2xl">TukiShop</p>
+            <img className="h-20" src={logo} alt="TukiShop" />
+            <p className="font-fugaz text-2xl mt-2">TukiShop</p>
+
             <div className="flex flex-col w-full items-center space-y-5 mt-10">
               {/* Formulario */}
               <form
@@ -75,7 +76,7 @@ export default function ResetPasswordPage() {
                 onSubmit={handleSubmit}
               >
                 <input
-                  className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[45%] font-quicksand"
+                  className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[90%] sm:w-[70%] lg:w-[45%] font-quicksand"
                   placeholder="Nueva contraseña"
                   type="password"
                   value={password}
@@ -83,7 +84,7 @@ export default function ResetPasswordPage() {
                   required
                 />
                 <input
-                  className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[45%] font-quicksand"
+                  className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-[90%] sm:w-[70%] lg:w-[45%] font-quicksand"
                   placeholder="Confirmar contraseña"
                   type="password"
                   value={confirm}
@@ -91,43 +92,40 @@ export default function ResetPasswordPage() {
                   required
                 />
                 <button
-                  className={`rounded-full py-3 px-4 w-[30%] font-quicksand text-white transition-all duration-300 ${
-                    loading
+                  className={`rounded-full py-3 px-4 w-[70%] sm:w-[50%] lg:w-[30%] font-quicksand text-white transition-all duration-300 ${loading
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-contrast-secondary hover:bg-contrast-main"
-                  }`}
+                    }`}
                   type="submit"
                   disabled={loading}
                 >
                   {loading ? "Actualizando..." : "Actualizar contraseña"}
                 </button>
 
-                {/* Mensajes de error */}
+                {/* Mensajes */}
                 {localError && (
-                  <p className="text-red-500 text-sm text-center">{localError}</p>
+                  <p className="text-red-500 text-sm text-center px-4">{localError}</p>
                 )}
                 {error && (
-                  <p className="text-red-500 text-sm text-center">
+                  <p className="text-red-500 text-sm text-center px-4">
                     {error === "This password reset token is invalid."
                       ? "El enlace de restablecimiento ha expirado o es inválido."
-                      : error ===
-                        "The password confirmation does not match."
-                      ? "Las contraseñas no coinciden."
-                      : error ===
-                        "We can't find a user with that email address."
-                      ? "El correo no está registrado."
-                      : "Ocurrió un error al restablecer la contraseña."}
+                      : error === "The password confirmation does not match."
+                        ? "Las contraseñas no coinciden."
+                        : error === "We can't find a user with that email address."
+                          ? "El correo no está registrado."
+                          : "Ocurrió un error al restablecer la contraseña."}
                   </p>
                 )}
                 {success && (
-                  <p className="text-green-600 text-center font-medium">
+                  <p className="text-green-600 text-center font-medium px-4">
                     Contraseña actualizada correctamente 🎉
                   </p>
                 )}
               </form>
 
-              {/* Reglas visuales */}
-              <ul className="text-sm text-gray-600 font-quicksand mt-3 text-left w-[45%]">
+              {/* Reglas */}
+              <ul className="text-sm text-gray-600 font-quicksand mt-3 text-left w-[90%] sm:w-[70%] lg:w-[45%]">
                 <li>• Mínimo 8 caracteres</li>
                 <li>• Al menos una letra mayúscula</li>
                 <li>• Al menos una letra minúscula</li>
@@ -137,6 +135,7 @@ export default function ResetPasswordPage() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

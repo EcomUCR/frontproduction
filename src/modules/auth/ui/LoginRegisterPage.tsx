@@ -32,17 +32,13 @@ export default function LoginRegisterPage() {
         <div>
             <NavBar />
 
-            <section className="flex flex-grow justify-center items-center font-quicksand">
-                {/* Panel izquierdo */}
-                <div className="flex justify-end items-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[90vh] w-[35%] relative">
+            <section className="flex flex-col lg:flex-row flex-grow justify-center items-center font-quicksand">
+                {/* 🟣 Panel izquierdo (solo visible en desktop) */}
+                <div className="hidden lg:flex justify-end items-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[90vh] w-[35%] relative">
                     <ul className="flex flex-col items-end pr-10 gap-20 relative">
-                        {/* Decoración animada */}
                         <div
-                            className={`bg-white absolute right-0 z-0 h-30 w-55 rounded-l-full transform transition-all duration-300 ${
-                                mode === "login"
-                                    ? "-top-6"
-                                    : "translate-y-30"
-                            }`}
+                            className={`bg-white absolute right-0 z-0 h-30 w-55 rounded-l-full transform transition-all duration-300 ${mode === "login" ? "-top-6" : "translate-y-30"
+                                }`}
                         >
                             <div className="-rotate-90 absolute w-10 h-10 -top-6 -right-4 bg-transparent flex items-center justify-center rounded-2xl">
                                 <div className="absolute w-full h-full border-l-[1rem] border-b-[1rem] border-white rounded-bl-[6rem]"></div>
@@ -52,28 +48,21 @@ export default function LoginRegisterPage() {
                             </div>
                         </div>
 
-                        {/* Botón login */}
+                        {/* Botones del panel */}
                         <li className="relative flex items-center">
                             <button
-                                className={`z-10 text-xl font-semibold py-5 rounded-full transition cursor-pointer ${
-                                    mode === "login"
-                                        ? "text-contrast-secondary"
-                                        : "text-white"
-                                }`}
+                                className={`z-10 text-xl font-semibold py-5 rounded-full transition cursor-pointer ${mode === "login" ? "text-contrast-secondary" : "text-white"
+                                    }`}
                                 onClick={() => goMode("login")}
                             >
                                 Iniciar sesión
                             </button>
                         </li>
 
-                        {/* Botón register */}
                         <li className="relative flex items-center font-quicksand">
                             <button
-                                className={`z-10 text-xl font-semibold py-5 rounded-full cursor-pointer transition ${
-                                    mode === "register"
-                                        ? "text-contrast-secondary"
-                                        : "text-white"
-                                }`}
+                                className={`z-10 text-xl font-semibold py-5 rounded-full cursor-pointer transition ${mode === "register" ? "text-contrast-secondary" : "text-white"
+                                    }`}
                                 onClick={() => goMode("register")}
                             >
                                 Registrarse
@@ -82,15 +71,41 @@ export default function LoginRegisterPage() {
                     </ul>
                 </div>
 
-                {/* Panel derecho */}
-                <div className="flex flex-col items-center justify-center h-[90vh] w-[65%] px-40 bg-white">
+                {/* 🧾 Panel derecho (formulario principal) */}
+                <div className="flex flex-col items-center justify-center h-auto lg:h-[90vh] w-full lg:w-[65%] px-6 sm:px-10 lg:px-40 bg-white py-10">
                     {mode === "login" ? (
                         <LoginForm />
                     ) : (
                         <RegisterForm onRegisterSuccess={() => setMode("login")} />
                     )}
+
+                    {/* 🔹 Switch entre login/register en mobile */}
+                    <div className="lg:hidden mt-10 text-center">
+                        {mode === "login" ? (
+                            <p className="text-sm text-gray-600">
+                                ¿No tienes una cuenta?{" "}
+                                <button
+                                    className="text-main font-semibold hover:underline"
+                                    onClick={() => goMode("register")}
+                                >
+                                    Regístrate
+                                </button>
+                            </p>
+                        ) : (
+                            <p className="text-sm text-gray-600">
+                                ¿Ya tienes una cuenta?{" "}
+                                <button
+                                    className="text-main font-semibold hover:underline"
+                                    onClick={() => goMode("login")}
+                                >
+                                    Inicia sesión
+                                </button>
+                            </p>
+                        )}
+                    </div>
                 </div>
             </section>
+
 
             <Footer />
         </div>
