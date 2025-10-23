@@ -61,6 +61,7 @@ function App() {
                 <Route path="/about" element={<AboutUsPage />} />
                 <Route path="/help" element={<HelpPage />} />
                 <Route path="/editProduct/:id" element={<CrudProductPage />} />
+                <Route path="/store/:id/search" element={<SellerPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Router>

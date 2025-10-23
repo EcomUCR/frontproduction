@@ -81,6 +81,25 @@ export function useProducts() {
     });
     return res.data.url as string;
   };
+  // 🔍 Buscar productos dentro de una tienda específica
+  const searchProductsByStore = async (
+    store_id: number,
+    query: string
+  ): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${BASE_URL}/store/${store_id}/search`, {
+        params: { q: query },
+      });
+      return res.data.map(normalizeProduct);
+    } catch (e: any) {
+      setError("No se pudieron buscar los productos en la tienda");
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Crear producto
   const createProduct = async (product: any) => {
@@ -294,6 +313,7 @@ export function useProducts() {
     updateProduct,
     getProductsForOwner,
     getOffersByStore,
+    searchProductsByStore,
     loading,
     error,
     success,
