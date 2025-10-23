@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../../../components/layout/NavBar";
 import Footer from "../../../components/layout/Footer";
-import StoreBannerDynamic from "./StoreInfoCard";
+import StoreInfoCard from "./StoreInfoCard";
 import { SkeletonStoreBanner } from "../../../components/ui/AllSkeletons";
 
 export default function SearchedStores() {
@@ -14,7 +14,7 @@ export default function SearchedStores() {
     const fetchStores = async () => {
       try {
         const { data } = await axios.get("/stores");
-        
+
         const verifiedStores = data.filter(
           (store: any) => store.is_verified === true
         );
@@ -32,7 +32,7 @@ export default function SearchedStores() {
     fetchStores();
   }, []);
 
-  // 🧱 1️⃣ Si todavía no se cargó nada (stores === null), mostramos skeleton fijo
+  // Si todavía no se cargó nada (stores === null), mostramos skeleton fijo
   if (stores === null || loading) {
     return (
       <div>
@@ -45,7 +45,7 @@ export default function SearchedStores() {
     );
   }
 
-  // 🧱 2️⃣ Si ya cargó pero no hay tiendas
+  //Si ya cargó pero no hay tiendas
   if (stores.length === 0) {
     return (
       <div>
@@ -60,13 +60,16 @@ export default function SearchedStores() {
     );
   }
 
-  // 🧱 3️⃣ Si hay tiendas, renderízalas directamente
+  //Si hay tiendas, renderízalas directamente
   return (
     <div>
       <NavBar />
-      <div className="max-w-6xl mx-auto my-10 flex flex-col gap-8 px-6">
+      <div className="max-w-6xl mx-auto my-10 flex flex-col  px-6">
         {stores.map((store) => (
-          <StoreBannerDynamic key={store.id} store={store} />
+          <div className="">
+            <StoreInfoCard key={store.id} store={store} />
+            <div className="relative bottom-0 left-0 w-full my-10 h-[2px] bg-gradient-to-r from-main via-contrast-secondary to-contrast-main"></div>
+          </div>
         ))}
       </div>
       <Footer />

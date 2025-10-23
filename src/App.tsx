@@ -13,7 +13,7 @@ import ResetPasswordPage from "./modules/auth/ui/ResetPasswordPage";
 
 //Search product
 import SearchedProductPage from "./modules/search/ui/SearchedProductPage";
-import SearchedStores from "./modules/search/ui/SeachedStores";
+import SearchedStores from "./modules/search/ui/SearchedStores";
 
 //home
 import HomePage from "./modules/home/ui/HomePage";
