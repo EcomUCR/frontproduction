@@ -14,7 +14,7 @@ export default function SearchedStores() {
     const fetchStores = async () => {
       try {
         const { data } = await axios.get("/stores");
-        
+
         const verifiedStores = data.filter(
           (store: any) => store.is_verified === true
         );
@@ -64,9 +64,12 @@ export default function SearchedStores() {
   return (
     <div>
       <NavBar />
-      <div className="max-w-6xl mx-auto my-10 flex flex-col gap-8 px-6">
+      <div className="max-w-6xl mx-auto my-10 flex flex-col  px-6">
         {stores.map((store) => (
-          <StoreInfoCard key={store.id} store={store} />
+          <div className="">
+            <StoreInfoCard key={store.id} store={store} />
+            <div className="relative bottom-0 left-0 w-full my-10 h-[2px] bg-gradient-to-r from-main via-contrast-secondary to-contrast-main"></div>
+          </div>
         ))}
       </div>
       <Footer />
