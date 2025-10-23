@@ -9,18 +9,18 @@ export default function LoginRegisterPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    // 🔹 Determinar modo inicial según la URL
+    // Determinar modo inicial según la URL
     const initialMode =
         searchParams.get("mode") === "register" ? "register" : "login";
     const [mode, setMode] = useState<"login" | "register">(initialMode);
 
-    // 🔹 Escuchar cambios en la URL
+    // Escuchar cambios en la URL
     useEffect(() => {
         const m = searchParams.get("mode");
         setMode(m === "register" ? "register" : "login");
     }, [searchParams]);
 
-    // 🔹 Cambiar modo desde los botones del panel izquierdo
+    // Cambiar modo desde los botones del panel izquierdo
     const goMode = (next: "login" | "register") => {
         setMode(next);
         const qs = new URLSearchParams(searchParams);
@@ -33,7 +33,7 @@ export default function LoginRegisterPage() {
             <NavBar />
 
             <section className="flex flex-col lg:flex-row flex-grow justify-center items-center font-quicksand">
-                {/* 🟣 Panel izquierdo (solo visible en desktop) */}
+                {/* Panel izquierdo (solo visible en desktop) */}
                 <div className="hidden lg:flex justify-end items-center bg-gradient-to-br from-contrast-main via-contrast-secondary to-main h-[90vh] w-[35%] relative">
                     <ul className="flex flex-col items-end pr-10 gap-20 relative">
                         <div
@@ -71,7 +71,7 @@ export default function LoginRegisterPage() {
                     </ul>
                 </div>
 
-                {/* 🧾 Panel derecho (formulario principal) */}
+                {/* Panel derecho (formulario principal) */}
                 <div className="flex flex-col items-center justify-center h-auto lg:h-[90vh] w-full lg:w-[65%] px-6 sm:px-10 lg:px-40 bg-white py-10">
                     {mode === "login" ? (
                         <LoginForm />
@@ -79,7 +79,7 @@ export default function LoginRegisterPage() {
                         <RegisterForm onRegisterSuccess={() => setMode("login")} />
                     )}
 
-                    {/* 🔹 Switch entre login/register en mobile */}
+                    {/* Switch entre login/register en mobile */}
                     <div className="lg:hidden mt-10 text-center">
                         {mode === "login" ? (
                             <p className="text-sm text-gray-600">
