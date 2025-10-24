@@ -50,7 +50,12 @@ export default function ShoppingCartPage() {
   return (
     <div>
       <NavBar />
-      <div className="mx-auto max-w-[80rem]">
+      <div className="mx-auto max-w-[80rem] px-4 sm:px-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-10">
+          <h1 className="text-xl sm:text-3xl font-quicksand font-bold border-b-4 border-main pb-2 w-fit">
+            Mi Carrito
+          </h1>
+        </div>
         {/* 🛍️ Contenido principal */}
         <section className="mx-4 sm:mx-10 flex flex-col sm:flex-row">
           {/* Lista de productos */}
