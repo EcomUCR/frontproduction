@@ -401,7 +401,7 @@ export default function ProductPage() {
                   )}
                 </section>
 
-                <section className="mx-5 sm:mx-10 my-6 sm:my-10">
+                <section className="mx-4 sm:mx-10 my-6 sm:my-10">
                   <div className="flex justify-between items-center">
                     <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
                       Explorar
@@ -416,7 +416,7 @@ export default function ProductPage() {
                       <IconChevronRight className="inline w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-6 sm:my-10 gap-4 sm:gap-5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-6 sm:my-10 gap-2 sm:gap-5">
                     {similarProducts.length > 0 ? (
                       similarProducts.slice(0, 10).map((prod) => (
                         <ProductCard
