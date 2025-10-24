@@ -58,7 +58,7 @@ export default function AnimatedHeartButton({
             {/* Texto (solo en modo inline) */}
             {isInline && label && (
                 <span
-                    className={`text-sm font-quicksand transition-colors duration-300 hover:font-semibold hover:text-main"
+                    className={`text-sm w-25 font-quicksand transition-colors duration-300 hover:font-semibold hover:text-main"
                         }`}
                 >
                     {label}
