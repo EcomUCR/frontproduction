@@ -3,35 +3,13 @@ import NavBar from "../../../components/layout/NavBar";
 import banner2 from "../../../img/resources/SmallBanner2.png";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import ProductCardWishList from "../../../components/data-display/ProductCardWishList";
-import { IconShare } from "@tabler/icons-react";
-import { useState } from "react";
+import ShareBubbles from "../../../components/data-display/ShareBubbles";
 
 export default function WishListPage() {
     const { loading } = useAuth();
-    const [copied, setCopied] = useState(false);
 
     if (loading)
         return <p className="text-center py-10">Cargando wishlist...</p>;
-
-    const handleShareWishlist = async () => {
-        const wishlistUrl = window.location.href;
-        try {
-            if (navigator.share) {
-                await navigator.share({
-                    title: "Mi Wishlist en TukiShop",
-                    text: "Mira mi lista de deseos en TukiShop y agrega lo que te guste:",
-                    url: wishlistUrl,
-                });
-            } else {
-                await navigator.clipboard.writeText(wishlistUrl);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-            }
-        } catch (err) {
-            console.error("Error al compartir:", err);
-        }
-    };
-
     return (
         <div>
             <NavBar />
@@ -69,15 +47,10 @@ export default function WishListPage() {
                     <p className="text-gray-500 text-sm mb-5 max-w-md">
                         Envía tu lista de deseos para que otros puedan ver tus productos favoritos y agregarlos a su carrito.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto items-center">
-                        <button
-                            onClick={handleShareWishlist}
-                            className="flex items-center justify-center gap-2 bg-main text-white font-quicksand font-semibold px-4 py-2 rounded-full shadow-md hover:bg-contrast-secondary hover:scale-105 transition-all duration-300 w-full sm:w-auto"
-                        >
-                            <IconShare size={18} />
-                            {copied ? "¡Enlace copiado!" : "Compartir wishlist"}
-                        </button>
+                    <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto items-center justify-center border-contrast-secondary border-2 py-2 px-30 sm:py-3 rounded-full">
+                        <ShareBubbles  />
                     </div>
+
                 </section>
 
                 {/* Banners */}

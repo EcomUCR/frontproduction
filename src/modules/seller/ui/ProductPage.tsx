@@ -6,17 +6,7 @@ import FormShopping from "../../../components/forms/FormShopping";
 import StarRatingComponent from "../../../components/ui/StarRatingComponent";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import FeaturedProductsSlider from "../../../components/data-display/FeaturedProductsSlider";
-import {
-  IconArrowBackUp,
-  IconBrandFacebook,
-  IconBrandInstagram,
-  IconBrandTiktok,
-  IconBrandWhatsapp,
-  IconBrandX,
-  IconChevronRight,
-  IconLink,
-  IconShare,
-} from "@tabler/icons-react";
+import {IconArrowBackUp,IconChevronRight,} from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import type { Product } from "../infrastructure/useProducts";
 import { useProducts } from "../infrastructure/useProducts";
@@ -33,6 +23,7 @@ import { useAlert } from "../../../hooks/context/AlertContext";
 import { useNavigate } from "react-router-dom";
 import AnimatedHeartButton from "../../../components/data-display/AnimatedHeartButton";
 import { AnimatePresence, motion } from "framer-motion";
+import ShareBubbles from "../../../components/data-display/ShareBubbles";
 
 type BorderColors = {
   description: string;
@@ -49,61 +40,10 @@ export default function ProductPage() {
   const [prodStore, setProdStore] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<keyof BorderColors>("description");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { token, setCart } = useAuth();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
-
-  const handleShare = async (platform: string) => {
-    const wishlistUrl = window.location.href;
-    const encodedUrl = encodeURIComponent(wishlistUrl);
-
-    try {
-      switch (platform) {
-        case "link":
-          await navigator.clipboard.writeText(wishlistUrl);
-          showAlert({
-            title: "Enlace copiado",
-            message: "El enlace del producto fue copiado al portapapeles.",
-            type: "success",
-          });
-          return;
-        case "whatsapp":
-          window.open(`https://wa.me/?text=${encodedUrl}`, "_blank");
-          return;
-        case "facebook":
-          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, "_blank");
-          return;
-        case "x":
-          window.open(
-            `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodeURIComponent(
-              "Mira este producto en TukiShop!"
-            )}`,
-            "_blank"
-          );
-          return;
-        case "instagram":
-        case "tiktok":
-          await navigator.clipboard.writeText(wishlistUrl);
-          showAlert({
-            title: "Enlace copiado",
-            message: "El enlace del producto fue copiado al portapapeles.",
-            type: "success",
-          });
-          return;
-        default:
-          return;
-      }
-    } catch (err) {
-      console.error("Error al compartir:", err);
-      showAlert({
-        title: "Error",
-        message: "No se pudo compartir el enlace.",
-        type: "error",
-      });
-    }
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -376,59 +316,7 @@ export default function ProductPage() {
                         </div>
 
                         <div className="relative">
-                          <ButtonComponent
-                            icon={<IconShare />}
-                            text="Compartir"
-                            style="flex text-sm px-2 items-center gap-2 hover:font-semibold rounded-full"
-                            iconStyle="text-contrast-secondary"
-                            onClick={() => setIsModalOpen((prev) => !prev)}
-                          />
-                          <div className="absolute right-30 top-25">
-                            <ul className="flex gap-3">
-                              <li
-                                className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"
-                                  }`}
-                                onClick={() => handleShare("link")}
-                              >
-                                <IconLink />
-                              </li>
-                              <li
-                                className={`relative bottom-10 left-27 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"
-                                  }`}
-                                onClick={() => handleShare("whatsapp")}
-                              >
-                                <IconBrandWhatsapp />
-                              </li>
-                              <li
-                                className={`relative bottom-10 left-27 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"
-                                  }`}
-                                onClick={() => handleShare("facebook")}
-                              >
-                                <IconBrandFacebook />
-                              </li>
-                              <li
-                                className={`relative bottom-10 left-27 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"
-                                  }`}
-                                onClick={() => handleShare("instagram")}
-                              >
-                                <IconBrandInstagram />
-                              </li>
-                              <li
-                                className={`relative bottom-10 left-27 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"
-                                  }`}
-                                onClick={() => handleShare("tiktok")}
-                              >
-                                <IconBrandTiktok />
-                              </li>
-                              <li
-                                className={`relative bottom-10 left-27 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"
-                                  }`}
-                                onClick={() => handleShare("x")}
-                              >
-                                <IconBrandX />
-                              </li>
-                            </ul>
-                          </div>
+                          <ShareBubbles positionClass="absolute right-30 top-25" />
                         </div>
                       </div>
                     </div>
@@ -475,59 +363,7 @@ export default function ProductPage() {
                           </div>
 
                           <div className="relative">
-                            <ButtonComponent
-                              icon={<IconShare />}
-                              text="Compartir"
-                              style="flex text-sm px-2 items-center gap-2 hover:font-semibold rounded-full"
-                              iconStyle="text-contrast-secondary"
-                              onClick={() => setIsModalOpen((prev) => !prev)}
-                            />
-                            <div className="absolute right-23 top-25">
-                              <ul className="flex gap-3">
-                                <li
-                                  className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"
-                                    }`}
-                                  onClick={() => handleShare("link")}
-                                >
-                                  <IconLink />
-                                </li>
-                                <li
-                                  className={`relative bottom-10 left-27 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"
-                                    }`}
-                                  onClick={() => handleShare("whatsapp")}
-                                >
-                                  <IconBrandWhatsapp />
-                                </li>
-                                <li
-                                  className={`relative bottom-10 left-27 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"
-                                    }`}
-                                  onClick={() => handleShare("facebook")}
-                                >
-                                  <IconBrandFacebook />
-                                </li>
-                                <li
-                                  className={`relative bottom-10 left-27 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"
-                                    }`}
-                                  onClick={() => handleShare("instagram")}
-                                >
-                                  <IconBrandInstagram />
-                                </li>
-                                <li
-                                  className={`relative bottom-10 left-27 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"
-                                    }`}
-                                  onClick={() => handleShare("tiktok")}
-                                >
-                                  <IconBrandTiktok />
-                                </li>
-                                <li
-                                  className={`relative bottom-10 left-27 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"
-                                    }`}
-                                  onClick={() => handleShare("x")}
-                                >
-                                  <IconBrandX />
-                                </li>
-                              </ul>
-                            </div>
+                            <ShareBubbles positionClass="absolute right-30 top-25" />
                           </div>
                         </div>
                       </div>
