@@ -491,8 +491,8 @@ export default function ProductPage() {
                   </div>
                 </section>
 
-                <section className="my-10 px-10">
-                  <h2 className="text-2xl font-semibold font-quicksand">
+        <section className="mx-5 sm:mx-10 my-6 sm:my-10">
+            <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
                     Más de {product.store?.name || "la tienda"}
                   </h2>
                   {loading ? (
@@ -516,17 +516,22 @@ export default function ProductPage() {
                   )}
                 </section>
 
-                <section className="my-10 px-10">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold font-quicksand">Productos similares</h2>
-                    <div>
-                      <a href="/search?mode=explore" className="font-semibold cursor-pointer">
-                        Ver todo
-                      </a>
-                      <IconChevronRight className="inline" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-10 gap-5">
+        <section className="mx-5 sm:mx-10 my-6 sm:my-10">
+                 <div className="flex justify-between items-center">
+            <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
+              Explorar
+            </h2>
+            <div className="flex items-center gap-1 text-sm sm:text-base">
+              <a
+                href="/search?mode=explore"
+                className="font-quicksand font-semibold cursor-pointer"
+              >
+                Ver todo
+              </a>
+              <IconChevronRight className="inline w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+          </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-6 sm:my-10 gap-4 sm:gap-5">
                     {similarProducts.length > 0 ? (
                       similarProducts.slice(0, 10).map((prod) => (
                         <ProductCard
