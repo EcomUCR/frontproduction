@@ -126,7 +126,7 @@ export default function ProductCard(props: ProductCardProps) {
 
         {!props.edit && (
           <div className="relative w-full flex pt-2 h-[66%]">
-            <div className="text-center flex flex-col relative w-full gap-2 sm:gap-3 group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
+            <div className="text-center flex flex-col relative w-full gap-2 sm:gap-3 sm:group-hover:-translate-x-14 transition-all duration-300 ease-in-out">
               <p className="font-poiret text-xs sm:text-sm">{props.shop}</p>
               <div className="flex flex-col">
                 {Number(props.discountPrice) > 0 ? (
