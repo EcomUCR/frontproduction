@@ -136,7 +136,7 @@ export default function NavBarSeller({
         {/* 🔹 Search bar (solo desktop) */}
         <form
           onSubmit={handleSearch}
-          className="hidden sm:flex items-center bg-white rounded-full h-10 px-2 w-1/3 ml-15"
+          className="hidden sm:flex items-center bg-white rounded-full h-10 px-1 w-1/3 ml-15"
         >
           <input
             type="text"
@@ -147,7 +147,7 @@ export default function NavBarSeller({
           />
           <button
             type="submit"
-            className="bg-gradient-to-br from-contrast-main to-contrast-secondary rounded-full w-10 h-9 flex items-center justify-center"
+            className="bg-gradient-to-br from-contrast-main to-contrast-secondary rounded-full w-12 h-9 flex items-center justify-center"
           >
             <IconSearch className="text-white h-5 w-auto" />
           </button>

@@ -39,7 +39,6 @@ export default function HomeSeller() {
       } catch (err) {
         console.error("Error al cargar productos del vendedor:", err);
       } finally {
-        // 🔹 Pequeño delay para transición más suave del skeleton
         setTimeout(() => setLoading(false), 600);
       }
     };
@@ -49,49 +48,72 @@ export default function HomeSeller() {
 
   return (
     <div>
-      <section className="mx-10 my-5">
-        {/* Ofertas */}
-        {!loading && offers.length > 0 && (
-          <>
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold font-quicksand">Ofertas</h2>
-              <div className="flex items-center">
-                <a
-                  href="#"
-                  className="font-semibold hover:text-contrast-main transition-colors"
-                >
-                  Ver todo
-                </a>
-                <IconChevronRight className="inline ml-1" />
-              </div>
+      {/* 🔹 Ofertas */}
+      <section className="mx-0 sm:mx-10 my-6 sm:my-10">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
+              Ofertas
+            </h2>
+            <div className="flex items-center gap-1 text-sm sm:text-base">
+              <a href="#" className="font-quicksand font-semibold">
+                Ver todo
+              </a>
+              <IconChevronRight className="inline w-4 h-4 sm:w-5 sm:h-5" />
             </div>
+          </div>
 
-            <div
-              className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
-                loading ? "opacity-0" : "opacity-100"
-              }`}
-            >
-              {offers.slice(0, 5).map((prod) => (
-                <ProductCard
-                  key={prod.id}
-                  id={prod.id!}
-                  shop={prod.store?.name || "Tienda"}
-                  title={prod.name}
-                  price={prod.price}
-                  discountPrice={prod.discount_price}
-                  img={prod.image_1_url || audifonos}
-                  edit={false}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </section>
-      {/*Productos destacados */}
-      <section className="mx-10 my-5">
+          {loading ? (
+            <SkeletonProduct count={5} />
+          ) : (
+            <>
+              {/* Mobile: muestra solo 6 productos */}
+              <div className="grid grid-cols-2 gap-4 my-6 sm:hidden">
+                {offers.slice(0, 6).map((prod) => (
+                  <ProductCard
+                    key={prod.id}
+                    id={prod.id!}
+                    shop={prod.store?.name || "No hay tienda"}
+                    title={prod.name}
+                    price={prod.price}
+                    discountPrice={
+                      prod.discount_price != null && prod.discount_price !== 0
+                        ? prod.discount_price
+                        : undefined
+                    }
+                    img={prod.image_1_url ? prod.image_1_url : audifonos}
+                    edit={false}
+                  />
+                ))}
+              </div>
+
+              {/* Escritorio: diseño original */}
+              <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-10 gap-5">
+                {offers.slice(0, 5).map((prod) => (
+                  <ProductCard
+                    key={prod.id}
+                    id={prod.id!}
+                    shop={prod.store?.name || "No hay tienda"}
+                    title={prod.name}
+                    price={prod.price}
+                    discountPrice={
+                      prod.discount_price != null && prod.discount_price !== 0
+                        ? prod.discount_price
+                        : undefined
+                    }
+                    img={prod.image_1_url ? prod.image_1_url : audifonos}
+                    edit={false}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+
+      {/* 🔹 Productos destacados */}
+      <section className="mx-4 sm:mx-10 my-6 sm:my-10">
         {!loading && featuredProducts.length > 0 && (
           <>
-            <h2 className="text-2xl font-semibold font-quicksand">
+            <h2 className="text-lg sm:text-2xl font-semibold font-quicksand mb-3 sm:mb-5">
               Productos destacados
             </h2>
 
@@ -126,9 +148,9 @@ export default function HomeSeller() {
         )}
       </section>
 
-      {/*Todos los productos */}
-      <section className="mx-10 my-5">
-        <h2 className="text-2xl font-semibold font-quicksand">
+      {/* 🔹 Todos los productos */}
+      <section className="mx-0 sm:mx-10 my-6 sm:my-10">
+        <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
           Todos los productos
         </h2>
 
@@ -139,7 +161,7 @@ export default function HomeSeller() {
         ) : products.length > 0 ? (
           <>
             <div
-              className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
+              className={`grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 my-6 gap-3 sm:gap-5 transition-opacity duration-500 ${
                 loading ? "opacity-0" : "opacity-100"
               }`}
             >
@@ -162,7 +184,7 @@ export default function HomeSeller() {
                 <ButtonComponent
                   text="Ver más"
                   onClick={() => setVisibleCount((prev) => prev + 10)}
-                  style="bg-contrast-secondary text-white px-5 py-2 rounded-full hover:bg-contrast-main transition-all duration-300 ease-in-out cursor-pointer w-[30%]"
+                  style="bg-contrast-secondary text-white px-5 py-2 rounded-full hover:bg-contrast-main transition-all duration-300 ease-in-out cursor-pointer w-[60%] sm:w-[30%]"
                 />
               </div>
             )}
