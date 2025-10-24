@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { IconEye, IconEyeClosed } from "@tabler/icons-react"; // 👁️ Importados aquí
 import logo from "../../../../img/TukiLogo.png";
 import { useAuth } from "../../../../hooks/context/AuthContext";
 
@@ -8,17 +9,15 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👁️ Nuevo estado
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-
     const emailLower = email.toLowerCase();
-
     console.log("Email:", emailLower, "Password:", password);
-
 
     const success = await login(emailLower, password);
     if (!success) {
@@ -27,7 +26,6 @@ export default function LoginForm() {
       navigate("/");
     }
   };
-
 
   return (
     <div className="flex flex-col items-center w-full justify-center">
@@ -46,14 +44,26 @@ export default function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-full sm:w-[65%] font-quicksand"
-            placeholder="Contraseña"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+
+          {/* 🔒 Campo de contraseña con ícono sin alterar diseño */}
+          <div className="relative w-full sm:w-[65%]">
+            <input
+              className="border-2 border-contrast-secondary text-contrast-secondary rounded-full px-4 py-3 w-full font-quicksand pr-10"
+              placeholder="Contraseña"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-4 text-contrast-secondary"
+            >
+              {showPassword ? <IconEye size={20} /> : <IconEyeClosed size={20} />}
+            </button>
+          </div>
+
           <button
             className="bg-contrast-secondary text-white rounded-full py-3 px-4 w-full sm:w-[30%] font-quicksand cursor-pointer"
             type="submit"
@@ -62,7 +72,9 @@ export default function LoginForm() {
             {loading ? "Ingresando..." : "Iniciar sesión"}
           </button>
         </form>
+
         {error && <div className="text-red-500">{error}</div>}
+
         <Link to="/forgotPassword">
           <span className="text-main font-quicksand">
             ¿Olvidaste tu contraseña?

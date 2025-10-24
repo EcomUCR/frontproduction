@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import logo from "../../../../img/TukiLogo.png";
 import useRegister from "../../infrastructure/useRegister";
 
@@ -17,7 +18,11 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
   });
   const [localError, setLocalError] = useState<string | null>(null);
   const [showTerms, setShowTerms] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false); // ✅ nuevo estado
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  // 👁️ Estados para mostrar u ocultar contraseña
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { register, loading, error } = useRegister();
 
@@ -39,10 +44,9 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
       return;
     }
 
-    
     const payload = {
-      username: form.username.toLowerCase(), 
-      email: form.email.toLowerCase(),      
+      username: form.username.toLowerCase(),
+      email: form.email.toLowerCase(),
       password: form.password,
       first_name: form.first_name || undefined,
       last_name: form.last_name || undefined,
@@ -52,11 +56,8 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
     try {
       await register(payload);
       onRegisterSuccess?.();
-    } catch {
-      
-    }
+    } catch { }
   };
-
 
   return (
     <div className="flex flex-col items-center w-full justify-center">
@@ -69,7 +70,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
           onSubmit={handleSubmit}
         >
           {/* Nombre y apellido */}
-          <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:gap-5 sm:w-[80%]">
+          <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:w-[80%]">
             <input
               className="border-2 border-main text-main rounded-full px-4 py-3 sm:w-[45%] font-quicksand"
               placeholder="Nombre"
@@ -91,9 +92,9 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
           </div>
 
           {/* Email y username */}
-          <div className="flex justify-center items-center flex-col space-y-5 w-full sm:w-[80%]">
+          <div className="flex flex-col space-y-5 w-full sm:w-[75%]">
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[94%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-full font-quicksand"
               placeholder="Correo electrónico"
               type="email"
               name="email"
@@ -102,7 +103,7 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               required
             />
             <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[94%] font-quicksand"
+              className="border-2 border-main text-main rounded-full px-4 py-3 w-full font-quicksand"
               placeholder="Nombre de usuario"
               type="text"
               name="username"
@@ -113,34 +114,58 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
 
           {/* Contraseña y confirmación */}
           <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:w-[80%]">
-            <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[45%] font-quicksand"
-              placeholder="Contraseña"
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-            />
-            <input
-              className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[45%] font-quicksand"
-              placeholder="Confirmar contraseña"
-              type="password"
-              name="password_confirmation"
-              value={form.password_confirmation}
-              onChange={handleChange}
-              required
-            />
+            {/* Contraseña */}
+            <div className="relative w-full sm:w-[45%]">
+              <input
+                className="border-2 border-main text-main rounded-full px-4 py-3 w-full font-quicksand pr-10"
+                placeholder="Contraseña"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-4 text-main"
+              >
+                {showPassword ? <IconEye size={20} /> : <IconEyeClosed size={20} />}
+              </button>
+            </div>
+
+            {/* Confirmar contraseña */}
+            <div className="relative w-full sm:w-[45%]">
+              <input
+                className="border-2 border-main text-main rounded-full px-4 py-3 w-full font-quicksand pr-10"
+                placeholder="Confirmar contraseña"
+                type={showConfirmPassword ? "text" : "password"}
+                name="password_confirmation"
+                value={form.password_confirmation}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-4 top-4 text-main"
+              >
+                {showConfirmPassword ? (
+                  <IconEye size={20} />
+                ) : (
+                  <IconEyeClosed size={20} />
+                )}
+              </button>
+            </div>
           </div>
 
-          {/* Checkbox de Términos */}
+          {/* Checkbox y botón */}
           <div className="flex flex-col items-center w-full">
             <label htmlFor="terms" className="flex items-center gap-2 mb-3">
               <input
                 id="terms"
                 className="mt-0.5 cursor-pointer accent-main"
                 type="checkbox"
-                name="terms"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
               />
@@ -156,11 +181,9 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
               </button>
             </label>
 
-            {/* Botón deshabilitado si no se aceptan los TYC */}
             <button
-              className={`bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand cursor-pointer transition ${
-                !acceptedTerms || loading ? "opacity-60 cursor-not-allowed" : ""
-              }`}
+              className={`bg-main text-white rounded-full py-3 px-4 w-[50%] font-quicksand cursor-pointer transition ${!acceptedTerms || loading ? "opacity-60 cursor-not-allowed" : ""
+                }`}
               type="submit"
               disabled={!acceptedTerms || loading}
             >
@@ -169,19 +192,18 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
           </div>
         </form>
 
-        {/* Mensajes de error */}
+        {/* Errores */}
         {localError && <div className="text-red-500">{localError}</div>}
         {error && <div className="text-red-500">{error}</div>}
       </div>
 
-      {/* Modal de Términos y Condiciones */}
+      {/* Modal de Términos */}
       {showTerms && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl w-[90%] max-w-3xl h-[80vh] overflow-y-auto p-6 relative">
             <h2 className="text-2xl font-bold mb-4 text-main">
               Términos y Condiciones de Uso de TukiShop
             </h2>
-
             <p className="text-sm text-gray-700 whitespace-pre-line">
               Última actualización: 02/10/2025
 
@@ -229,8 +251,6 @@ export default function RegisterForm({ onRegisterSuccess }: Props) {
 
               © 2025 TukiShop. Todos los derechos reservados.
             </p>
-
-            {/* Botón cerrar modal */}
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => setShowTerms(false)}
