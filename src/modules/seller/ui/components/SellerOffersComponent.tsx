@@ -28,7 +28,6 @@ export default function SellerOffersPage() {
       } catch (err) {
         console.error("Error al cargar productos del vendedor:", err);
       } finally {
-        // 🔹 Pequeño delay para transición más suave del skeleton
         setTimeout(() => setLoading(false), 600);
       }
     };
@@ -37,8 +36,10 @@ export default function SellerOffersPage() {
   }, [id]);
 
   return (
-    <section className="mx-10 my-5">
-      <h2 className="text-2xl font-semibold font-quicksand">Ofertas</h2>
+    <section className="mx-0 sm:mx-10 my-6 sm:my-5">
+      <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
+        Ofertas
+      </h2>
 
       {loading ? (
         <div className="transition-opacity duration-500 opacity-100">
@@ -46,11 +47,11 @@ export default function SellerOffersPage() {
         </div>
       ) : offers.length > 0 ? (
         <div
-          className={`grid grid-cols-5 my-10 gap-5 transition-opacity duration-500 ${
+          className={`grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 my-6 sm:my-10 gap-3 sm:gap-5 transition-opacity duration-500 ${
             loading ? "opacity-0" : "opacity-100"
           }`}
         >
-          {offers.slice(0, 5).map((prod) => (
+          {offers.map((prod) => (
             <ProductCard
               key={prod.id}
               id={prod.id!}
@@ -64,7 +65,9 @@ export default function SellerOffersPage() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 my-5">No hay productos en oferta.</p>
+        <p className="text-gray-500 my-5 text-center sm:text-left">
+          No hay productos en oferta.
+        </p>
       )}
     </section>
   );
