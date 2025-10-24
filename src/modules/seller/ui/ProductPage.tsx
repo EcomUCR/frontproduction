@@ -365,7 +365,7 @@ export default function ProductPage() {
                     </div>
 
                     {/* Compartir (solo mobile, debajo de tabs) */}
-                    <div className="border-t-2 border-main pt-6 block sm:hidden">
+                    <div className="border-t-2 w-full border-main pt-6 mt-10 block sm:hidden">
                       <div className="flex relative items-center justify-between border border-contrast-secondary rounded-full px-3 py-2">
                         <div className="flex items-center gap-2">
                           <AnimatedHeartButton
@@ -385,23 +385,48 @@ export default function ProductPage() {
                           />
                           <div className="absolute right-30 top-25">
                             <ul className="flex gap-3">
-                              {[
-                                { icon: <IconLink />, color: 'hover:bg-sky-500', action: 'link' },
-                                { icon: <IconBrandWhatsapp />, color: 'hover:bg-green-600', action: 'whatsapp' },
-                                { icon: <IconBrandFacebook />, color: 'hover:bg-blue-600', action: 'facebook' },
-                                { icon: <IconBrandInstagram />, color: 'hover:bg-orange-500', action: 'instagram' },
-                                { icon: <IconBrandTiktok />, color: 'hover:bg-rose-500', action: 'tiktok' },
-                                { icon: <IconBrandX />, color: 'hover:bg-black', action: 'x' },
-                              ].map((btn, i) => (
-                                <li
-                                  key={i}
-                                  className={`relative bottom-10 left-27 bg-main ${btn.color} p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-${i *
-                                    50} ${isModalOpen ? 'scale-100' : 'scale-0'}`}
-                                  onClick={() => handleShare(btn.action)}
-                                >
-                                  {btn.icon}
-                                </li>
-                              ))}
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"
+                                  }`}
+                                onClick={() => handleShare("link")}
+                              >
+                                <IconLink />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"
+                                  }`}
+                                onClick={() => handleShare("whatsapp")}
+                              >
+                                <IconBrandWhatsapp />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"
+                                  }`}
+                                onClick={() => handleShare("facebook")}
+                              >
+                                <IconBrandFacebook />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"
+                                  }`}
+                                onClick={() => handleShare("instagram")}
+                              >
+                                <IconBrandInstagram />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"
+                                  }`}
+                                onClick={() => handleShare("tiktok")}
+                              >
+                                <IconBrandTiktok />
+                              </li>
+                              <li
+                                className={`relative bottom-10 left-27 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"
+                                  }`}
+                                onClick={() => handleShare("x")}
+                              >
+                                <IconBrandX />
+                              </li>
                             </ul>
                           </div>
                         </div>
@@ -415,8 +440,7 @@ export default function ProductPage() {
                   </div>
 
                   <div className="hidden lg:block w-3/12 pt-10 order-1">
-
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col w-full items-center">
                       <div className="w-full flex justify-center mb-5 pb-4">
                         <div className="relative w-[18rem] h-[18rem] overflow-hidden rounded-2xl">
                           <img
@@ -426,7 +450,7 @@ export default function ProductPage() {
                           />
                         </div>
                       </div>
-                      <div className="flex gap-3 justify-center flex-wrap pb-5">
+                      <div className="flex gap-3 justify-center flex-wrap pb-5 ">
                         {[product.image_1_url, product.image_2_url, product.image_3_url]
                           .filter(Boolean)
                           .map((img, index) => (
@@ -440,7 +464,7 @@ export default function ProductPage() {
                             </button>
                           ))}
                       </div>
-                      <div className="border-t-2 border-main pt-10 hidden sm:block">
+                      <div className="border-t-2 w-72 border-main pt-10 hidden sm:block">
                         <div className="flex relative items-center justify-between border border-contrast-secondary rounded-full px-3 py-2">
                           <div className="flex items-center gap-2">
                             <AnimatedHeartButton
@@ -460,23 +484,48 @@ export default function ProductPage() {
                             />
                             <div className="absolute right-23 top-25">
                               <ul className="flex gap-3">
-                                {[
-                                  { icon: <IconLink />, color: 'hover:bg-sky-500', action: 'link' },
-                                  { icon: <IconBrandWhatsapp />, color: 'hover:bg-green-600', action: 'whatsapp' },
-                                  { icon: <IconBrandFacebook />, color: 'hover:bg-blue-600', action: 'facebook' },
-                                  { icon: <IconBrandInstagram />, color: 'hover:bg-orange-500', action: 'instagram' },
-                                  { icon: <IconBrandTiktok />, color: 'hover:bg-rose-500', action: 'tiktok' },
-                                  { icon: <IconBrandX />, color: 'hover:bg-black', action: 'x' },
-                                ].map((btn, i) => (
-                                  <li
-                                    key={i}
-                                    className={`relative bottom-10 left-27 bg-main ${btn.color} p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-${i *
-                                      50} ${isModalOpen ? 'scale-100' : 'scale-0'}`}
-                                    onClick={() => handleShare(btn.action)}
-                                  >
-                                    {btn.icon}
-                                  </li>
-                                ))}
+                                <li
+                                  className={`relative bottom-10 left-27 bg-main hover:bg-sky-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-0 ${isModalOpen ? "scale-100" : "scale-0"
+                                    }`}
+                                  onClick={() => handleShare("link")}
+                                >
+                                  <IconLink />
+                                </li>
+                                <li
+                                  className={`relative bottom-10 left-27 bg-main hover:bg-green-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-50 ${isModalOpen ? "scale-100" : "scale-0"
+                                    }`}
+                                  onClick={() => handleShare("whatsapp")}
+                                >
+                                  <IconBrandWhatsapp />
+                                </li>
+                                <li
+                                  className={`relative bottom-10 left-27 bg-main hover:bg-blue-600 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-100 ${isModalOpen ? "scale-100" : "scale-0"
+                                    }`}
+                                  onClick={() => handleShare("facebook")}
+                                >
+                                  <IconBrandFacebook />
+                                </li>
+                                <li
+                                  className={`relative bottom-10 left-27 bg-main hover:bg-orange-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-150 ${isModalOpen ? "scale-100" : "scale-0"
+                                    }`}
+                                  onClick={() => handleShare("instagram")}
+                                >
+                                  <IconBrandInstagram />
+                                </li>
+                                <li
+                                  className={`relative bottom-10 left-27 bg-main hover:bg-rose-500 p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-200 ${isModalOpen ? "scale-100" : "scale-0"
+                                    }`}
+                                  onClick={() => handleShare("tiktok")}
+                                >
+                                  <IconBrandTiktok />
+                                </li>
+                                <li
+                                  className={`relative bottom-10 left-27 bg-main hover:bg-black p-2 rounded-full text-white transform transition-all duration-300 shadow-md delay-250 ${isModalOpen ? "scale-100" : "scale-0"
+                                    }`}
+                                  onClick={() => handleShare("x")}
+                                >
+                                  <IconBrandX />
+                                </li>
                               </ul>
                             </div>
                           </div>
@@ -491,8 +540,8 @@ export default function ProductPage() {
                   </div>
                 </section>
 
-        <section className="mx-5 sm:mx-10 my-6 sm:my-10">
-            <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
+                <section className="mx-5 sm:mx-10 my-6 sm:my-10">
+                  <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
                     Más de {product.store?.name || "la tienda"}
                   </h2>
                   {loading ? (
@@ -516,21 +565,21 @@ export default function ProductPage() {
                   )}
                 </section>
 
-        <section className="mx-5 sm:mx-10 my-6 sm:my-10">
-                 <div className="flex justify-between items-center">
-            <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
-              Explorar
-            </h2>
-            <div className="flex items-center gap-1 text-sm sm:text-base">
-              <a
-                href="/search?mode=explore"
-                className="font-quicksand font-semibold cursor-pointer"
-              >
-                Ver todo
-              </a>
-              <IconChevronRight className="inline w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-          </div>
+                <section className="mx-5 sm:mx-10 my-6 sm:my-10">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-lg sm:text-2xl font-semibold font-quicksand">
+                      Explorar
+                    </h2>
+                    <div className="flex items-center gap-1 text-sm sm:text-base">
+                      <a
+                        href="/search?mode=explore"
+                        className="font-quicksand font-semibold cursor-pointer"
+                      >
+                        Ver todo
+                      </a>
+                      <IconChevronRight className="inline w-4 h-4 sm:w-5 sm:h-5" />
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 my-6 sm:my-10 gap-4 sm:gap-5">
                     {similarProducts.length > 0 ? (
                       similarProducts.slice(0, 10).map((prod) => (
