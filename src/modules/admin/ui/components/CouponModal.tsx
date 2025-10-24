@@ -5,7 +5,7 @@ import { useCoupons } from "../../infrastructure/useCoupons";
 import {
   useProducts,
   type Category,
-} from "../../../seller/infrastructure/useProducts"; // 👈 importa categorías
+} from "../../../seller/infrastructure/useProducts";
 
 interface CouponModalProps {
   coupon?: any;
@@ -55,10 +55,9 @@ export default function CouponModal({
   );
 
   const { createCoupon, updateCoupon, loading } = useCoupons();
-  const { getCategories } = useProducts(); // ✅ usamos el hook
-  const [categories, setCategories] = useState<Category[]>([]); // lista local
+  const { getCategories } = useProducts();
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  // 🌀 Cargar categorías al montar
   useEffect(() => {
     (async () => {
       const data = await getCategories();
@@ -133,15 +132,16 @@ export default function CouponModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 font-quicksand animate-fadeIn"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 font-quicksand animate-fadeIn px-3 sm:px-0"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl w-[38rem] p-6 shadow-xl relative overflow-y-auto max-h-[90vh]"
+        className="bg-white rounded-3xl w-full sm:w-[38rem] max-w-[95vw] sm:max-w-none p-5 sm:p-6 shadow-xl relative overflow-y-auto max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-main">
+          <h2 className="text-xl sm:text-2xl font-bold text-main">
             {coupon ? "Editar cupón" : "Crear cupón"}
           </h2>
           <IconX
@@ -150,6 +150,7 @@ export default function CouponModal({
           />
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Código */}
           <div>
@@ -159,7 +160,7 @@ export default function CouponModal({
               name="code"
               value={formData.code}
               onChange={handleChange}
-              className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main"
+              className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main text-sm sm:text-base"
               required
             />
           </div>
@@ -171,20 +172,20 @@ export default function CouponModal({
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="w-full border rounded-xl p-2 resize-none focus:outline-none focus:ring-2 focus:ring-main"
+              className="w-full border rounded-xl p-2 resize-none focus:outline-none focus:ring-2 focus:ring-main text-sm sm:text-base"
               rows={2}
             />
           </div>
 
           {/* Tipo y Valor */}
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <label className="text-sm font-semibold">Tipo</label>
               <select
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main"
+                className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main text-sm sm:text-base"
               >
                 <option value="PERCENTAGE">Porcentaje (%)</option>
                 <option value="FIXED">Monto fijo</option>
@@ -198,13 +199,13 @@ export default function CouponModal({
                 name="value"
                 value={formData.value}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main"
+                className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main text-sm sm:text-base"
               />
             </div>
           </div>
 
           {/* Reglas */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-sm font-semibold">Compra mínima</label>
               <input
@@ -212,7 +213,7 @@ export default function CouponModal({
                 name="min_purchase"
                 value={formData.min_purchase}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
             <div>
@@ -222,13 +223,13 @@ export default function CouponModal({
                 name="max_discount"
                 value={formData.max_discount}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
           </div>
 
           {/* Relacionales */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-sm font-semibold">Tienda (ID)</label>
               <input
@@ -236,7 +237,7 @@ export default function CouponModal({
                 name="store_id"
                 value={formData.store_id}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
             <div>
@@ -245,7 +246,7 @@ export default function CouponModal({
                 name="category_id"
                 value={formData.category_id || ""}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main"
+                className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-main text-sm sm:text-base"
               >
                 <option value="">Selecciona una categoría</option>
                 {categories.map((cat) => (
@@ -263,7 +264,7 @@ export default function CouponModal({
                 name="product_id"
                 value={formData.product_id}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
             <div>
@@ -273,13 +274,13 @@ export default function CouponModal({
                 name="user_id"
                 value={formData.user_id}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
           </div>
 
           {/* Límites */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-sm font-semibold">
                 Límite total de uso
@@ -289,7 +290,7 @@ export default function CouponModal({
                 name="usage_limit"
                 value={formData.usage_limit}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
             <div>
@@ -301,13 +302,13 @@ export default function CouponModal({
                 name="usage_per_user"
                 value={formData.usage_per_user}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
           </div>
 
           {/* Fecha y estado */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div className="flex-1">
               <label className="text-sm font-semibold">Expira en</label>
               <input
@@ -315,11 +316,11 @@ export default function CouponModal({
                 name="expires_at"
                 value={formData.expires_at}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-2"
+                className="w-full border rounded-xl p-2 text-sm sm:text-base"
               />
             </div>
 
-            <label className="flex items-center gap-2 mt-6 cursor-pointer">
+            <label className="flex items-center gap-2 mt-2 sm:mt-6 cursor-pointer">
               <input
                 type="checkbox"
                 name="active"
@@ -331,15 +332,15 @@ export default function CouponModal({
           </div>
 
           {/* Botones */}
-          <div className="flex justify-end gap-3 mt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-5">
             <ButtonComponent
               text="Cancelar"
-              style="bg-gray-300 text-black rounded-full px-4 py-2 hover:bg-gray-400 transition-all duration-300"
+              style="bg-gray-300 text-black rounded-full px-4 py-2 hover:bg-gray-400 transition-all duration-300 w-full sm:w-auto"
               onClick={onClose}
             />
             <ButtonComponent
-              text={loading ? "Guardando..." : "Guardar cupón"}
-              style="bg-main-dark text-white rounded-full px-4 py-2 hover:bg-main transition-all duration-300"
+              text={loading ? 'Guardando...' : 'Guardar cupón'}
+              style="bg-main-dark text-white rounded-full px-4 py-2 hover:bg-main transition-all duration-300 w-full sm:w-auto"
               type="submit"
             />
           </div>

@@ -5,7 +5,14 @@ import CouponModal from "./CouponModal";
 import { useCoupons } from "../../infrastructure/useCoupons";
 
 export default function AdminCoupons() {
-  const { coupons, createCoupon, updateCoupon, deleteCoupon, fetchCoupons, loading } = useCoupons();
+  const {
+    coupons,
+    createCoupon,
+    updateCoupon,
+    deleteCoupon,
+    fetchCoupons,
+    loading,
+  } = useCoupons();
   const [showModal, setShowModal] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<any | null>(null);
 
@@ -20,7 +27,7 @@ export default function AdminCoupons() {
     setShowModal(true);
   };
 
-  // 💾 Guardar cupón (crear o editar)
+  // 💾 Guardar cupón
   const handleSaveCoupon = async (couponData: any) => {
     try {
       if (selectedCoupon) {
@@ -51,23 +58,25 @@ export default function AdminCoupons() {
   };
 
   return (
-    <section className="pl-4 font-quicksand">
-      <div className="pl-5">
+    <section className="pl-2 sm:pl-4 font-quicksand">
+      <div className="pl-0 sm:pl-5">
         {/* Header */}
-        <div className="pb-10 flex items-center justify-between">
-          <h1 className="text-2xl border-b-3 border-main">
+        <div className="pb-6 sm:pb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+          <h1 className="text-lg sm:text-2xl border-b-3 border-main w-fit">
             Administración de cupones
           </h1>
           <ButtonComponent
             text="Crear cupón"
-            style="bg-main-dark text-white rounded-full py-2 px-4 font-quicksand hover:bg-main transition-all duration-400"
+            style="bg-main-dark text-white rounded-full py-2 px-4 font-quicksand hover:bg-main transition-all duration-400 w-full sm:w-auto"
             onClick={handleCreateCoupon}
           />
         </div>
 
         {/* Lista de cupones */}
         <div>
-          <h2 className="text-xl font-quicksand mb-4">Cupones</h2>
+          <h2 className="text-base sm:text-xl font-quicksand mb-3 sm:mb-4">
+            Cupones
+          </h2>
 
           {loading ? (
             <p className="text-gray-500">Cargando cupones...</p>
@@ -86,7 +95,7 @@ export default function AdminCoupons() {
               ))}
             </div>
           ) : (
-            <div>
+            <div className="space-y-4">
               <p className="text-gray-500 italic">
                 No hay cupones creados todavía.
               </p>
