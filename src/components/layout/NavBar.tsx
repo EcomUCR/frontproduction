@@ -70,7 +70,7 @@ export default function NavBar() {
   }, []);
 
   return (
-    <nav className="bg-main px-4 sm:px-30 py-2 font-quicksand relative z-50">
+    <nav className="bg-main px-4 sm:px-30 pt-4 pb-4 sm:pb-0 font-quicksand relative z-50">
       {/* Barra superior */}
       <div className="flex w-full justify-between items-center">
         {/* Logo */}
@@ -207,7 +207,7 @@ export default function NavBar() {
 
       {/* Menú inferior desktop */}
       <div className="hidden md:block">
-        <ul className="flex justify-center gap-10 p-3 text-white text-sm">
+        <ul className="flex justify-center gap-10 p-4 text-white text-sm">
           <li>
             <CategoryDropdown categories={categories} navigate={navigate} />
           </li>
@@ -235,11 +235,16 @@ export default function NavBar() {
           >
             Tiendas
           </li>
-          <li>
-            <Link to="/beSellerPage">Vender</Link>
+          <li
+            onClick={() => navigate("/search/stores")}
+            className="hover:-translate-y-1 transition-all cursor-pointer"
+          >
+            Vender
           </li>
-          <li>
-            <Link to="/about">Conócenos</Link>
+          <li onClick={() => navigate("/search/stores")}
+            className="hover:-translate-y-1 transition-all cursor-pointer"
+          >
+            Conócenos
           </li>
         </ul>
       </div>
