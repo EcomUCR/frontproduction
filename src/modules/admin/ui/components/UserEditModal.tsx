@@ -30,7 +30,7 @@ interface UserEditModalProps {
   user: User;
   onClose: () => void;
   onSave: (updatedUser: User) => Promise<void>;
-  onEditStore?: (updatedStore: Store) => Promise<void>; // ahora actualiza la tienda directamente
+  onEditStore?: (updatedStore: Store) => Promise<void>;
 }
 
 export default function UserEditModal({
@@ -58,7 +58,6 @@ export default function UserEditModal({
     }));
   };
 
-  // 📸 Seleccionar nueva imagen
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -72,7 +71,6 @@ export default function UserEditModal({
     );
   };
 
-  // ❌ Eliminar imagen
   const handleRemoveImage = () => {
     setFormData((prev) =>
       prev.store
@@ -82,7 +80,6 @@ export default function UserEditModal({
     setProfileFile(null);
   };
 
-  // 💾 Guardar cambios
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -90,12 +87,10 @@ export default function UserEditModal({
       const updatedData = { ...formData };
 
       if (profileFile && updatedData.store) {
-        // 🖼️ Si tiene tienda, sube el logo de la tienda
         const uploadedImage = await uploadImage(profileFile);
         updatedData.store.image = uploadedImage;
         await onEditStore?.(updatedData.store);
       } else if (profileFile && !updatedData.store) {
-        // 🧍 Si no tiene tienda, sube la imagen del usuario
         const uploadedImage = await uploadImage(profileFile);
         updatedData.image = uploadedImage;
       }
@@ -109,7 +104,6 @@ export default function UserEditModal({
     }
   };
 
-  // 🔒 Bloquear scroll del fondo
   useEffect(() => {
     const scrollY = window.scrollY;
     document.body.style.position = "fixed";
@@ -127,9 +121,7 @@ export default function UserEditModal({
     };
   }, []);
 
-  // 🧠 Mostrar el logo si tiene tienda, sino su imagen personal
   const profileImage = formData.store?.image || formData.image;
-
   const userInitial =
     formData.first_name?.charAt(0)?.toUpperCase() ||
     formData.username?.charAt(0)?.toUpperCase() ||
@@ -137,16 +129,16 @@ export default function UserEditModal({
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-center z-50 animate-fadeIn font-quicksand"
+      className="fixed inset-0 flex justify-center items-center z-50 animate-fadeIn font-quicksand px-2 sm:px-0"
       onClick={onClose}
     >
       <div
-        className="bg-white w-[920px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-10 relative border border-main/10 animate-slideUp flex flex-col gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
+        className="bg-white w-full sm:w-[920px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-6 sm:p-10 relative border border-main/10 animate-slideUp flex flex-col gap-6 sm:gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 🔹 Header */}
+        {/* Header */}
         <div className="flex flex-col justify-between items-center border-b border-gray-200 pb-4">
-          <div className="flex w-full items-center pb-10">
+          <div className="flex w-full items-center pb-6 sm:pb-10">
             <button
               onClick={onClose}
               className="flex justify-start items-center gap-1 text-gray-main hover:text-main transition-all"
@@ -156,13 +148,13 @@ export default function UserEditModal({
             </button>
 
             <div className="flex justify-center w-full">
-              <h2 className="text-2xl font-semibold text-main">
+              <h2 className="text-lg sm:text-2xl font-semibold text-main text-center">
                 Modificar Usuario
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-10 text-sm text-gray-600 flex-wrap justify-center">
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-10 text-xs sm:text-sm text-gray-600">
             <div>
               <strong>UUID:</strong> {user.id}
             </div>
@@ -172,14 +164,14 @@ export default function UserEditModal({
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="ml-2 border border-gray-300 rounded-lg px-2 py-1 outline-none focus:border-main focus:ring-1 focus:ring-main/20 transition"
+                className="ml-1 sm:ml-2 border border-gray-300 rounded-lg px-1 sm:px-2 py-1 outline-none focus:border-main focus:ring-1 focus:ring-main/20 transition"
               >
                 <option value="CUSTOMER">Customer</option>
                 <option value="SELLER">Seller</option>
                 <option value="ADMIN">Admin</option>
               </select>
             </div>
-            <div>
+            <div className="hidden sm:block">
               <strong>Última conexión:</strong> {user.last_connection ?? "—"}
             </div>
             <div className="flex items-center gap-2">
@@ -194,40 +186,37 @@ export default function UserEditModal({
           </div>
         </div>
 
-        {/* 🔹 Cuerpo principal */}
+        {/* Cuerpo principal */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {/* Columna izquierda */}
-            <div className="bg-gradient-to-br from-main/10 to-contrast-secondary/10 rounded-2xl p-6 shadow-inner flex flex-col items-center">
+            <div className="bg-gradient-to-br from-main/10 to-contrast-secondary/10 rounded-2xl p-5 sm:p-6 shadow-inner flex flex-col items-center">
               {/* Imagen */}
-              <div className="relative w-36 h-36 rounded-full overflow-hidden shadow-lg mb-3">
+              <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden shadow-lg mb-3">
                 {formData.store?.image ? (
-                  // 🏪 Si es vendedor con tienda → mostrar logo de tienda
                   <img
                     src={formData.store.image}
                     alt="Store Logo"
                     className="w-full h-full object-contain"
                   />
                 ) : profileImage ? (
-                  // 👤 Si es usuario normal → mostrar su foto
                   <img
                     src={profileImage}
                     alt="User"
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  // 🧩 Si no tiene imagen
-                  <div className="w-full h-full flex items-center justify-center bg-main/20 text-main text-4xl font-semibold">
+                  <div className="w-full h-full flex items-center justify-center bg-main/20 text-main text-3xl sm:text-4xl font-semibold">
                     {userInitial}
                   </div>
                 )}
               </div>
 
-              {/* Botones debajo de la imagen */}
+              {/* Botones imagen */}
               {(formData.role === "CUSTOMER" || !formData.store) && (
-                <div className="flex gap-3 mb-6">
-                  <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                    <IconCamera size={16} /> Cambiar
+                <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <label className="bg-main text-white rounded-full px-2 sm:px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-xs sm:text-sm flex items-center gap-1">
+                    <IconCamera size={14} /> Cambiar
                     <input
                       type="file"
                       accept="image/*"
@@ -239,9 +228,9 @@ export default function UserEditModal({
                     <button
                       type="button"
                       onClick={handleRemoveImage}
-                      className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
+                      className="bg-red-500 text-white rounded-full px-2 sm:px-3 py-1 shadow-md hover:bg-red-600 transition text-xs sm:text-sm flex items-center gap-1"
                     >
-                      <IconTrash size={16} /> Quitar
+                      <IconTrash size={14} /> Quitar
                     </button>
                   )}
                 </div>
@@ -260,7 +249,7 @@ export default function UserEditModal({
                         name="first_name"
                         value={formData.first_name || ""}
                         onChange={handleChange}
-                        className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
+                        className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition text-base"
                       />
                     </div>
                     <div>
@@ -272,7 +261,7 @@ export default function UserEditModal({
                         name="last_name"
                         value={formData.last_name || ""}
                         onChange={handleChange}
-                        className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
+                        className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition text-base"
                       />
                     </div>
                   </>
@@ -287,7 +276,7 @@ export default function UserEditModal({
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
-                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
+                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition text-base"
                   />
                 </div>
 
@@ -300,7 +289,7 @@ export default function UserEditModal({
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
+                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition text-base"
                   />
                 </div>
 
@@ -313,7 +302,7 @@ export default function UserEditModal({
                     name="phone_number"
                     value={formData.phone_number || ""}
                     onChange={handleChange}
-                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
+                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition text-base"
                   />
                 </div>
 
@@ -327,7 +316,7 @@ export default function UserEditModal({
                     value={formData.password || ""}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
+                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition text-base"
                   />
                 </div>
               </div>
@@ -335,9 +324,9 @@ export default function UserEditModal({
 
             {/* Columna derecha */}
             {user.role === "CUSTOMER" && (
-              <div className="bg-gray-50 rounded-2xl p-6 shadow-inner flex flex-col justify-between">
+              <div className="bg-gray-50 rounded-2xl p-5 sm:p-6 shadow-inner flex flex-col justify-between text-sm sm:text-base">
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-3">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
                     Actividad del usuario
                   </h3>
                   <p className="text-gray-700">
@@ -351,23 +340,23 @@ export default function UserEditModal({
 
                   <ButtonComponent
                     text="Ver historial de compras"
-                    style="bg-contrast-secondary text-white rounded-full px-6 py-2 mt-4"
+                    style="bg-contrast-secondary text-white rounded-full px-4 sm:px-6 py-2 mt-4 text-sm sm:text-base"
                   />
                 </div>
               </div>
             )}
 
             {user.role === "SELLER" && (
-              <div className="bg-gray-50 rounded-2xl items-center justify-center flex p-6 shadow-inner">
+              <div className="bg-gray-50 rounded-2xl items-center justify-center flex p-5 sm:p-6 shadow-inner text-center">
                 <div className="flex flex-col gap-4">
-                  <h2 className="text-center text-lg">
+                  <h2 className="text-base sm:text-lg">
                     Tienda de{" "}
                     <span className="font-semibold">{user.username}</span>
                   </h2>
                   <ButtonComponent
                     text="Modificar tienda"
-                    onClick={() => onEditStore?.(formData)} // le pasa todo el usuario, con su tienda incluida
-                    style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition"
+                    onClick={() => onEditStore?.(formData)}
+                    style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-4 sm:px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition text-sm sm:text-base"
                   />
                 </div>
               </div>
@@ -376,19 +365,19 @@ export default function UserEditModal({
 
           {/* Footer */}
           <div className="flex flex-col justify-center items-center border-t border-gray-200 pt-4">
-            <p className="text-xs text-gray-500 mb-3">
+            <p className="text-[10px] sm:text-xs text-gray-500 mb-3 text-center px-2">
               Every change will be notified to the account owner.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto justify-center">
               <ButtonComponent
                 text="Cancel"
                 onClick={onClose}
-                style="bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition"
+                style="bg-gray-200 text-gray-700 px-4 sm:px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition text-sm"
               />
               <ButtonComponent
-                text={uploading ? "Saving..." : "Save"}
+                text={uploading ? 'Saving...' : 'Save'}
                 type="submit"
-                style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition"
+                style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-4 sm:px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition text-sm"
               />
             </div>
           </div>

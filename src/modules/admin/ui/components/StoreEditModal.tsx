@@ -76,11 +76,9 @@ export default function StoreEditModal({
     e.preventDefault();
     try {
       setUploading(true);
-
-      // Copia el formData actualizado
       const updatedData: Store = {
         ...formData,
-        is_verified: !!formData.is_verified, // 👈 fuerza el booleano correcto
+        is_verified: !!formData.is_verified,
       };
 
       if (logoFile) {
@@ -93,7 +91,7 @@ export default function StoreEditModal({
         updatedData.banner = uploadedBanner;
       }
 
-      console.log("Datos enviados:", updatedData); // 🔎 útil para debug
+      console.log("Datos enviados:", updatedData);
       await onSave(updatedData);
       onClose();
     } catch (error) {
@@ -104,7 +102,6 @@ export default function StoreEditModal({
   };
 
   useEffect(() => {
-    // Bloquear scroll sin romper el layout
     const scrollbarWidth =
       window.innerWidth - document.documentElement.clientWidth;
     const originalStyle = {
@@ -123,31 +120,31 @@ export default function StoreEditModal({
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-center z-50 animate-fadeIn font-quicksand"
+      className="fixed inset-0 flex justify-center items-center z-50 animate-fadeIn font-quicksand px-2 sm:px-0"
       onClick={onClose}
     >
       <div
-        className="bg-white w-[1280px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-10 relative border border-main/10 animate-slideUp flex flex-col gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
+        className="bg-white w-full sm:w-[1280px] max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-6 sm:p-10 relative border border-main/10 animate-slideUp flex flex-col gap-6 sm:gap-8 scrollbar-thin scrollbar-thumb-main/40 scrollbar-track-transparent"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex flex-col justify-between items-center border-b border-gray-200 pb-4">
-          <div className="flex w-full items-center pb-10">
+          <div className="flex w-full items-center pb-6 sm:pb-10">
             <button
               onClick={onClose}
-              className="flex justify-start items-center gap-1 text-gray-main hover:text-main transition-all"
+              className="flex justify-start items-center gap-1 text-gray-main hover:text-main transition-all text-sm sm:text-base"
             >
               <IconArrowLeft size={18} />
-              <span className="text-sm font-medium">Back</span>
+              <span className="font-medium">Back</span>
             </button>
             <div className="flex justify-center w-full">
-              <h2 className="text-2xl font-semibold text-main">
+              <h2 className="text-lg sm:text-2xl font-semibold text-main text-center">
                 Modificar Tienda
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-10 text-sm text-gray-600 flex-wrap justify-center">
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-10 text-xs sm:text-sm text-gray-600">
             <div>
               <strong>ID:</strong> {store.id}
             </div>
@@ -159,10 +156,7 @@ export default function StoreEditModal({
               <Switch
                 checked={!!formData.is_verified}
                 onCheckedChange={(checked) =>
-                  setFormData((p: Store) => ({
-                    ...p,
-                    is_verified: checked,
-                  }))
+                  setFormData((p: Store) => ({ ...p, is_verified: checked }))
                 }
               />
             </div>
@@ -177,7 +171,7 @@ export default function StoreEditModal({
                     status: e.target.value,
                   }))
                 }
-                className="border border-gray-300 rounded-lg px-2 py-1 text-sm outline-none focus:border-main focus:ring-1 focus:ring-main/20 transition"
+                className="border border-gray-300 rounded-lg px-2 py-1 text-xs sm:text-sm outline-none focus:border-main focus:ring-1 focus:ring-main/20 transition"
               >
                 <option value="ACTIVE">Activa</option>
                 <option value="SUSPENDED">Suspendida</option>
@@ -188,12 +182,12 @@ export default function StoreEditModal({
         </div>
 
         {/* Formulario principal */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-          <div className="grid grid-cols-2 gap-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {/* Columna izquierda */}
-            <div className="bg-gradient-to-br from-main/10 to-contrast-secondary/10 rounded-2xl p-6 shadow-inner flex flex-col items-center">
+            <div className="bg-gradient-to-br from-main/10 to-contrast-secondary/10 rounded-2xl p-5 sm:p-6 shadow-inner flex flex-col items-center">
               {/* Logo */}
-              <div className="relative w-36 h-36 rounded-full overflow-hidden shadow-lg mb-3">
+              <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden shadow-lg mb-3">
                 {formData.image ? (
                   <img
                     src={formData.image}
@@ -201,15 +195,15 @@ export default function StoreEditModal({
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-main/20 text-main text-4xl font-semibold">
+                  <div className="w-full h-full flex items-center justify-center bg-main/20 text-main text-3xl sm:text-4xl font-semibold">
                     {formData.name?.charAt(0)?.toUpperCase() ?? "?"}
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-3 mb-6">
-                <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                  <IconEdit size={16} />
+              <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <label className="bg-main text-white rounded-full px-2 sm:px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-xs sm:text-sm flex items-center gap-1">
+                  <IconEdit size={14} />
                   <input
                     type="file"
                     accept="image/*"
@@ -221,15 +215,15 @@ export default function StoreEditModal({
                   <button
                     type="button"
                     onClick={handleRemoveLogo}
-                    className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
+                    className="bg-red-500 text-white rounded-full px-2 sm:px-3 py-1 shadow-md hover:bg-red-600 transition text-xs sm:text-sm flex items-center gap-1"
                   >
-                    <IconTrash size={16} />
+                    <IconTrash size={14} />
                   </button>
                 )}
               </div>
 
               {/* Banner */}
-              <div className="w-full h-24 rounded-xl overflow-hidden shadow-md mb-3">
+              <div className="w-full h-20 sm:h-24 rounded-xl overflow-hidden shadow-md mb-3">
                 {formData.banner ? (
                   <img
                     src={formData.banner}
@@ -237,15 +231,15 @@ export default function StoreEditModal({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm">
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-xs sm:text-sm">
                     Sin banner
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-3 mb-6">
-                <label className="bg-main text-white rounded-full px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-sm flex items-center gap-1">
-                  <IconEdit size={16} />
+              <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <label className="bg-main text-white rounded-full px-2 sm:px-3 py-1 cursor-pointer shadow-md hover:bg-main/80 transition text-xs sm:text-sm flex items-center gap-1">
+                  <IconEdit size={14} />
                   <input
                     type="file"
                     accept="image/*"
@@ -257,9 +251,9 @@ export default function StoreEditModal({
                   <button
                     type="button"
                     onClick={handleRemoveBanner}
-                    className="bg-red-500 text-white rounded-full px-3 py-1 shadow-md hover:bg-red-600 transition text-sm flex items-center gap-1"
+                    className="bg-red-500 text-white rounded-full px-2 sm:px-3 py-1 shadow-md hover:bg-red-600 transition text-xs sm:text-sm flex items-center gap-1"
                   >
-                    <IconTrash size={16} />
+                    <IconTrash size={14} />
                   </button>
                 )}
               </div>
@@ -267,12 +261,12 @@ export default function StoreEditModal({
               <ButtonComponent
                 text="Ver productos de la tienda"
                 onClick={() => onViewProducts(formData.id)}
-                style="bg-contrast-secondary text-white rounded-full px-6 py-2 mt-2"
+                style="bg-contrast-secondary text-white rounded-full px-4 sm:px-6 py-2 mt-2 text-xs sm:text-base"
               />
             </div>
 
             {/* Columna derecha */}
-            <div className="bg-gray-50 rounded-2xl p-6 shadow-inner space-y-3 overflow-y-auto">
+            <div className="bg-gray-50 rounded-2xl p-5 sm:p-6 shadow-inner space-y-3">
               {[
                 ["Nombre", "name"],
                 ["Descripción", "description"],
@@ -284,7 +278,7 @@ export default function StoreEditModal({
                 ["Dirección física", "address"],
               ].map(([label, name]) => (
                 <div key={name}>
-                  <label className="text-sm font-semibold text-gray-600">
+                  <label className="text-base font-semibold text-gray-600">
                     {label}
                   </label>
                   <input
@@ -292,7 +286,7 @@ export default function StoreEditModal({
                     name={name}
                     value={(formData as any)[name] || ""}
                     onChange={handleChange}
-                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
+                    className="w-full mt-1 border border-gray-300 rounded-lg p-2 text-base outline-none focus:border-main focus:ring-2 focus:ring-main/20 transition"
                   />
                 </div>
               ))}
@@ -300,21 +294,21 @@ export default function StoreEditModal({
           </div>
 
           {/* Footer */}
-          <div className="flex flex-col justify-center items-center border-t border-gray-200 pt-4">
-            <p className="text-xs text-gray-500 mb-3">
+          <div className="flex flex-col justify-center items-center border-t border-gray-200 pt-4 text-center">
+            <p className="text-[10px] sm:text-xs text-gray-500 mb-3 px-2">
               Los cambios se aplicarán inmediatamente y serán notificados al
               vendedor.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto justify-center">
               <ButtonComponent
                 text="Cancelar"
                 onClick={onClose}
-                style="bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition"
+                style="bg-gray-200 text-gray-700 px-4 sm:px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition text-sm"
               />
               <ButtonComponent
-                text={uploading ? "Guardando..." : "Guardar"}
+                text={uploading ? 'Guardando...' : 'Guardar'}
                 type="submit"
-                style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition"
+                style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-4 sm:px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition text-sm"
               />
             </div>
           </div>
