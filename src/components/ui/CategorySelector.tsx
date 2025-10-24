@@ -1,4 +1,4 @@
-//Componente hecho con IA para dropdown de categorías
+// Componente hecho con IA para dropdown de categorías
 
 import { useState } from "react";
 import { IconPlus, IconX } from "@tabler/icons-react";
@@ -10,7 +10,11 @@ interface CategorySelectorProps {
     setSelected: (ids: number[]) => void;
 }
 
-export default function CategorySelector({ categories, selected, setSelected }: CategorySelectorProps) {
+export default function CategorySelector({
+    categories,
+    selected,
+    setSelected,
+}: CategorySelectorProps) {
     const [open, setOpen] = useState(false);
 
     const handleSelect = (id: number) => {
@@ -25,19 +29,20 @@ export default function CategorySelector({ categories, selected, setSelected }: 
     };
 
     return (
-        <div className="relative w-1/2">
+        <div className="relative w-full sm:w-1/2">
             {/* Botón + */}
             <button
                 type="button"
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 bg-main-dark/20 p-2 rounded-full cursor-pointer"
+                className="flex items-center justify-center sm:justify-start gap-2 bg-main-dark/20 p-2 rounded-full cursor-pointer w-full sm:w-auto"
             >
                 <IconPlus size={16} />
-                Agregar categoría
+                <span className="text-sm sm:text-base">Agregar categoría</span>
             </button>
 
+            {/* Dropdown */}
             {open && (
-                <div className="absolute top-full mt-2 left-0 w-full bg-light-gray rounded-lg shadow-md z-50 p-2">
+                <div className="absolute top-full mt-2 left-0 w-full bg-light-gray rounded-lg shadow-md z-50 p-2 max-sm:text-sm">
                     <button
                         type="button"
                         onClick={() => setOpen(false)}
@@ -45,6 +50,7 @@ export default function CategorySelector({ categories, selected, setSelected }: 
                     >
                         <IconX size={16} />
                     </button>
+
                     <ul className="flex flex-col gap-2 mt-6 max-h-60 overflow-y-auto">
                         {categories
                             .filter((cat) => !selected.includes(cat.id))
@@ -63,6 +69,7 @@ export default function CategorySelector({ categories, selected, setSelected }: 
                 </div>
             )}
 
+            {/* Chips de categorías seleccionadas */}
             <div className="flex flex-wrap gap-2 mt-2">
                 {selected.map((id) => {
                     const cat = categories.find((c) => c.id === id);
@@ -70,10 +77,14 @@ export default function CategorySelector({ categories, selected, setSelected }: 
                     return (
                         <div
                             key={id}
-                            className="bg-contrast-secondary text-white px-2 py-1 rounded-full flex items-center gap-1 text-sm"
+                            className="bg-contrast-secondary text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs sm:text-sm"
                         >
                             {cat.name}
-                            <button type="button" onClick={() => handleRemove(id)}>
+                            <button
+                                type="button"
+                                onClick={() => handleRemove(id)}
+                                className="hover:text-gray-200"
+                            >
                                 <IconX size={14} />
                             </button>
                         </div>

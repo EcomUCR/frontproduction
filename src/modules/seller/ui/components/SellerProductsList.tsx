@@ -65,9 +65,9 @@ export default function SellerProductsList() {
 
   return (
     <div className="pl-4">
-      {/* Header */}
+      {/* ⚠️ Estado: tienda en verificación */}
       {store?.is_verified === false && (
-        <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-12 ml-10 shadow-lg border border-main/20">
+        <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-6 sm:px-12 mx-4 sm:ml-10 shadow-lg border border-main/20 text-center">
           <div className="flex items-center justify-center w-14 h-14 bg-contrast-secondary/20 rounded-full">
             <IconExclamationCircle
               size={30}
@@ -78,9 +78,9 @@ export default function SellerProductsList() {
           <p className="text-xl font-semibold text-main">
             Tu tienda está en verificación
           </p>
-          <p className="text-center text-main-dark/70 max-w-md">
-            El equipo de TukiShop se pondrá en contacto contigo para verificar
-            tu tienda. Si tienes dudas, contacta con soporte.
+          <p className="text-main-dark/70 max-w-md">
+            El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda.
+            Si tienes dudas, contacta con soporte.
           </p>
           <a
             href="https://wa.me/50687355629"
@@ -94,47 +94,54 @@ export default function SellerProductsList() {
         </div>
       )}
 
+      {/* ✅ Contenido si la tienda está verificada */}
       {store?.is_verified === true && (
         <>
-          {/* 🔹 HEADER SUPERIOR */}
-          <section className="flex justify-between font-quicksand items-center px-10">
-            <h1 className="text-2xl font-semibold border-b-3 border-main">
+          {/* 🔹 Header superior */}
+          <section className="flex flex-col sm:flex-row sm:justify-between sm:items-center font-quicksand gap-4 sm:gap-0 px-0 sm:px-10 mt-6">
+            <h1 className="text-xl sm:text-2xl font-semibold border-b-2 border-main w-fit">
               Lista de productos
             </h1>
-            <div className="bg-main-dark/10 flex items-center gap-2 px-1 py-1 rounded-full">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar..."
-                className="bg-transparent outline-none px-2"
-              />
-              <ButtonComponent
-                icon={<IconSearch />}
-                iconStyle="text-white cursor-pointer"
-                style="bg-gradient-to-br to-contrast-main from-contrast-secondary rounded-full w-12 h-8 flex items-center justify-center"
-              />
+
+            {/* 🔎 Buscador */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
+              <div className="flex items-center bg-main-dark/10 gap-2 px-3 py-1.5 rounded-full w-full sm:w-auto">
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar..."
+                  className="bg-transparent outline-none px-2 w-full sm:w-40"
+                />
+                <ButtonComponent
+                  icon={<IconSearch />}
+                  iconStyle="text-white cursor-pointer"
+                  style="bg-gradient-to-br to-contrast-main from-contrast-secondary rounded-full w-10 h-8 flex items-center justify-center"
+                />
+              </div>
+
+              {/* 🟧 Botón registrar */}
+              <Link to="/crudProduct" className="w-full sm:w-auto">
+                <ButtonComponent
+                  text="Registrar producto"
+                  style="bg-contrast-secondary cursor-pointer rounded-full px-4 py-2 w-full text-white font-semibold hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400"
+                />
+              </Link>
             </div>
-            <Link to="/crudProduct">
-              <ButtonComponent
-                text="Registrar nuevo producto"
-                style="bg-contrast-secondary cursor-pointer rounded-full px-4 py-2 text-white font-semibold hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400"
-              />
-            </Link>
           </section>
 
-          {/* 🔹 LISTA DE PRODUCTOS */}
-          <section className="py-10 border-b-2 border-main space-y-3">
+          {/* 🔹 Lista de productos */}
+          <section className="py-8 sm:py-10 border-b-2 border-main space-y-3">
             {loading && (
-              <div className="px-10">
-                <SkeletonPersonalProduct count={9} /> {/* ✅ se ve en rejilla correcta */}
+              <div className="px-4 sm:px-10">
+                <SkeletonPersonalProduct count={9} />
               </div>
             )}
 
-            {error && <p className="col-span-3 text-red-500">{error}</p>}
+            {error && <p className="text-red-500 px-4 sm:px-10">{error}</p>}
 
             {!loading && filteredProducts.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center gap-6 px-10">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 justify-items-center gap-6 px-0 sm:px-10">
                 {filteredProducts
                   .filter((p) => !p.is_featured)
                   .map((product) => (
@@ -143,12 +150,8 @@ export default function SellerProductsList() {
                       shop={store?.name || product.store?.name || "Sin vendedor"}
                       title={product.name}
                       price={product.price}
-                      discountPrice={
-                        product.discount_price || undefined
-                      }
-                      img={
-                        product.image_1_url ? product.image_1_url : audifonos
-                      }
+                      discountPrice={product.discount_price || undefined}
+                      img={product.image_1_url ? product.image_1_url : audifonos}
                       edit
                       id={product.id ?? 0}
                     />
@@ -157,18 +160,18 @@ export default function SellerProductsList() {
             )}
 
             {!loading && filteredProducts.length === 0 && (
-              <p className="col-span-3 text-gray-500 px-10">
+              <p className="text-gray-500 text-center px-4 sm:px-10">
                 No hay productos
               </p>
             )}
           </section>
 
-          {/* 🔹 PRODUCTOS DESTACADOS */}
-          <section className="my-10 px-10">
-            <h2 className="text-2xl font-semibold font-quicksand mb-6">
+          {/* ⭐ Productos destacados */}
+          <section className="my-10 px-4 sm:px-10">
+            <h2 className="text-xl sm:text-2xl font-semibold font-quicksand mb-6 text-center sm:text-left">
               Productos destacados
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 justify-items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 justify-items-center">
               {filteredProducts
                 .filter((p) => p.is_featured)
                 .map((product) => (

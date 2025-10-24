@@ -12,7 +12,6 @@ import CategorySelector from "../../../components/ui/CategorySelector";
 import { useAuth } from "../../../hooks/context/AuthContext";
 import { useParams } from "react-router-dom";
 
-
 type ProductForm = Omit<
   Product,
   "price" | "discount_price" | "image" | "image_1_url" | "image_2_url" | "image_3_url"
@@ -28,7 +27,6 @@ type ProductPayload = Omit<ProductForm, "images"> & {
   image_2?: File | string | null;
   image_3?: File | string | null;
 };
-
 
 export default function CrudProductPage() {
   const {
@@ -49,13 +47,11 @@ export default function CrudProductPage() {
     error: errorDescription,
   } = useOpenAI();
 
-
   const fileInputRefs = [
     React.useRef<HTMLInputElement>(null),
     React.useRef<HTMLInputElement>(null),
     React.useRef<HTMLInputElement>(null),
   ];
-
 
   const [form, setForm] = useState<ProductForm>({
     name: "",
@@ -75,9 +71,6 @@ export default function CrudProductPage() {
     null,
     null,
   ]);
-  const [errorPrice, setErrorPrice] = useState<string | null>(null);
-  const [errorDiscount, setErrorDiscount] = useState<string | null>(null);
-
 
   useEffect(() => {
     (async () => {
@@ -86,13 +79,11 @@ export default function CrudProductPage() {
     })();
   }, []);
 
-
   useEffect(() => {
     if (!id) return;
     (async () => {
       const product = await getProductById(Number(id));
       if (product) {
-
         const loadedImages: (string | null)[] = [
           (product as any).image_1_url || null,
           (product as any).image_2_url || null,
@@ -119,8 +110,6 @@ export default function CrudProductPage() {
     if (description) setForm({ ...form, description });
   };
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -133,18 +122,13 @@ export default function CrudProductPage() {
     const mainImageFile = form.images[0];
 
     const payload: ProductPayload = {
-
-
       image: mainImageFile || null,
-
       store_id: storeId,
       price: Number(form.price),
       discount_price: Number(form.discount_price),
-
       image_1: form.images[0],
       image_2: form.images[1],
       image_3: form.images[2],
-
       name: form.name,
       description: form.description,
       stock: form.stock,
@@ -158,7 +142,6 @@ export default function CrudProductPage() {
         await updateProduct(Number(id), payload as any);
       } else {
         await createProduct(payload as any);
-
         setForm({
           name: "",
           description: "",
@@ -171,10 +154,8 @@ export default function CrudProductPage() {
           is_featured: false,
         });
         setPreviews([null, null, null]);
-
-
-        fileInputRefs.forEach(ref => {
-          if (ref.current) ref.current.value = '';
+        fileInputRefs.forEach((ref) => {
+          if (ref.current) ref.current.value = "";
         });
       }
     } catch (err) {
@@ -182,22 +163,16 @@ export default function CrudProductPage() {
     }
   };
 
-
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const fileURL = URL.createObjectURL(file);
-
-
 
       setForm((prevForm) => {
         const newImages = [...prevForm.images];
         newImages[index] = file;
         return { ...prevForm, images: newImages };
       });
-
-
 
       setPreviews((prevPreviews) => {
         const newPreviews = [...prevPreviews];
@@ -207,18 +182,12 @@ export default function CrudProductPage() {
     }
   };
 
-
-
   const handleRemoveImage = (index: number) => {
-
-
     if (fileInputRefs[index].current) {
-      fileInputRefs[index].current!.value = '';
+      fileInputRefs[index].current!.value = "";
     }
 
-
-
-    if (previews[index] && (form.images[index] instanceof File)) {
+    if (previews[index] && form.images[index] instanceof File) {
       URL.revokeObjectURL(previews[index]!);
     }
 
@@ -232,209 +201,162 @@ export default function CrudProductPage() {
       newPreviews[index] = null;
       return newPreviews;
     });
-  }
+  };
 
-  const mainPreview = previews[0] ||
-    (typeof form.images[0] === "string" ? form.images[0] : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg");
-
+  const mainPreview =
+    previews[0] ||
+    (typeof form.images[0] === "string"
+      ? form.images[0]
+      : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg");
 
   return (
     <div>
       <NavBar />
-      <section className="flex flex-col font-quicksand gap-5 my-10 mx-auto max-w-[80rem]">
-        <div className="flex items-center gap-3">
+      <section className="flex flex-col font-quicksand gap-5 my-10 mx-auto max-w-[80rem] px-4 sm:px-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <ButtonComponent
             icon={<IconArrowBackUp />}
             text="Volver"
-
-
-            style="flex text-sm ml-5 px-2 items-center gap-2 rounded-full cursor-pointer"
+            style="flex text-sm ml-0 sm:ml-5 px-2 items-center gap-2 rounded-full cursor-pointer"
             onClick={() => window.history.back()}
           />
-          <h1 className="text-3xl font-bold border-b-3 border-main">
+          <h1 className="text-2xl sm:text-3xl font-bold border-b-2 sm:border-b-3 border-main">
             {id ? "Editar Producto" : "Nuevo Producto"}
           </h1>
         </div>
-        <form onSubmit={handleSubmit}>
-          <div className="mx-30 flex flex-col gap-10 py-10">
 
+        <form onSubmit={handleSubmit} className="flex flex-col gap-10 py-6 sm:py-10">
+          {/* 🔹 Datos principales */}
+          <div className="w-full flex flex-col sm:flex-row justify-between gap-6 sm:gap-0">
+            <label className="flex flex-col sm:w-5/12 gap-2">
+              <p className="font-semibold">
+                Nombre del producto <span className="text-red-500">*</span>
+              </p>
+              <textarea
+                maxLength={54}
+                cols={35}
+                rows={2}
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Nombre"
+                className="bg-main-dark/20 rounded-2xl p-2 w-full"
+              />
+            </label>
 
-            <div className="w-full flex justify-between">
-              <label className="flex flex-col w-5/12 gap-2">
+            <div className="flex flex-col sm:flex-row sm:w-6/12 gap-5">
+              <label className="flex flex-col w-full gap-2">
                 <p className="font-semibold">
-                  Nombre del producto <span className="text-red-500">*</span>
+                  Precio <span className="text-red-500">*</span>
                 </p>
-                <textarea
-                  maxLength={54}
-                  cols={35}
-                  rows={2}
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Nombre"
-                  className="bg-main-dark/20 rounded-2xl p-2 w-auto"
+                <input
+                  type="text"
+                  value={form.price}
+                  onChange={(e) => setForm({ ...form, price: e.target.value })}
+                  placeholder="Precio"
+                  className="bg-main-dark/20 rounded-2xl p-2 w-full"
                 />
               </label>
 
-              <div className="flex w-6/12 gap-5">
-                <label className="flex flex-col w-full gap-2">
-                  <p className="font-semibold">
-                    Precio <span className="text-red-500">*</span>
-                  </p>
-                  <input
-                    type="text"
-                    value={form.price}
-                    onChange={(e) => {
-                      let value = e.target.value;
-                      if (/^\d*\.?\d*$/.test(value) || value === "") {
-                        if (/^0+\d/.test(value))
-                          value = value.replace(/^0+/, "");
-                        setForm({ ...form, price: value });
-                        setErrorPrice(null);
-                      } else {
-                        setErrorPrice("Solo se permiten valores numéricos");
-                      }
-                    }}
-                    onBlur={() => {
-                      setForm({ ...form, price: Number(form.price) || 0 });
-                    }}
-                    placeholder="Precio"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorPrice ? "border border-red-500" : ""
-                      }`}
-                  />
-                  {errorPrice && (
-                    <p className="text-red-500 text-sm">{errorPrice}</p>
-                  )}
-                </label>
-
-                <label className="flex flex-col w-full gap-2">
-                  <p className="font-semibold">Precio de oferta</p>
-                  <input
-                    type="text"
-                    value={form.discount_price}
-                    onChange={(e) => {
-                      let value = e.target.value;
-                      if (/^\d*\.?\d*$/.test(value) || value === "") {
-                        if (/^0+\d/.test(value))
-                          value = value.replace(/^0+/, "");
-                        setForm({ ...form, discount_price: value });
-                        setErrorDiscount(null);
-                      } else {
-                        setErrorDiscount("Solo se permiten valores numéricos");
-                      }
-                    }}
-                    onBlur={() => {
-                      setForm({
-                        ...form,
-                        discount_price: Number(form.discount_price) || 0,
-                      });
-                    }}
-                    placeholder="Precio de oferta"
-                    className={`bg-main-dark/20 rounded-2xl p-2 ${errorDiscount ? "border border-red-500" : ""
-                      }`}
-                  />
-                  {errorDiscount && (
-                    <p className="text-red-500 text-sm">{errorDiscount}</p>
-                  )}
-                </label>
-              </div>
-            </div>
-
-
-            <div className="w-full flex gap-5">
-              <div className="flex flex-col w-6/12 gap-2">
-                <p className="font-semibold">
-                  Categorías <span className="text-red-500">*</span>
-                </p>
-                <CategorySelector
-                  categories={categories}
-                  selected={form.categories}
-                  setSelected={(ids) => setForm({ ...form, categories: ids })}
+              <label className="flex flex-col w-full gap-2">
+                <p className="font-semibold">Precio de oferta</p>
+                <input
+                  type="text"
+                  value={form.discount_price}
+                  onChange={(e) => setForm({ ...form, discount_price: e.target.value })}
+                  placeholder="Precio de oferta"
+                  className="bg-main-dark/20 rounded-2xl p-2 w-full"
                 />
-              </div>
-
-              <div className="flex w-6/12 gap-5">
-                <label className="flex flex-col w-full gap-2">
-                  <p className="font-semibold">
-                    Stock <span className="text-red-500">*</span>
-                  </p>
-                  <input
-                    type="number"
-                    value={form.stock}
-                    onChange={(e) =>
-                      setForm({ ...form, stock: Number(e.target.value) })
-                    }
-                    placeholder="Stock"
-                    className="bg-main-dark/20 rounded-2xl p-2 w-full"
-                  />
-                </label>
-
-                <label className="flex flex-col w-full gap-2">
-                  <p className="font-semibold">
-                    Estado <span className="text-red-500">*</span>
-                  </p>
-                  <select
-                    value={form.status}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        status: e.target.value as
-                          | "ACTIVE"
-                          | "INACTIVE"
-                          | "DRAFT",
-                      })
-                    }
-                    className="bg-main-dark/20 rounded-2xl p-2 w-full"
-                  >
-                    <option value="ACTIVE">Activo</option>
-                    <option value="INACTIVE">Inactivo</option>
-                    <option value="DRAFT">Archivado</option>
-                  </select>
-                </label>
-              </div>
+              </label>
             </div>
           </div>
 
+          {/* 🔹 Categorías y stock */}
+          <div className="w-full flex flex-col sm:flex-row gap-6 sm:gap-5">
+            <div className="flex flex-col sm:w-6/12 gap-2">
+              <p className="font-semibold">
+                Categorías <span className="text-red-500">*</span>
+              </p>
+              <CategorySelector
+                categories={categories}
+                selected={form.categories}
+                setSelected={(ids) => setForm({ ...form, categories: ids })}
+              />
+            </div>
 
-          <div className="flex gap-2 w-full justify-between px-30">
-            <div className="flex flex-col w-5/12 gap-6">
+            <div className="flex flex-col sm:flex-row sm:w-6/12 gap-5">
+              <label className="flex flex-col w-full gap-2">
+                <p className="font-semibold">
+                  Stock <span className="text-red-500">*</span>
+                </p>
+                <input
+                  type="number"
+                  value={form.stock}
+                  onChange={(e) =>
+                    setForm({ ...form, stock: Number(e.target.value) })
+                  }
+                  placeholder="Stock"
+                  className="bg-main-dark/20 rounded-2xl p-2 w-full"
+                />
+              </label>
+
+              <label className="flex flex-col w-full gap-2">
+                <p className="font-semibold">
+                  Estado <span className="text-red-500">*</span>
+                </p>
+                <select
+                  value={form.status}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      status: e.target.value as "ACTIVE" | "INACTIVE" | "DRAFT",
+                    })
+                  }
+                  className="bg-main-dark/20 rounded-2xl p-2 w-full"
+                >
+                  <option value="ACTIVE">Activo</option>
+                  <option value="INACTIVE">Inactivo</option>
+                  <option value="DRAFT">Archivado</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          {/* 🔹 Descripción + Preview */}
+          <div className="flex flex-col sm:flex-row gap-10 justify-between">
+            {/* Izquierda */}
+            <div className="flex flex-col sm:w-5/12 gap-6">
               <label className="flex flex-col w-full gap-2">
                 <p className="font-semibold">Sobre este producto</p>
-                <div className="flex flex-col gap-2">
-                  <textarea
-                    placeholder="Sobre este producto"
-                    value={form.description}
-                    onChange={(e) =>
-                      setForm({ ...form, description: e.target.value })
+                <textarea
+                  placeholder="Sobre este producto"
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  cols={30}
+                  rows={5}
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                />
+                <div className="flex flex-col w-full items-center">
+                  <ButtonComponent
+                    type="button"
+                    text={
+                      loadingDescription
+                        ? "Cargando..."
+                        : "Autogenerar descripción"
                     }
-                    cols={30}
-                    rows={5}
-                    className="bg-main-dark/20 rounded-xl px-3 py-2 w-auto"
+                    onClick={handleGenerateDescription}
+                    icon={<IconWand />}
+                    style="flex justify-center text-sm w-full sm:w-[50%] px-3 py-2 items-center gap-2 rounded-full bg-main text-white hover:bg-contrast-secondary transition-colors duration-300"
                   />
-                  <div className="flex flex-col w-full items-center">
-                    <ButtonComponent
-                      type="button"
-                      text={
-                        loadingDescription
-                          ? "Cargando..."
-                          : "Autogenerar descripción"
-                      }
-                      onClick={handleGenerateDescription}
-                      icon={<IconWand />}
-
-                      style="flex justify-center text-sm w-[50%] px-2 py-2 items-center gap-2 rounded-full bg-main text-white cursor-pointer hover:bg-contrast-secondary transition-colors duration-300 ease-in-out"
-                    />
-                    {errorDescription && (
-                      <p className="text-red-500 text-sm text-center">
-                        {errorDescription}
-                      </p>
-                    )}
-                  </div>
+                  {errorDescription && (
+                    <p className="text-red-500 text-sm text-center">
+                      {errorDescription}
+                    </p>
+                  )}
                 </div>
               </label>
 
-
               <div className="flex flex-col gap-4">
-                <p className="font-semibold">Agregar imágenes </p>
+                <p className="font-semibold">Agregar imágenes</p>
                 {previews.map((previewUrl, index) => (
                   <div key={index} className="flex flex-col gap-2 p-2 border border-gray-300 rounded-lg">
                     <label className="font-medium text-sm">
@@ -443,10 +365,9 @@ export default function CrudProductPage() {
                     <input
                       type="file"
                       accept="image/*"
-
                       ref={fileInputRefs[index]}
                       onChange={(e) => handleImageChange(e, index)}
-                      className="bg-main-dark/20 rounded-2xl p-2 w-full cursor-pointer text-sm "
+                      className="bg-main-dark/20 rounded-2xl p-2 w-full cursor-pointer text-sm"
                     />
                     {previewUrl && (
                       <div className="flex flex-col items-center gap-2 mt-2">
@@ -459,7 +380,6 @@ export default function CrudProductPage() {
                           type="button"
                           text="Quitar imagen"
                           onClick={() => handleRemoveImage(index)}
-
                           style="text-xs text-red-600 hover:text-red-800 cursor-pointer"
                         />
                       </div>
@@ -469,8 +389,8 @@ export default function CrudProductPage() {
               </div>
             </div>
 
-
-            <div className="flex flex-col items-center justify-center w-6/12 gap-2">
+            {/* Derecha */}
+            <div className="flex flex-col items-center justify-center sm:w-6/12 gap-6">
               <label className="flex items-center gap-2">
                 <p className="font-semibold">Destacar producto</p>
                 <input
@@ -482,7 +402,6 @@ export default function CrudProductPage() {
                   className="cursor-pointer"
                 />
               </label>
-
 
               {form.is_featured ? (
                 <FeaturedProductCard
@@ -504,67 +423,57 @@ export default function CrudProductPage() {
                   shop="Preview"
                   title={form.name || "Nombre del producto"}
                   price={Number(form.price) || 0}
-                  discountPrice={
-                    Number(form.discount_price) || undefined
-                  }
+                  discountPrice={Number(form.discount_price) || undefined}
                   img={mainPreview}
                   edit={false}
                   id={0}
                 />
               )}
 
-
-              <div className="flex flex-col items-center gap-5 py-10 w-full">
+              <div className="flex flex-col gap-4 w-full sm:w-2/3">
                 <ButtonComponent
                   text={loading ? "Guardando..." : "Guardar"}
-
-                  style="text-white text-lg p-2 items-center rounded-full bg-contrast-main w-2/3 hover:bg-contrast-secondary transition-all duration-400 cursor-pointer"
+                  style="text-white text-lg py-2 rounded-full bg-contrast-main w-full hover:bg-contrast-secondary transition-all duration-400 cursor-pointer"
                   type="submit"
                 />
                 <ButtonComponent
                   text="Cancelar"
-
-                  style="text-white text-lg p-2 items-center rounded-full bg-main-dark w-2/3 hover:bg-main transition-all duration-400 cursor-pointer"
+                  style="text-white text-lg py-2 rounded-full bg-main-dark w-full hover:bg-main transition-all duration-400 cursor-pointer"
                   onClick={() => window.history.back()}
                 />
-                <ButtonComponent
-                  text="Eliminar producto"
-                  style="text-white text-lg p-2 items-center rounded-full bg-red-600 w-2/3 hover:bg-red-700 transition-all duration-400 cursor-pointer"
-                  onClick={async () => {
-                    if (!id) return;
-                    const confirm = window.confirm(
-                      "¿Estás seguro de eliminar este producto?"
-                    );
-                    if (!confirm) return;
+                {id && (
+                  <ButtonComponent
+                    text="Eliminar producto"
+                    style="text-white text-lg py-2 rounded-full bg-red-600 w-full hover:bg-red-700 transition-all duration-400 cursor-pointer"
+                    onClick={async () => {
+                      if (!id) return;
+                      if (!window.confirm("¿Estás seguro de eliminar este producto?")) return;
 
-                    const mainImageFile = form.images[0];
+                      const payload: ProductPayload = {
+                        image: form.images[0] || null,
+                        price: Number(form.price),
+                        discount_price: Number(form.discount_price),
+                        status: "ARCHIVED",
+                        image_1: form.images[0],
+                        image_2: form.images[1],
+                        image_3: form.images[2],
+                        name: form.name,
+                        description: form.description,
+                        stock: form.stock,
+                        categories: form.categories,
+                        is_featured: form.is_featured,
+                      };
 
-
-                    const payload: ProductPayload = {
-                      image: mainImageFile || null,
-                      price: Number(form.price),
-                      discount_price: Number(form.discount_price),
-                      status: "ARCHIVED",
-                      image_1: form.images[0],
-                      image_2: form.images[1],
-                      image_3: form.images[2],
-                      name: form.name,
-                      description: form.description,
-                      stock: form.stock,
-                      categories: form.categories,
-                      is_featured: form.is_featured,
-                    }
-
-                    try {
-                      await updateProduct(Number(id), payload as any);
-                      alert("Producto archivado correctamente");
-                      window.history.back();
-                    } catch (err) {
-                      console.error(err);
-                      alert("No se pudo archivar el producto");
-                    }
-                  }}
-                />
+                      try {
+                        await updateProduct(Number(id), payload as any);
+                        alert("Producto archivado correctamente");
+                        window.history.back();
+                      } catch {
+                        alert("No se pudo archivar el producto");
+                      }
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
