@@ -15,6 +15,7 @@ import {
   PaginationPrevious,
 } from "../../../../components/ui/pagination";
 import { useNotificationContext } from "../../../../hooks/context/NotificationContext";
+import AddUserModal from "./AddUserModal";
 
 export default function AdminUsersTable() {
   const {
@@ -29,6 +30,8 @@ export default function AdminUsersTable() {
 
   const { storeToOpen, clearStoreToOpen } = useNotificationContext();
 
+
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"ALL" | "CUSTOMER" | "SELLER" | "ADMIN">(
@@ -195,8 +198,10 @@ export default function AdminUsersTable() {
           {/* Crear */}
           <ButtonComponent
             text="Agregar usuario"
+            onClick={() => setShowAddUserModal(true)}
             style="bg-main text-white rounded-full py-2 sm:py-3 px-4 font-quicksand hover:bg-contrast-secondary transition-all duration-400 w-full sm:w-auto"
           />
+
         </div>
 
         {/* 🧾 Tabla scrollable */}
@@ -262,8 +267,8 @@ export default function AdminUsersTable() {
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
                   className={`${currentPage === 1
-                      ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
-                      : "hover:bg-main-dark/10 hover:text-main-dark"
+                    ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
+                    : "hover:bg-main-dark/10 hover:text-main-dark"
                     } rounded-full px-3 py-2 transition-all duration-300`}
                 />
               </PaginationItem>
@@ -277,8 +282,8 @@ export default function AdminUsersTable() {
                       onClick={() => handlePageChange(page)}
                       isActive={isActive}
                       className={`rounded-full w-9 h-9 flex items-center justify-center text-sm font-semibold transition-all duration-300 ${isActive
-                          ? "bg-contrast-secondary text-white shadow-md scale-105"
-                          : "bg-main-dark/10 text-main-dark hover:bg-main-dark/20"
+                        ? "bg-contrast-secondary text-white shadow-md scale-105"
+                        : "bg-main-dark/10 text-main-dark hover:bg-main-dark/20"
                         }`}
                     >
                       {page}
@@ -291,8 +296,8 @@ export default function AdminUsersTable() {
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
                   className={`${currentPage === totalPages
-                      ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
-                      : "hover:bg-main-dark/10 hover:text-main-dark"
+                    ? "opacity-50 pointer-events-none bg-gray-200 text-gray-500"
+                    : "hover:bg-main-dark/10 hover:text-main-dark"
                     } rounded-full px-3 py-2 transition-all duration-300`}
                 />
               </PaginationItem>
@@ -329,6 +334,15 @@ export default function AdminUsersTable() {
           </motion.div>
         )}
       </AnimatePresence>
+      <AnimatePresence>
+        {showAddUserModal && (
+          <motion.div className="fixed inset-0 z-50 flex items-center justify-center">
+            <AddUserModal onClose={() => setShowAddUserModal(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+
     </div>
   );
 }
