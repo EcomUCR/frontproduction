@@ -243,7 +243,7 @@ export default function InteractiveRatingSummary({
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full border rounded p-2 h-20 text-sm resize-none"
+              className="w-full border rounded p-2 h-20 text-base resize-none"
               placeholder="Escribe tu opinión aquí..."
             />
 
