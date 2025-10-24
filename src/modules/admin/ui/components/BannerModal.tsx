@@ -9,7 +9,7 @@ interface BannerModalProps {
   newBanner: any;
   setNewBanner: (value: any) => void;
   onClose: () => void;
-  onSaveSuccess?: () => void; // callback opcional tras guardar
+  onSaveSuccess?: () => void;
 }
 
 export default function BannerModal({
@@ -21,7 +21,6 @@ export default function BannerModal({
   const { saveBanner, loading } = useBanner();
   const [uploading, setUploading] = useState(false);
 
-  /** 🔹 Maneja cambios de input */
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -32,7 +31,6 @@ export default function BannerModal({
     }));
   };
 
-  /** 🔹 Maneja checkbox */
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setNewBanner((prev: any) => ({
@@ -41,7 +39,6 @@ export default function BannerModal({
     }));
   };
 
-  /** 🔹 Subida de imágenes */
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "image" | "character"
@@ -64,7 +61,6 @@ export default function BannerModal({
     }
   };
 
-  /** 🔹 Guardar banner */
   const handleSave = async () => {
     try {
       await saveBanner(newBanner);
@@ -78,25 +74,26 @@ export default function BannerModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn font-quicksand"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn font-quicksand px-3 sm:px-0"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-6 w-[80rem] shadow-xl relative animate-scaleIn max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-2xl p-4 sm:p-6 w-full sm:w-[80rem] max-w-[95vw] shadow-xl relative animate-scaleIn max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold mb-6 text-main-dark text-center">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-main-dark text-center">
           Nuevo Banner
         </h2>
 
         <button
-          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 cursor-pointer"
+          className="absolute top-3 right-3 text-gray-600 hover:text-gray-800 cursor-pointer"
           onClick={onClose}
         >
           <IconX size={24} />
         </button>
 
-        <div className="grid grid-cols-2 gap-6">
+        {/* 🔹 Responsive grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* 🧾 Columna izquierda: formulario */}
           <form className="space-y-4">
             <div>
@@ -148,7 +145,7 @@ export default function BannerModal({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-semibold mb-1">Tipo</label>
                 <select
@@ -179,7 +176,7 @@ export default function BannerModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-semibold mb-1">Link</label>
                 <input
@@ -237,13 +234,13 @@ export default function BannerModal({
           </form>
 
           {/* 🖼️ Columna derecha: preview */}
-          <div className="flex flex-col items-center justify-start pt-4">
-            <h3 className="font-semibold text-lg mb-3 text-main-dark">
+          <div className="flex flex-col items-center justify-start pt-2 sm:pt-4">
+            <h3 className="font-semibold text-base sm:text-lg mb-3 text-main-dark">
               Previsualización
             </h3>
 
             {newBanner.image ? (
-              <div className="scale-[0.9] border border-gray-300 p-3 rounded-2xl shadow-sm bg-gray-50">
+              <div className="scale-95 sm:scale-[0.9] border border-gray-300 p-2 sm:p-3 rounded-2xl shadow-sm bg-gray-50 w-full sm:w-auto">
                 <BannerComponent
                   id={newBanner.id}
                   type={newBanner.type}
@@ -267,7 +264,7 @@ export default function BannerModal({
                 />
               </div>
             ) : (
-              <p className="text-gray-500 text-sm mt-4">
+              <p className="text-gray-500 text-sm mt-4 text-center px-2">
                 Sube una imagen para ver la previsualización
               </p>
             )}
@@ -275,19 +272,19 @@ export default function BannerModal({
         </div>
 
         {/* 🧭 Botones inferiores */}
-        <div className="mt-8 flex justify-end gap-3">
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-end gap-3">
           <ButtonComponent
             text="Cancelar"
-            style="bg-gray-300 text-black rounded-full px-4 py-2 hover:bg-gray-400 transition-all duration-300"
+            style="bg-gray-300 text-black rounded-full px-4 py-2 hover:bg-gray-400 transition-all duration-300 w-full sm:w-auto"
             onClick={onClose}
           />
           <ButtonComponent
-            text={loading || uploading ? "Guardando..." : "Guardar"}
+            text={loading || uploading ? 'Guardando...' : 'Guardar'}
             style={`${
               loading || uploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-main-dark hover:bg-main"
-            } text-white rounded-full px-4 py-2 transition-all duration-300`}
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-main-dark hover:bg-main'
+            } text-white rounded-full px-4 py-2 transition-all duration-300 w-full sm:w-auto`}
             onClick={handleSave}
           />
         </div>
