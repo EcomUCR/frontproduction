@@ -356,37 +356,56 @@ export default function CrudProductPage() {
               </label>
 
               <div className="flex flex-col gap-4">
-                <p className="font-semibold">Agregar imágenes</p>
+                <p className="font-semibold text-lg text-main">Agregar imágenes</p>
+
                 {previews.map((previewUrl, index) => (
-                  <div key={index} className="flex flex-col gap-2 p-2 border border-gray-300 rounded-lg">
-                    <label className="font-medium text-sm">
-                      {`Imagen ${index + 1}`}
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={fileInputRefs[index]}
-                      onChange={(e) => handleImageChange(e, index)}
-                      className="bg-main-dark/20 rounded-2xl p-2 w-full cursor-pointer text-sm"
-                    />
-                    {previewUrl && (
-                      <div className="flex flex-col items-center gap-2 mt-2">
+                  <div
+                    key={index}
+                    className="relative border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300 bg-white/70 max-sm:p-3"
+                  >
+                    {/* Header del bloque */}
+                    <div className="flex justify-between items-center mb-3 max-sm:flex-col max-sm:items-start max-sm:gap-1">
+                      <label className="font-medium text-sm text-gray-700">
+                        Imagen {index + 1}
+                      </label>
+
+                      {previewUrl && (
+                        <button
+                          onClick={() => handleRemoveImage(index)}
+                          className="text-red-500 hover:text-red-700 text-sm font-semibold max-sm:self-end"
+                        >
+                          Quitar
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Contenido: Imagen + Input */}
+                    <div className="flex items-center gap-4 max-sm:flex-col max-sm:items-start max-sm:gap-3">
+                      {previewUrl ? (
                         <img
                           src={previewUrl}
                           alt={`Previsualización ${index + 1}`}
-                          className="w-20 h-20 object-cover rounded-md border border-gray-400"
+                          className="w-24 h-20 rounded-lg object-cover border border-gray-300 max-sm:w-full max-sm:h-40"
                         />
-                        <ButtonComponent
-                          type="button"
-                          text="Quitar imagen"
-                          onClick={() => handleRemoveImage(index)}
-                          style="text-xs text-red-600 hover:text-red-800 cursor-pointer"
-                        />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-24 h-24 flex items-center justify-center border border-dashed border-gray-400 rounded-lg text-gray-400 text-xs max-sm:w-full max-sm:h-40">
+                          Sin imagen
+                        </div>
+                      )}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRefs[index]}
+                        onChange={(e) => handleImageChange(e, index)}
+                        className="flex-1 text-sm file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-main-dark/20 file:text-main file:cursor-pointer hover:file:bg-main-dark/30 transition max-sm:w-full max-sm:text-xs"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
+
+
             </div>
 
             {/* Derecha */}
