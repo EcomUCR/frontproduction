@@ -34,7 +34,6 @@ interface Store {
   is_verified?: boolean | string | null;
 }
 
-
 interface SocialLink {
   type: "instagram" | "x" | "facebook" | "link";
   text: string;
@@ -60,35 +59,21 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
 
   useEffect(() => {
     if (user?.store) {
-      setEditableStore({ ...user.store });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (user?.store) {
       const storeData = {
         ...user.store,
         is_verified:
           user.store.is_verified === true ||
-            user.store.is_verified === "true"
+          user.store.is_verified === "true"
             ? true
             : false,
       };
       setEditableStore(storeData);
-
-      console.log(
-        "%c[TukiShop Debug]",
-        "color:#ff7e47; font-weight:bold;",
-        "Valor de is_verified:",
-        storeData.is_verified,
-        "| Tipo de dato:",
-        typeof storeData.is_verified
-      );
     }
   }, [user]);
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setEditableStore((prev) => (prev ? { ...prev, [name]: value } : prev));
   };
@@ -170,21 +155,24 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
 
   if (!editableStore) return null;
 
-
-
   return (
     <div className="flex flex-col justify-center gap-4 mt-10 font-quicksand">
+      {/* 🔸 Estado de verificación */}
       {editableStore.is_verified === false && (
-        <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-12 ml-10 shadow-lg border border-main/20">
+        <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-6 sm:px-12 mx-4 sm:ml-10 shadow-lg border border-main/20 text-center">
           <div className="flex items-center justify-center w-14 h-14 bg-contrast-secondary/20 rounded-full">
-            <IconExclamationCircle size={30} className="text-contrast-secondary" />
+            <IconExclamationCircle
+              size={30}
+              className="text-contrast-secondary"
+            />
           </div>
 
           <p className="text-xl font-semibold text-main">
             Tu tienda está en verificación
           </p>
-          <p className="text-center text-main-dark/70 max-w-md">
-            El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda. Si tienes dudas, contacta con soporte.
+          <p className="text-main-dark/70 max-w-md">
+            El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda.
+            Si tienes dudas, contacta con soporte.
           </p>
           <a
             href="https://wa.me/50687355629"
@@ -197,16 +185,29 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
           </a>
         </div>
       )}
+
+      {/* 🔹 Contenido editable (solo tiendas verificadas) */}
       {editableStore.is_verified === true && (
         <>
-          {/* Logo / Banner */}
-          <form onSubmit={(e) => e.preventDefault()} className="flex justify-center gap-10 px-10">
-            <figure className="flex flex-col gap-10 w-1/3">
-              <div className="flex items-center gap-2">
-                <p>Logo de tienda</p>
+          {/* 🖼️ Logo / Banner */}
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-10 px-4 sm:px-10"
+          >
+            {/* Logo */}
+            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-1/3 items-center">
+              <div className="flex items-center justify-between w-full sm:w-auto">
+                <p className="text-sm sm:text-base font-semibold">
+                  Logo de tienda
+                </p>
                 <label className="bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center">
-                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                  <IconEdit size={22} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <IconEdit size={20} />
                 </label>
               </div>
               <img
@@ -215,13 +216,16 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                   "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 alt="Logo"
-                className="w-2/3 h-auto rounded-xl object-cover"
+                className="w-[60%] sm:w-2/3 max-w-[12rem] h-auto rounded-xl object-cover shadow-sm"
               />
             </figure>
 
-            <figure className="flex flex-col gap-10 w-2/3">
-              <div className="flex items-center gap-2">
-                <p>Banner de la tienda</p>
+            {/* Banner */}
+            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-2/3 items-center">
+              <div className="flex items-center justify-between w-full sm:w-auto">
+                <p className="text-sm sm:text-base font-semibold">
+                  Banner de la tienda
+                </p>
                 <label className="bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center">
                   <input
                     type="file"
@@ -229,9 +233,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     onChange={handleBannerChange}
                     className="hidden"
                   />
-                  <IconEdit size={22} />
+                  <IconEdit size={20} />
                 </label>
-
               </div>
               <img
                 src={
@@ -239,16 +242,18 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                   "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 alt="Banner"
-                className="rounded-xl object-cover"
+                className="rounded-xl object-cover w-full sm:w-auto max-h-[12rem] sm:max-h-[18rem] shadow-sm"
               />
             </figure>
           </form>
 
-          {/* Formulario principal */}
-          <div className="w-full px-10">
-            <form className="flex flex-col gap-8 pt-10">
-              <section className="flex flex-col gap-10">
-                <div className="flex gap-10">
+          {/* 🧾 Formulario principal */}
+          <div className="w-full px-4 sm:px-10">
+            <form className="flex flex-col gap-6 sm:gap-8 pt-8 sm:pt-10">
+              {/* Campos principales */}
+              <section className="flex flex-col gap-6 sm:gap-10">
+                {/* Nombre / Correo */}
+                <div className="flex flex-col sm:flex-row gap-5 sm:gap-10">
                   <label className="flex flex-col w-full">
                     Nombre de la tienda
                     <textarea
@@ -256,7 +261,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       value={editableStore.name || ""}
                       onChange={handleChange}
                       rows={2}
-                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                     />
                   </label>
                   <label className="flex flex-col w-full">
@@ -264,13 +269,14 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     <input
                       type="text"
                       placeholder={user?.email || "Correo de la tienda"}
-                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                       disabled
                     />
                   </label>
                 </div>
 
-                <section className="flex gap-10">
+                {/* Teléfono / Email */}
+                <section className="flex flex-col sm:flex-row gap-5 sm:gap-10">
                   <div className="w-full">
                     Número telefónico
                     <label className="bg-main-dark/20 rounded-xl px-3 flex items-center gap-2 w-full">
@@ -281,7 +287,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                         value={editableStore.support_phone || ""}
                         onChange={handleChange}
                         placeholder="Número telefónico"
-                        className="w-full py-2 focus:outline-none"
+                        className="w-full py-2 focus:outline-none text-sm sm:text-base"
                       />
                     </label>
                   </div>
@@ -292,28 +298,34 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       name="support_email"
                       value={editableStore.support_email || ""}
                       onChange={handleChange}
-                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                     />
                   </label>
                 </section>
 
-                {/* Redes */}
+                {/* Redes sociales */}
                 <section>
                   <div className="flex flex-col gap-2">
                     <div className="flex gap-2 items-center">
-                      <h2>Links/Redes sociales</h2>
+                      <h2>Links / Redes sociales</h2>
                       {!adding ? (
-                        <button type="button" onClick={() => setAdding(true)}>
+                        <button
+                          type="button"
+                          onClick={() => setAdding(true)}
+                        >
                           <IconSquareRoundedPlus className="text-contrast-secondary cursor-pointer" />
                         </button>
                       ) : (
-                        <button type="button" onClick={() => setAdding(false)}>
+                        <button
+                          type="button"
+                          onClick={() => setAdding(false)}
+                        >
                           <IconX className="text-contrast-secondary size-4" />
                         </button>
                       )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-x-10 gap-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                       {socialLinks.map((link, index) => (
                         <ButtonComponent
                           key={index}
@@ -358,7 +370,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                   </div>
                 </section>
 
-                <div className="flex gap-10">
+                {/* Descripción / Dirección */}
+                <div className="flex flex-col sm:flex-row gap-5 sm:gap-10">
                   <label className="flex flex-col w-full">
                     Descripción de la tienda
                     <textarea
@@ -366,7 +379,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       value={editableStore.description || ""}
                       onChange={handleChange}
                       rows={4}
-                      className="bg-main-dark/20 rounded-xl px-3 py-2"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 text-sm sm:text-base"
                     />
                   </label>
                   <label className="flex flex-col w-full">
@@ -376,23 +389,24 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                       value={editableStore.registered_address || ""}
                       onChange={handleChange}
                       rows={4}
-                      className="bg-main-dark/20 rounded-xl px-3 py-2"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 text-sm sm:text-base"
                     />
                   </label>
                 </div>
               </section>
             </form>
 
-            <div className="flex w-full justify-between">
+            {/* Botones */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-10 w-full">
               <ButtonComponent
                 text="Cancelar"
                 onClick={handleCancel}
-                style="w-[48%] p-3 rounded-full text-white bg-main mt-10 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
+                style="w-full sm:w-[48%] p-3 rounded-full text-white bg-main cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
               />
               <ButtonComponent
-                text={saving ? "Guardando..." : "Guardar cambios"}
+                text={saving ? 'Guardando...' : 'Guardar cambios'}
                 onClick={handleSave}
-                style="w-[48%] p-3 rounded-full text-white bg-contrast-secondary mt-10 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
+                style="w-full sm:w-[48%] p-3 rounded-full text-white bg-contrast-secondary cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
               />
             </div>
           </div>

@@ -4,7 +4,7 @@ import ButtonComponent from "../../../../components/ui/ButtonComponent";
 import foto from "../../../../img/perfil.png";
 import axios from "axios";
 import { uploadImage } from "../../infrastructure/imageService";
-import {IconEdit} from "@tabler/icons-react";
+import { IconEdit } from "@tabler/icons-react";
 
 interface CustomerProfileProps {
   alert: any;
@@ -66,47 +66,52 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
   };
 
   return (
-    <div className="flex relative w-full flex-col justify-center gap-4 mt-10">
-      <div className="flex justify-center relative">
+    <div className="flex flex-col justify-center items-center gap-6 mt-10 font-quicksand px-4 sm:px-10">
+      {/* 🖼️ Imagen de perfil */}
+      <div className="relative flex justify-center">
         <img
           src={profilePreview || user?.image || foto}
           alt="profile_image"
-          className="w-48 h-48 rounded-full object-cover border-4 border-white shadow"
+          className="w-36 h-36 sm:w-48 sm:h-48 rounded-full object-cover border-4 border-white shadow"
         />
-              <label className="absolute bottom-2 right-[calc(50%-5rem)] bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer">
-              <IconEdit size={22} />
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleProfileFileChange}
-              />
-            </label>
+        <label className="absolute bottom-2 right-[calc(50%-4.5rem)] sm:right-[calc(50%-5rem)] bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer transition-all duration-300">
+          <IconEdit size={20} />
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleProfileFileChange}
+          />
+        </label>
       </div>
 
-      <div className="w-[70%] mx-auto">
-        <form className="flex flex-col gap-5 pt-10">
-          <div className="flex gap-2">
+      {/* 🧾 Formulario */}
+      <div className="w-full sm:w-[70%]">
+        <form className="flex flex-col gap-5 pt-6 sm:pt-10">
+          {/* Nombre y correo */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
             <input
               type="text"
-              placeholder={user?.first_name}
-              className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+              placeholder={user?.first_name || "Nombre"}
+              className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
             />
             <input
               type="text"
-              placeholder={user?.email || "correo"}
-              className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+              placeholder={user?.email || "Correo electrónico"}
+              className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
               disabled
             />
           </div>
 
+          {/* Username */}
           <input
             type="text"
             placeholder={user?.username || "Nombre de usuario"}
-            className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
+            className="bg-main-dark/20 rounded-xl px-3 py-2 w-full sm:w-[50%] text-sm sm:text-base"
           />
 
-          <label className="flex items-center gap-2 pt-5 font-quicksand">
+          {/* Cambiar contraseña */}
+          <label className="flex items-center gap-2 pt-5 text-sm sm:text-base">
             Cambiar contraseña
             <input
               type="checkbox"
@@ -116,41 +121,40 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
           </label>
 
           {cambiarPassword && (
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 mt-2">
               <input
                 type="password"
                 placeholder="Contraseña actual"
-                className="bg-main-dark/20 rounded-xl px-3 py-2 w-[50%]"
+                className="bg-main-dark/20 rounded-xl px-3 py-2 w-full sm:w-[50%] text-sm sm:text-base"
               />
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
                 <input
                   type="password"
                   placeholder="Nueva contraseña"
-                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                 />
                 <input
                   type="password"
                   placeholder="Confirmar contraseña"
-                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full"
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                 />
               </div>
             </div>
           )}
         </form>
 
-        <div className="w-[70%] mx-auto">
-          <div className="flex justify-between gap-2">
-            <ButtonComponent
-              text="Cancelar"
-              onClick={handleCancel}
-              style="w-[48%] p-3 rounded-full text-white bg-main mt-10 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
-            />
-            <ButtonComponent
-              text={saving ? "Guardando..." : "Guardar cambios"}
-              onClick={handleSave}
-              style="w-[48%] p-3 rounded-full text-white bg-contrast-secondary mt-10 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
-            />
-          </div>
+        {/* 🧩 Botones */}
+        <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-6 mt-10 w-full">
+          <ButtonComponent
+            text="Cancelar"
+            onClick={handleCancel}
+            style="w-full sm:w-[48%] p-3 rounded-full text-white bg-main cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
+          />
+          <ButtonComponent
+            text={saving ? 'Guardando...' : 'Guardar cambios'}
+            onClick={handleSave}
+            style="w-full sm:w-[48%] p-3 rounded-full text-white bg-contrast-secondary cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
+          />
         </div>
       </div>
     </div>
