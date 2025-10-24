@@ -7,7 +7,7 @@ import HomeSeller from "./components/SellerHomeComponent";
 import SellerOffers from "./components/SellerOffersComponent";
 import SellerContactComponent from "./components/SellerContactComponent";
 import SellerReviewsComponent from "./components/SellerReviewsComponent";
-import SellerSearchPage from "./SellerSearchResults"; // ✅ importamos la nueva
+import SellerSearchPage from "./SellerSearchResults";
 import { getStore } from "../infrastructure/storeService";
 import type { Store } from "../../users/infrastructure/useUser";
 import { SkeletonStoreHeader } from "../../../components/ui/AllSkeletons";
@@ -19,7 +19,6 @@ export default function SellerPage() {
   const [view, setView] = useState<"home" | "offers" | "contact" | "reviews">("home");
   const [loading, setLoading] = useState(true);
 
-  // Detectar si estamos en modo búsqueda (por URL)
   const isSearchMode = location.pathname.includes("/search");
 
   useEffect(() => {
@@ -38,22 +37,26 @@ export default function SellerPage() {
   return (
     <div className="flex flex-col w-full">
       <NavBar />
-      <div className="mx-auto max-w-[80rem] w-full">
-        <header className="flex flex-col justify-center w-full px-5 py-5 gap-3 ">
+      <div className="mx-auto w-full max-w-[80rem] px-4 sm:px-6 lg:px-10">
+        <header className="flex flex-col justify-center w-full gap-3 py-5 sm:px-5">
           {loading ? (
             <SkeletonStoreHeader />
           ) : (
             <img
               src={store?.banner || ""}
               alt="Banner Store"
-              className="w-full h-[15rem] object-cover rounded-2xl"
+              className="w-full h-[8rem] sm:h-[15rem] object-cover rounded-xl sm:rounded-2xl"
             />
           )}
-          <NavBarSeller setView={setView} currentView={view} id={id} />
+
+          {/* 🔹 Navbar del vendedor (mantiene diseño desktop, adaptado a mobile) */}
+          <div className="overflow-x-auto sm:overflow-visible">
+            <NavBarSeller setView={setView} currentView={view} id={id} />
+          </div>
         </header>
 
         {/* 🔹 Contenido dinámico */}
-        <div>
+        <div className="mt-2 sm:mt-4">
           {isSearchMode ? (
             <SellerSearchPage />
           ) : view === "home" ? (
