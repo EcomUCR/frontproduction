@@ -84,6 +84,7 @@ export default function NavBarSeller({
             src={store.image || ""}
             alt={store.name}
             className="h-14 w-auto object-contain"
+            onClick={() => handleViewChange("home")}
           />
         </div>
 
