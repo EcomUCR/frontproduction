@@ -56,6 +56,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [cambiarPassword, setCambiarPassword] = useState(false); // ✅ nuevo estado
 
   useEffect(() => {
     if (user?.store) {
@@ -100,6 +101,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
     setNewLogoFile(null);
     setSocialLinks([]);
     setAdding(false);
+    setCambiarPassword(false); // ✅ resetea también el checkbox
   };
 
   const addSocialLink = () => {
@@ -159,7 +161,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
     <div className="flex flex-col justify-center gap-4 mt-10 font-quicksand">
       {/* 🔸 Estado de verificación */}
       {editableStore.is_verified === false && (
-        <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-6 sm:px-12 mx-4 sm:ml-10 shadow-lg border border-main/20 text-center">
+        <div className="flex flex-col gap-6 justify-center items-center bg-white rounded-2xl py-10 px-4 sm:px-12 mx-4 sm:ml-10 shadow-lg border border-main/20 text-center">
           <div className="flex items-center justify-center w-14 h-14 bg-contrast-secondary/20 rounded-full">
             <IconExclamationCircle
               size={30}
@@ -393,6 +395,38 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     />
                   </label>
                 </div>
+
+                {/* ✅ Cambiar contraseña */}
+                <label className="flex items-center gap-2 pt-5 text-sm sm:text-base">
+                  Cambiar contraseña
+                  <input
+                    type="checkbox"
+                    checked={cambiarPassword}
+                    onChange={() => setCambiarPassword(!cambiarPassword)}
+                  />
+                </label>
+
+                {cambiarPassword && (
+                  <div className="flex flex-col gap-5 mt-2">
+                    <input
+                      type="password"
+                      placeholder="Contraseña actual"
+                      className="bg-main-dark/20 rounded-xl px-3 py-2 w-full sm:w-[50%] text-sm sm:text-base"
+                    />
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
+                      <input
+                        type="password"
+                        placeholder="Nueva contraseña"
+                        className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
+                      />
+                      <input
+                        type="password"
+                        placeholder="Confirmar contraseña"
+                        className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
+                      />
+                    </div>
+                  </div>
+                )}
               </section>
             </form>
 
