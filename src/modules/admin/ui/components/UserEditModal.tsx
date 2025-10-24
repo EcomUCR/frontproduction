@@ -370,12 +370,12 @@ export default function UserEditModal({
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto justify-center">
               <ButtonComponent
-                text="Cancel"
+                text="Cancelar"
                 onClick={onClose}
                 style="bg-gray-200 text-gray-700 px-4 sm:px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition text-sm"
               />
               <ButtonComponent
-                text={uploading ? 'Saving...' : 'Save'}
+                text={uploading ? 'Guardando...' : 'Guardar'}
                 type="submit"
                 style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-4 sm:px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition text-sm"
               />
