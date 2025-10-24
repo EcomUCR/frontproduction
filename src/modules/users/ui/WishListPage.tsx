@@ -1,15 +1,23 @@
 import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
-import banner2 from "../../../img/resources/SmallBanner2.png";
 import { useAuth } from "../../../hooks/context/AuthContext";
+import { useBanner } from "../../admin/infrastructure/useBanner";
 import ProductCardWishList from "../../../components/data-display/ProductCardWishList";
 import ShareBubbles from "../../../components/data-display/ShareBubbles";
+import BannerComponent from "../../../components/data-display/BannerComponent";
+import { useEffect } from "react";
 
 export default function WishListPage() {
     const { loading } = useAuth();
+    const { banners, fetchBanners, loading: loadingBanners } = useBanner();
 
-    if (loading)
-        return <p className="text-center py-10">Cargando wishlist...</p>;
+    // Cargar banners al montar
+    useEffect(() => {
+        fetchBanners();
+    }, []);
+
+    if (loading) return <p className="text-center py-10">Cargando wishlist...</p>;
+
     return (
         <div>
             <NavBar />
@@ -41,30 +49,84 @@ export default function WishListPage() {
 
                 {/* Compartir */}
                 <section className="flex flex-col items-center justify-center text-center py-10 font-quicksand px-4 sm:px-0">
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3">
+                    <h3 className="text-lg sm:text-xl font-semibold text-main-dark mb-3">
                         ¡Compartí tu wishlist con tus amigos!
                     </h3>
-                    <p className="text-gray-500 text-sm mb-5 max-w-md">
+                    <p className="text-main-dark/50 text-sm mb-5 max-w-md">
                         Envía tu lista de deseos para que otros puedan ver tus productos favoritos y agregarlos a su carrito.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto items-center justify-center border-contrast-secondary border-2 py-2 px-30 sm:py-3 rounded-full">
-                        <ShareBubbles  />
+                    <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto items-center justify-center border-contrast-secondary border-2 py-2 px-10 sm:py-3 rounded-full">
+                        <ShareBubbles positionClass="absolute right-3 top-25" />
                     </div>
-
                 </section>
 
-                {/* Banners */}
-                <section className="flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-4 px-0 sm:px-10 py-10">
-                    <img
-                        className="w-[90%] sm:w-auto h-auto rounded-xl"
-                        src={banner2}
-                        alt="banner"
-                    />
-                    <img
-                        className="w-[90%] sm:w-auto h-auto rounded-xl"
-                        src={banner2}
-                        alt="banner"
-                    />
+                {/* Banners dinámicos */}
+                <section className="mx-4 sm:mx-10 sm:my-10 my-6 pt-5">
+                    {loadingBanners ? (
+                        <p className="text-main-dark/50 text-center">Cargando banners...</p>
+                    ) : banners.length > 0 ? (
+                        (() => {
+                            const activeBanners = banners.filter(
+                                (b) => b.type === "SHORT" && b.is_active
+                            );
+
+                            if (activeBanners.length === 1) {
+                                // Solo 1 → centrado
+                                const b = activeBanners[0];
+                                return (
+                                    <div className="flex justify-center items-center">
+                                        <div className="transition-transform duration-300">
+                                            <BannerComponent
+                                                {...b}
+                                                image={
+                                                    typeof b.image === "string"
+                                                        ? b.image
+                                                        : URL.createObjectURL(b.image)
+                                                }
+                                                character={
+                                                    b.character
+                                                        ? typeof b.character === "string"
+                                                            ? b.character
+                                                            : URL.createObjectURL(b.character)
+                                                        : undefined
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            // 2 o más banners → grid
+                            return (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10 justify-center items-end">
+                                    {activeBanners.map((b) => (
+                                        <div
+                                            key={b.id}
+                                            className="transition-transform duration-300 flex justify-center"
+                                        >
+                                            <BannerComponent
+                                                {...b}
+                                                image={
+                                                    typeof b.image === "string"
+                                                        ? b.image
+                                                        : URL.createObjectURL(b.image)
+                                                }
+                                                character={
+                                                    b.character
+                                                        ? typeof b.character === "string"
+                                                            ? b.character
+                                                            : URL.createObjectURL(b.character)
+                                                        : undefined
+                                                }
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            );
+                        })()
+                    ) : (
+                        <p className="text-main-dark/50 text-center">No hay banners activos</p>
+                    )}
                 </section>
             </div>
             <Footer />
