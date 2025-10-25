@@ -215,7 +215,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
               <img
                 src={
                   editableStore.image ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761412207/imagenNoSubida_dymbb7.png"
                 }
                 alt="Logo"
                 className="w-[60%] sm:w-2/3 max-w-[12rem] h-auto rounded-xl object-cover shadow-sm"
@@ -241,7 +241,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
               <img
                 src={
                   editableStore.banner ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761410400/BannerNoSubido_avlp5v.png"
                 }
                 alt="Banner"
                 className="rounded-xl object-cover w-full sm:w-auto max-h-[12rem] sm:max-h-[10rem] shadow-sm"
