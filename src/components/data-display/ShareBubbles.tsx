@@ -12,33 +12,47 @@ import ButtonComponent from "../ui/ButtonComponent";
 
 interface ShareBubblesProps {
   positionClass?: string;
+  shareUrl: string; // ✅ añadimos solo esta prop
 }
 
-export default function ShareBubbles({ positionClass = "absolute right-3 top-25" }: ShareBubblesProps) {
+export default function ShareBubbles({
+  positionClass = "absolute right-3 top-25",
+  shareUrl,
+}: ShareBubblesProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleShare = (platform: string) => {
-    const url = encodeURIComponent(window.location.href);
+    const encodedUrl = encodeURIComponent(shareUrl);
 
     switch (platform) {
       case "link":
-        navigator.clipboard.writeText(window.location.href);
+        navigator.clipboard.writeText(shareUrl);
         alert("Enlace copiado al portapapeles 📋");
         break;
       case "whatsapp":
-        window.open(`https://wa.me/?text=${url}`, "_blank");
+        window.open(`https://wa.me/?text=${encodedUrl}`, "_blank");
         break;
       case "facebook":
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+          "_blank"
+        );
         break;
       case "instagram":
-        alert("Instagram no permite compartir enlaces directamente desde el navegador 😅");
+        alert(
+          "Instagram no permite compartir enlaces directamente desde el navegador 😅"
+        );
         break;
       case "tiktok":
-        alert("TikTok no permite compartir desde el navegador. Usa la app móvil 😉");
+        alert(
+          "TikTok no permite compartir desde el navegador. Usa la app móvil 😉"
+        );
         break;
       case "x":
-        window.open(`https://twitter.com/intent/tweet?url=${url}`, "_blank");
+        window.open(
+          `https://twitter.com/intent/tweet?url=${encodedUrl}`,
+          "_blank"
+        );
         break;
     }
 

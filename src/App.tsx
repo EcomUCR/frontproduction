@@ -51,7 +51,7 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/shoppingCart" element={<ShoppingCartPage />} />
                 <Route path="/wishlist" element={<WishListPage />} />
-                <Route path="/wishlist/:slug" element={<WishListPage />} />
+                <Route path="/wishlist/public/:slug" element={<WishListPage />} />
                 <Route path="/product/:id" element={<ProductPage />} />
                 <Route path="/resetPassword" element={<ResetPasswordPage />} />
                 <Route path="/forgotPassword" element={<ForgotPasswordPage />}/>

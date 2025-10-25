@@ -29,9 +29,6 @@ export interface Wishlist {
   items: WishlistItem[];
 }
 
-
-// Hook principal
-
 export function useWishlist() {
   const { token } = useAuth();
   const [wishlist, setWishlist] = useState<Wishlist | null>(null);
@@ -84,11 +81,11 @@ export function useWishlist() {
     }
   };
 
-  // 🔹 Obtener wishlist pública por slug
+  // ✅ 🔹 Obtener wishlist pública por slug (RUTA CORRECTA)
   const getPublicWishlist = async (slug: string) => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`/wishlist/${slug}`);
+      const { data } = await axios.get(`/wishlist/public/${slug}`);
       setWishlist(data);
     } catch (err) {
       console.error("❌ Error al cargar wishlist pública:", err);

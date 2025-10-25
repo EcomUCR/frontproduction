@@ -6,7 +6,7 @@ import ProductCardWishList from "../../../components/data-display/ProductCardWis
 import ShareBubbles from "../../../components/data-display/ShareBubbles";
 import BannerComponent from "../../../components/data-display/BannerComponent";
 import { useBanner } from "../../admin/infrastructure/useBanner";
-import { useWishlist } from "../infrastructure/useWishList"; 
+import { useWishlist } from "../infrastructure/useWishList";
 
 export default function WishListPage() {
   const { slug } = useParams(); // Si viene slug => modo público
@@ -112,7 +112,7 @@ export default function WishListPage() {
             <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto items-center justify-center border-contrast-secondary border-2 py-2 px-10 sm:py-3 rounded-full">
               <ShareBubbles
                 positionClass="absolute right-3 top-25"
-                shareUrl={`${window.location.origin}/wishlist/${wishlist.slug}`}
+                shareUrl={`${window.location.origin}/wishlist/public/${wishlist.slug}`}
               />
             </div>
           </section>
