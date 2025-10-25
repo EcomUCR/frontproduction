@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../../../hooks/context/AuthContext";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
-import foto from "../../../../img/perfil.png";
 import axios from "axios";
 import { uploadImage } from "../../infrastructure/imageService";
 import { IconEdit } from "@tabler/icons-react";
@@ -37,7 +36,8 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
 
         if (Object.keys(body).length > 0) {
           await axios.patch(`/users/${user.id}`, body);
-          await refreshUser();
+          await await refreshUser?.();
+;
         }
 
         setAlert({
@@ -67,13 +67,22 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
 
   return (
     <div className="flex flex-col justify-center items-center gap-6 mt-10 font-quicksand px-4 sm:px-10">
-      {/* 🖼️ Imagen de perfil */}
+      {/*Imagen de perfil */}
       <div className="relative flex justify-center">
-        <img
-          src={profilePreview || user?.image || foto}
-          alt="profile_image"
-          className="w-36 h-36 sm:w-48 sm:h-48 rounded-full object-cover border-4 border-white shadow"
-        />
+        {profilePreview || user?.image ? (
+          <img
+            src={profilePreview || user?.image}
+            alt="profile_image"
+            className="w-36 h-36 sm:w-48 sm:h-48 rounded-full object-cover border-4 border-white shadow"
+          />
+        ) : (
+          <div className="w-36 h-36 sm:w-48 sm:h-48 rounded-full bg-gradient-to-br from-contrast-main to-contrast-secondary flex items-center justify-center border-4 border-white shadow">
+            <p className="uppercase text-white font-bold text-5xl leading-[0] relative top-[-2px]">
+              {user?.username?.[0] || "?"}
+            </p>
+          </div>
+        )}
+
         <label className="absolute bottom-2 right-[calc(50%-4.5rem)] sm:right-[calc(50%-5rem)] bg-contrast-secondary/80 hover:bg-main/80 text-white p-2 rounded-full cursor-pointer transition-all duration-300">
           <IconEdit size={20} />
           <input
@@ -84,6 +93,7 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
           />
         </label>
       </div>
+
 
       {/* 🧾 Formulario */}
       <div className="w-full sm:w-[70%]">
