@@ -26,6 +26,12 @@ type StoreType = {
   is_verified?: boolean | string | null;
   verification_date?: string | null;
   status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
+  storeSocials?: {
+    id: number;
+    store_id: number;
+    platform: "instagram" | "facebook" | "x" | "link" | string;
+    url: string;
+  }[];
 };
 
 type UserType = {
@@ -49,7 +55,6 @@ type AuthContextType = {
   logout: () => Promise<void>;
   refreshUser?: () => Promise<void>; // opcional por si lo necesitas luego
 };
-
 
 // ============================
 // ⚙️ Creación del contexto
@@ -114,7 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
 
 // ============================
 // 🔍 Hook personalizado

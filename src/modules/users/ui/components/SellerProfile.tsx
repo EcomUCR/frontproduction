@@ -32,6 +32,13 @@ interface Store {
   support_email?: string | null;
   registered_address?: string | null;
   is_verified?: boolean | string | null;
+
+  // 🔹 Agrega esto:
+  storeSocials?: {
+    id: number;
+    platform: "instagram" | "facebook" | "x" | "link" | string;
+    url: string;
+  }[];
 }
 
 interface SocialLink {
@@ -63,14 +70,48 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
       const storeData = {
         ...user.store,
         is_verified:
-          user.store.is_verified === true ||
-          user.store.is_verified === "true"
+          user.store.is_verified === true || user.store.is_verified === "true"
             ? true
             : false,
       };
       setEditableStore(storeData);
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchStoreDetails = async () => {
+      if (!user?.store?.id) return;
+
+      try {
+        // 🔹 Obtener tienda completa con relaciones
+        const { data } = await axios.get(`/stores/${user.store.id}`);
+
+        // 🔹 Actualizar estado editableStore (con imagen/banner actualizados)
+        setEditableStore({
+          ...data,
+          is_verified: data.is_verified === true || data.is_verified === "true",
+        });
+
+        // 🔹 Cargar redes sociales
+        const socials =
+          data.storeSocials?.map((s: any) => ({
+            type: s.platform,
+            text: s.url,
+          })) ||
+          data.store_socials?.map((s: any) => ({
+            type: s.platform,
+            text: s.url,
+          })) ||
+          [];
+
+        setSocialLinks(socials);
+      } catch (err) {
+        console.error("Error cargando detalles de la tienda:", err);
+      }
+    };
+
+    fetchStoreDetails();
+  }, [user?.store?.id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -121,6 +162,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
         registered_address: editableStore.registered_address ?? "",
         support_phone: editableStore.support_phone ?? "",
         support_email: editableStore.support_email ?? "",
+        social_links: socialLinks, // 🔹 Agregamos las redes sociales
       };
 
       if (newLogoFile) {
@@ -173,8 +215,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             Tu tienda está en verificación
           </p>
           <p className="text-main-dark/70 max-w-md">
-            El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda.
-            Si tienes dudas, contacta con soporte.
+            El equipo de TukiShop se pondrá en contacto contigo para verificar
+            tu tienda. Si tienes dudas, contacta con soporte.
           </p>
           <a
             href="https://wa.me/50687355629"
@@ -311,17 +353,11 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     <div className="flex gap-2 items-center">
                       <h2>Links / Redes sociales</h2>
                       {!adding ? (
-                        <button
-                          type="button"
-                          onClick={() => setAdding(true)}
-                        >
+                        <button type="button" onClick={() => setAdding(true)}>
                           <IconSquareRoundedPlus className="text-contrast-secondary cursor-pointer" />
                         </button>
                       ) : (
-                        <button
-                          type="button"
-                          onClick={() => setAdding(false)}
-                        >
+                        <button type="button" onClick={() => setAdding(false)}>
                           <IconX className="text-contrast-secondary size-4" />
                         </button>
                       )}
@@ -438,7 +474,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                 style="w-full sm:w-[48%] p-3 rounded-full text-white bg-main cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
               />
               <ButtonComponent
-                text={saving ? 'Guardando...' : 'Guardar cambios'}
+                text={saving ? "Guardando..." : "Guardar cambios"}
                 onClick={handleSave}
                 style="w-full sm:w-[48%] p-3 rounded-full text-white bg-contrast-secondary cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
               />
