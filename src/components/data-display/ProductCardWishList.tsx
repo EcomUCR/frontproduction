@@ -15,12 +15,14 @@ interface ProductCardWishListProps {
   };
   onDelete?: (id: number) => void;
   onAddToCart?: (product: any) => void;
+  isPublicMode?: boolean; // ✅ Nueva prop
 }
 
 export default function ProductCardWishList({
   product,
   onDelete,
   onAddToCart,
+  isPublicMode = false, // valor por defecto
 }: ProductCardWishListProps) {
   const formatCRC = (n: number) =>
     n?.toLocaleString("es-CR", { style: "currency", currency: "CRC" });
@@ -94,30 +96,33 @@ export default function ProductCardWishList({
             )}
           </div>
 
-          <div className="flex gap-3 text-main">
-            {/* Añadir al carrito */}
-            <button
-              onClick={() => onAddToCart?.(product)}
-              disabled={product.stock <= 0}
-              className={`flex items-center gap-2 px-3 py-2 rounded-full font-semibold text-sm shadow-md transition-all duration-300 hover:scale-105 ${
-                product.stock > 0
-                  ? "bg-main text-white hover:bg-contrast-secondary"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              <IconShoppingBag size={16} />
-              Añadir
-            </button>
+          {/* ✅ Ocultar botones si es público */}
+          {!isPublicMode && (
+            <div className="flex gap-3 text-main">
+              {/* Añadir al carrito */}
+              <button
+                onClick={() => onAddToCart?.(product)}
+                disabled={product.stock <= 0}
+                className={`flex items-center gap-2 px-3 py-2 rounded-full font-semibold text-sm shadow-md transition-all duration-300 hover:scale-105 ${
+                  product.stock > 0
+                    ? "bg-main text-white hover:bg-contrast-secondary"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                <IconShoppingBag size={16} />
+                Añadir
+              </button>
 
-            {/* Eliminar */}
-            <button
-              onClick={() => onDelete?.(product.id)}
-              className="p-2 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
-              title="Eliminar de la lista"
-            >
-              <IconTrash size={18} />
-            </button>
-          </div>
+              {/* Eliminar */}
+              <button
+                onClick={() => onDelete?.(product.id)}
+                className="p-2 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
+                title="Eliminar de la lista"
+              >
+                <IconTrash size={18} />
+              </button>
+            </div>
+          )}
         </div>
       </figure>
 
@@ -128,7 +133,6 @@ export default function ProductCardWishList({
       >
         {/* Parte superior */}
         <div className="flex w-full">
-          {/* Imagen */}
           <div className="flex-shrink-0 flex items-center justify-center w-24 h-24 rounded-2xl overflow-hidden bg-white shadow-inner mr-3">
             <Link to={`/product/${product.id}`}>
               <img
@@ -142,7 +146,6 @@ export default function ProductCardWishList({
             </Link>
           </div>
 
-          {/* Info básica */}
           <div className="flex flex-col justify-between flex-grow">
             <div>
               <Link to={`/product/${product.id}`}>
@@ -174,7 +177,6 @@ export default function ProductCardWishList({
 
         {/* Parte inferior */}
         <div className="flex justify-between items-end w-full mt-3">
-          {/* Precio */}
           <div className="flex flex-col items-start">
             {product.discount_price && product.discount_price > 0 ? (
               <>
@@ -192,27 +194,29 @@ export default function ProductCardWishList({
             )}
           </div>
 
-          {/* Acciones */}
-          <div className="flex gap-3 text-main">
-            <button
-              onClick={() => onAddToCart?.(product)}
-              disabled={product.stock <= 0}
-              className={`p-2 rounded-full flex items-center justify-center shadow-md transition-transform duration-300 hover:scale-110 ${
-                product.stock > 0
-                  ? "bg-gradient-to-br from-contrast-main to-contrast-secondary text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              <IconShoppingBag size={16} />
-            </button>
+          {/* ✅ Ocultar botones en modo público */}
+          {!isPublicMode && (
+            <div className="flex gap-3 text-main">
+              <button
+                onClick={() => onAddToCart?.(product)}
+                disabled={product.stock <= 0}
+                className={`p-2 rounded-full flex items-center justify-center shadow-md transition-transform duration-300 hover:scale-110 ${
+                  product.stock > 0
+                    ? "bg-gradient-to-br from-contrast-main to-contrast-secondary text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                <IconShoppingBag size={16} />
+              </button>
 
-            <button
-              onClick={() => onDelete?.(product.id)}
-              className="p-2 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
-            >
-              <IconTrash size={16} />
-            </button>
-          </div>
+              <button
+                onClick={() => onDelete?.(product.id)}
+                className="p-2 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
+              >
+                <IconTrash size={16} />
+              </button>
+            </div>
+          )}
         </div>
       </figure>
     </>
