@@ -159,10 +159,10 @@ export default function ProductCard(props: ProductCardProps) {
               onClick={handleAddToCart}
             >
               <IconShoppingBag className="w-5 h-5" />
-              <ButtonComponent
-                style="w-full text-xs cursor-pointer"
-                text="Añadir al carrito"
-              />
+              <button className="w-full text-xs cursor-pointer">
+                Añadir al carrito
+              </button>
+
             </div>
           </div>
         )}
