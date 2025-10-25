@@ -43,7 +43,7 @@ export default function SellerPage() {
             <SkeletonStoreHeader />
           ) : (
             <img
-              src={store?.banner || ""}
+              src={store?.banner || "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761410400/BannerNoSubido_avlp5v.png"}
               alt="Banner Store"
               className="w-full h-[8rem] sm:h-[15rem] object-cover rounded-xl sm:rounded-2xl"
             />
