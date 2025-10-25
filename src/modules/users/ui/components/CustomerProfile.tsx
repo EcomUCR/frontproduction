@@ -17,10 +17,37 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
   const [cambiarPassword, setCambiarPassword] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // campos de contraseña
+  // 🔹 Campos de contraseña
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // 🔹 Direcciones del usuario
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [addingAddress, setAddingAddress] = useState(false);
+  const [form, setForm] = useState({
+    street: "",
+    city: "",
+    state: "",
+    zip_code: "",
+    country: "Costa Rica",
+    phone_number: "",
+  });
+
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const { data } = await axios.get("/user/addresses", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAddresses(data.addresses || []);
+      } catch (error) {
+        console.error("❌ Error al obtener direcciones:", error);
+      }
+    };
+
+    if (user) fetchAddresses();
+  }, [user, token]);
 
   const handleProfileFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -33,8 +60,9 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
     setSaving(true);
     try {
       if (user) {
-        // 🖼️ Imagen de perfil
         const body: Record<string, any> = {};
+
+        // 🖼️ Imagen de perfil
         if (newProfileFile) {
           const imageUrl = await uploadImage(newProfileFile);
           body.image = imageUrl;
@@ -118,12 +146,18 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
 
   const handleAddAddress = async () => {
     try {
-      const { data } = await axios.post("/addresses", form);
+      // 📨 1️⃣ Crear la nueva dirección en el backend
+      await axios.post("/addresses", form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      // ✅ Refrescar solo direcciones desde el nuevo endpoint
-      const res = await axios.get("/user/addresses");
-      setAddresses(res.data.addresses);
+      // 🔁 2️⃣ Volver a cargar las direcciones actualizadas
+      const res = await axios.get("/user/addresses", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAddresses(res.data.addresses || []);
 
+      // ✅ 3️⃣ Alerta de éxito
       setAlert({
         show: true,
         title: "Dirección agregada",
@@ -131,6 +165,15 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
         type: "success",
       });
 
+      // 🧹 4️⃣ Reset del formulario
+      setForm({
+        street: "",
+        city: "",
+        state: "",
+        zip_code: "",
+        country: "Costa Rica",
+        phone_number: "",
+      });
       setAddingAddress(false);
     } catch (error) {
       console.error("❌ Error al agregar dirección:", error);
@@ -147,10 +190,12 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
     setProfilePreview(null);
     setNewProfileFile(null);
     setCambiarPassword(false);
+    setAddingAddress(false);
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
   };
+
   return (
     <div className="flex flex-col justify-center items-center gap-6 mt-10 font-quicksand px-4 sm:px-10">
       {/* Imagen de perfil */}
@@ -370,7 +415,6 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
               </div>
             </div>
           )}
-
         </form>
 
         {/* 🧩 Botones */}
