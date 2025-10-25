@@ -24,19 +24,17 @@ export default function AdminUsersTable() {
     updateUserData,
     getStoreByUserId,
     updateStoreData,
+    createUser, // ✅ agregado
     loading,
     error,
   } = useAdmin();
 
   const { storeToOpen, clearStoreToOpen } = useNotificationContext();
 
-
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"ALL" | "CUSTOMER" | "SELLER" | "ADMIN">(
-    "ALL"
-  );
+  const [filter, setFilter] = useState<"ALL" | "CUSTOMER" | "SELLER" | "ADMIN">("ALL");
 
   const [selectedStore, setSelectedStore] = useState<any | null>(null);
   const [showStoreModal, setShowStoreModal] = useState(false);
@@ -47,6 +45,7 @@ export default function AdminUsersTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
+  // 🔹 Cargar lista de usuarios
   useEffect(() => {
     (async () => {
       try {
@@ -60,11 +59,10 @@ export default function AdminUsersTable() {
     })();
   }, []);
 
+  // 🔹 Abrir modal de tienda si viene desde notificación
   useEffect(() => {
     if (!storeToOpen || users.length === 0) return;
-    const userWithStore = users.find(
-      (u) => u.store && u.store.id === storeToOpen
-    );
+    const userWithStore = users.find((u) => u.store && u.store.id === storeToOpen);
     if (userWithStore) {
       setTimeout(() => {
         handleEditStore(userWithStore);
@@ -73,11 +71,13 @@ export default function AdminUsersTable() {
     }
   }, [storeToOpen, users]);
 
+  // 🔹 Editar usuario
   const handleEditUser = (user: any) => {
     setSelectedUser(user);
     setShowModal(true);
   };
 
+  // 🔹 Guardar cambios de usuario
   const handleSaveUser = async (updatedData: any) => {
     console.log("🟣 handleSaveUser recibió:", updatedData);
 
@@ -97,9 +97,7 @@ export default function AdminUsersTable() {
       if (updatedUser) {
         const userData = updatedUser.user || updatedUser;
         setUsers((prev: any[]) =>
-          prev.map((u) =>
-            u.id === updatedData.id ? { ...u, ...userData } : u
-          )
+          prev.map((u) => (u.id === updatedData.id ? { ...u, ...userData } : u))
         );
         setSelectedUser((prev: any | null) =>
           prev?.id === updatedData.id ? { ...prev, ...userData } : prev
@@ -111,10 +109,7 @@ export default function AdminUsersTable() {
     }
   };
 
-
-
-
-
+  // 🔹 Editar tienda
   const handleEditStore = async (user: any) => {
     const storeData = await getStoreByUserId(user.id);
     if (storeData) {
@@ -123,6 +118,7 @@ export default function AdminUsersTable() {
     }
   };
 
+  // 🔹 Guardar cambios en tienda
   const handleSaveStore = async (updatedStore: any) => {
     const cleanedData = { ...updatedStore };
     delete cleanedData.user;
@@ -138,6 +134,7 @@ export default function AdminUsersTable() {
     }
   };
 
+  // 🔹 Filtro de búsqueda
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.username?.toLowerCase().includes(search.toLowerCase()) ||
@@ -150,10 +147,7 @@ export default function AdminUsersTable() {
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedUsers = filteredUsers.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -163,9 +157,7 @@ export default function AdminUsersTable() {
   };
 
   if (loading)
-    return (
-      <p className="text-center text-gray-500 py-10">Cargando usuarios...</p>
-    );
+    return <p className="text-center text-gray-500 py-10">Cargando usuarios...</p>;
   if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
 
   return (
@@ -200,9 +192,7 @@ export default function AdminUsersTable() {
             <select
               value={filter}
               onChange={(e) =>
-                setFilter(
-                  e.target.value as "ALL" | "CUSTOMER" | "SELLER" | "ADMIN"
-                )
+                setFilter(e.target.value as "ALL" | "CUSTOMER" | "SELLER" | "ADMIN")
               }
               className="bg-transparent outline-none text-sm text-gray-700 font-medium cursor-pointer w-full sm:w-auto"
             >
@@ -219,29 +209,18 @@ export default function AdminUsersTable() {
             onClick={() => setShowAddUserModal(true)}
             style="bg-main text-white rounded-full py-2 sm:py-3 px-4 font-quicksand hover:bg-contrast-secondary transition-all duration-400 w-full sm:w-auto"
           />
-
         </div>
 
-        {/* 🧾 Tabla scrollable */}
+        {/* 🧾 Tabla */}
         <div className="pt-6 sm:pt-8 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <div className="min-w-[700px] space-y-4">
             {/* Cabecera */}
             <div className="flex items-center justify-between w-full bg-main text-white font-quicksand font-semibold rounded-2xl px-6 py-4 shadow-md">
-              <p className="w-24 text-xs sm:text-sm tracking-wide uppercase opacity-90">
-                UUID
-              </p>
-              <p className="w-40 text-xs sm:text-sm tracking-wide uppercase opacity-90">
-                Username
-              </p>
-              <p className="w-56 text-xs sm:text-sm tracking-wide uppercase opacity-90">
-                Email
-              </p>
-              <p className="w-32 text-xs sm:text-sm tracking-wide uppercase opacity-90">
-                Rol
-              </p>
-              <p className="w-28 text-xs sm:text-sm tracking-wide uppercase opacity-90">
-                Status
-              </p>
+              <p className="w-24 text-xs sm:text-sm tracking-wide uppercase opacity-90">UUID</p>
+              <p className="w-40 text-xs sm:text-sm tracking-wide uppercase opacity-90">Username</p>
+              <p className="w-56 text-xs sm:text-sm tracking-wide uppercase opacity-90">Email</p>
+              <p className="w-32 text-xs sm:text-sm tracking-wide uppercase opacity-90">Rol</p>
+              <p className="w-28 text-xs sm:text-sm tracking-wide uppercase opacity-90">Status</p>
               <p className="w-10"></p>
             </div>
 
@@ -251,10 +230,7 @@ export default function AdminUsersTable() {
                 <AdminProfileCard
                   key={user.id}
                   id={user.id}
-                  username={
-                    user.username ||
-                    `${user.first_name ?? ""} ${user.last_name ?? ""}`
-                  }
+                  username={user.username || `${user.first_name ?? ""} ${user.last_name ?? ""}`}
                   email={user.email}
                   role={user.role}
                   status={user.status}
@@ -324,7 +300,7 @@ export default function AdminUsersTable() {
         )}
       </div>
 
-      {/* Modales */}
+      {/* 🧩 Modales */}
       <AnimatePresence>
         {showModal && selectedUser && (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -352,15 +328,27 @@ export default function AdminUsersTable() {
           </motion.div>
         )}
       </AnimatePresence>
+
       <AnimatePresence>
         {showAddUserModal && (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center">
-            <AddUserModal onClose={() => setShowAddUserModal(false)} />
+            <AddUserModal
+              onClose={() => setShowAddUserModal(false)}
+              onSave={async (userData) => {
+                const created = await createUser(userData);
+                if (created) {
+                  const updatedList = await getUsers();
+                  if (Array.isArray(updatedList)) {
+                    setUsers(updatedList.sort((a, b) => a.id - b.id));
+                  }
+                  setShowAddUserModal(false);
+                }
+              }}
+
+            />
           </motion.div>
         )}
       </AnimatePresence>
-
-
     </div>
   );
 }

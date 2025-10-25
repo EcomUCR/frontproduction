@@ -90,6 +90,24 @@ export default function useAdmin() {
         }
     };
 
+    const createUser = async (newUserData: Partial<User>) => {
+        if (!token) {
+            console.error("❌ No hay token disponible para crear usuario");
+            return null;
+        }
+
+        try {
+            const res = await axios.post(`${BASE_URL}/users`, newUserData, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            console.log("✅ Usuario creado correctamente:", res.data);
+            return res.data.user || res.data;
+        } catch (e) {
+            console.error("❌ Error al crear usuario:", e);
+            return null;
+        }
+    };
     const updateUserData = async (userId: number, updatedData: Partial<User>) => {
         if (!token) {
             console.error("❌ No hay token disponible para actualizar datos");
@@ -149,6 +167,7 @@ export default function useAdmin() {
 
     return {
         getUsers,
+        createUser,
         updateUserStatus,
         updateUserData,
         getStoreByUserId,
