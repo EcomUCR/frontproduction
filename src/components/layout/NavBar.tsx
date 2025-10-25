@@ -13,6 +13,8 @@ import logo from "../../img/TukiLogo.png";
 import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useProducts } from "../../modules/seller/infrastructure/useProducts";
+import { useWishlist } from "../../modules/users/infrastructure/useWishList";
+
 import { useEffect, useState } from "react";
 import CategoryDropdown from "../data-display/CategoryDropdown";
 import NotificationDropdown from "../data-display/NotificationDropDown";
@@ -23,6 +25,8 @@ type Category = { id: number; name: string };
 export default function NavBar() {
   const { user, logout } = useAuth();
   const { itemCount, refreshCart } = useCart();
+  const { wishlist, fetchWishlist } = useWishlist();
+
   const { getCategories } = useProducts();
   const navigate = useNavigate();
 
@@ -30,6 +34,9 @@ export default function NavBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (user) fetchWishlist();
+  }, [user]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -123,7 +130,6 @@ export default function NavBar() {
                       {user.username[0]}
                     </p>
                   </div>
-
                 )}
                 {/* Nombre del usuario */}
                 <span className="text-sm sm:text-base">{displayName}</span>
@@ -197,8 +203,13 @@ export default function NavBar() {
           {user && <NotificationDropdown />}
 
           {/* Lista de deseos */}
-          <Link to="/wishlist" className="pr-2">
+          <Link to="/wishlist" className="relative pr-2">
             <IconHeart className="h-6 w-6" />
+            {(wishlist?.items?.length ?? 0) > 0 && (
+              <span className="absolute -top-1 right-0.5 bg-contrast-secondary text-white text-[10px] font-semibold rounded-full shadow-sm flex items-center justify-center h-4 min-w-[1rem] px-1">
+                {wishlist!.items.length > 9 ? "9+" : wishlist!.items.length}
+              </span>
+            )}
           </Link>
 
           {/* Carrito */}
