@@ -110,12 +110,6 @@ export default function NavBar() {
                 className="flex items-center gap-1 cursor-pointer"
                 onClick={() => setShowUserMenu((prev) => !prev)}
               >
-                {/* Icono de usuario */}
-                <IconUser className="h-5 w-5" />
-
-                {/* Nombre del usuario */}
-                <span className="text-sm sm:text-base">{displayName}</span>
-
                 {/* Imagen de perfil */}
                 {user?.image ? (
                   <img
@@ -128,6 +122,8 @@ export default function NavBar() {
                     <IconUser className="h-5 w-5 text-gray-500" />
                   </div>
                 )}
+                    {/* Nombre del usuario */}
+                <span className="text-sm sm:text-base">{displayName}</span>
 
                 <AnimatePresence>
                   {showUserMenu && (
