@@ -9,7 +9,7 @@ interface AlertComponentProps {
     cancelText?: string;
     onConfirm?: () => void;
     onCancel?: () => void;
-    type?: "info" | "success" | "warning" | "error"; // opcional por compatibilidad
+    type?: "info" | "success" | "warning" | "error"; // opcional por compatibilidad hola
 }
 
 console.log("Hola");

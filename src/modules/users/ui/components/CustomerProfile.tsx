@@ -11,36 +11,16 @@ interface CustomerProfileProps {
 }
 
 export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, token } = useAuth();
   const [newProfileFile, setNewProfileFile] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const [cambiarPassword, setCambiarPassword] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // 🔹 Direcciones del usuario
-  const [addresses, setAddresses] = useState<any[]>([]);
-  const [addingAddress, setAddingAddress] = useState(false);
-  const [form, setForm] = useState({
-    street: "",
-    city: "",
-    state: "",
-    zip_code: "",
-    country: "Costa Rica",
-    phone_number: "",
-  });
-
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const { data } = await axios.get("/user/addresses");
-        setAddresses(data.addresses || []);
-      } catch (error) {
-        console.error("❌ Error al obtener direcciones:", error);
-      }
-    };
-
-    if (user) fetchAddresses();
-  }, [user]);
+  // campos de contraseña
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleProfileFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,29 +33,82 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
     setSaving(true);
     try {
       if (user) {
+        // 🖼️ Imagen de perfil
         const body: Record<string, any> = {};
         if (newProfileFile) {
           const imageUrl = await uploadImage(newProfileFile);
           body.image = imageUrl;
         }
 
+        // 📩 Actualizar foto si aplica
         if (Object.keys(body).length > 0) {
-          await axios.patch(`/users/${user.id}`, body);
+          await axios.patch(`/users/${user.id}`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           await refreshUser?.();
+        }
+
+        // 🔐 Cambiar contraseña
+        if (cambiarPassword) {
+          if (!currentPassword || !newPassword || !confirmPassword) {
+            setAlert({
+              show: true,
+              title: "Campos incompletos",
+              message: "Debes llenar todos los campos de contraseña.",
+              type: "warning",
+            });
+            setSaving(false);
+            return;
+          }
+
+          if (newPassword !== confirmPassword) {
+            setAlert({
+              show: true,
+              title: "Error de confirmación",
+              message: "Las contraseñas no coinciden.",
+              type: "error",
+            });
+            setSaving(false);
+            return;
+          }
+
+          await axios.put(
+            "/change-password",
+            {
+              current_password: currentPassword,
+              new_password: newPassword,
+              new_password_confirmation: confirmPassword,
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
         }
 
         setAlert({
           show: true,
-          title: "Perfil actualizado",
-          message: "Tu perfil se actualizó correctamente.",
+          title: "Cambios guardados",
+          message: cambiarPassword
+            ? "Tu contraseña y perfil se actualizaron correctamente."
+            : "Tu foto de perfil se actualizó correctamente.",
           type: "success",
         });
+
+        // Reset campos
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setCambiarPassword(false);
+        setProfilePreview(null);
+        setNewProfileFile(null);
       }
-    } catch {
+    } catch (err: any) {
       setAlert({
         show: true,
         title: "Error al guardar",
-        message: "Ocurrió un problema al actualizar el perfil.",
+        message:
+          err.response?.data?.error ||
+          "Ocurrió un problema al actualizar el perfil.",
         type: "error",
       });
     } finally {
@@ -114,9 +147,10 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
     setProfilePreview(null);
     setNewProfileFile(null);
     setCambiarPassword(false);
-    setAddingAddress(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
   };
-
   return (
     <div className="flex flex-col justify-center items-center gap-6 mt-10 font-quicksand px-4 sm:px-10">
       {/* Imagen de perfil */}
@@ -308,6 +342,35 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
               onChange={() => setCambiarPassword(!cambiarPassword)}
             />
           </label>
+
+          {cambiarPassword && (
+            <div className="flex flex-col gap-5 mt-2">
+              <input
+                type="password"
+                placeholder="Contraseña actual"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="bg-main-dark/20 rounded-xl px-3 py-2 w-full sm:w-[50%] text-sm sm:text-base"
+              />
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
+                <input
+                  type="password"
+                  placeholder="Nueva contraseña"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
+                />
+                <input
+                  type="password"
+                  placeholder="Confirmar contraseña"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
+                />
+              </div>
+            </div>
+          )}
+
         </form>
 
         {/* 🧩 Botones */}

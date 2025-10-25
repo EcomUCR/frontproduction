@@ -277,13 +277,13 @@ export default function NavBar() {
             Tiendas
           </li>
           <li
-            onClick={() => navigate("/search/stores")}
+            onClick={() => navigate("/beSellerPage")}
             className="hover:-translate-y-1 transition-all cursor-pointer"
           >
             Vender
           </li>
           <li
-            onClick={() => navigate("/search/stores")}
+            onClick={() => navigate("/about")}
             className="hover:-translate-y-1 transition-all cursor-pointer"
           >
             Conócenos

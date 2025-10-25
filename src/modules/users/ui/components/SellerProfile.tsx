@@ -54,7 +54,7 @@ const iconMap = {
 };
 
 export default function SellerProfile({ setAlert }: SellerProfileProps) {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, token } = useAuth();
   const [editableStore, setEditableStore] = useState<Store | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [adding, setAdding] = useState(false);
@@ -63,7 +63,11 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
-  const [cambiarPassword, setCambiarPassword] = useState(false); // ✅ nuevo estado
+  const [cambiarPassword, setCambiarPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
 
   useEffect(() => {
     if (user?.store) {
@@ -155,6 +159,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const handleSave = async () => {
     if (!editableStore) return;
     setSaving(true);
+
     try {
       const updatedFields: Record<string, any> = {
         name: editableStore.name ?? "",
@@ -162,7 +167,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
         registered_address: editableStore.registered_address ?? "",
         support_phone: editableStore.support_phone ?? "",
         support_email: editableStore.support_email ?? "",
-        social_links: socialLinks, // 🔹 Agregamos las redes sociales
+        social_links: socialLinks,
       };
 
       if (newLogoFile) {
@@ -178,23 +183,73 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
       await updateStore(editableStore.id, updatedFields);
       await refreshUser?.();
 
+      if (cambiarPassword) {
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          setAlert({
+            show: true,
+            title: "Campos incompletos",
+            message: "Debes llenar todos los campos de contraseña.",
+            type: "warning",
+          });
+          setSaving(false);
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          setAlert({
+            show: true,
+            title: "Error de confirmación",
+            message: "Las contraseñas no coinciden.",
+            type: "error",
+          });
+          setSaving(false);
+          return;
+        }
+
+        await axios.put(
+          "/change-password",
+          {
+            current_password: currentPassword,
+            new_password: newPassword,
+            new_password_confirmation: confirmPassword,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+      }
+
       setAlert({
         show: true,
         title: "Cambios guardados",
-        message: "La tienda se actualizó correctamente.",
+        message: cambiarPassword
+          ? "Tu contraseña y perfil de tienda se actualizaron correctamente."
+          : "La tienda se actualizó correctamente.",
         type: "success",
       });
-    } catch {
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setCambiarPassword(false);
+      setNewLogoFile(null);
+      setNewBannerFile(null);
+    } catch (err: any) {
       setAlert({
         show: true,
         title: "Error al guardar",
-        message: "Ocurrió un problema al actualizar los datos.",
+        message:
+          err.response?.data?.error ||
+          "Ocurrió un problema al actualizar los datos.",
         type: "error",
       });
     } finally {
       setSaving(false);
     }
   };
+
+
 
   if (!editableStore) return null;
 
@@ -446,22 +501,29 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     <input
                       type="password"
                       placeholder="Contraseña actual"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                       className="bg-main-dark/20 rounded-xl px-3 py-2 w-full sm:w-[50%] text-sm sm:text-base"
                     />
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
                       <input
                         type="password"
                         placeholder="Nueva contraseña"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
                         className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                       />
                       <input
                         type="password"
                         placeholder="Confirmar contraseña"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                       />
                     </div>
                   </div>
                 )}
+
               </section>
             </form>
 

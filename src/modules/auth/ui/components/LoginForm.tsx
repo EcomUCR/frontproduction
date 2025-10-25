@@ -8,24 +8,39 @@ export default function LoginForm() {
   const { login, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // 👁️ Nuevo estado
   const navigate = useNavigate();
+const [error, setError] = useState(""); // 👈 agrega esto
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError(""); // Limpia error previo
 
     const emailLower = email.toLowerCase();
-    console.log("Email:", emailLower, "Password:", password);
 
-    const success = await login(emailLower, password);
-    if (!success) {
-      setError("Usuario o contraseña incorrectos.");
-    } else {
+    try {
+      const success = await login(emailLower, password);
+
+      if (!success) {
+        setError("Correo o contraseña incorrectos.");
+        return;
+      }
+
       navigate("/");
+    } catch (error: any) {
+      console.error("Error al iniciar sesión:", error);
+
+      if (error.response?.status === 401) {
+        setError("Correo o contraseña incorrectos.");
+      } else {
+        setError("No se pudo conectar con el servidor. Intenta nuevamente.");
+      }
     }
   };
+
+
 
   return (
     <div className="flex flex-col items-center w-full justify-center">

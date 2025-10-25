@@ -86,7 +86,7 @@ export default function ProductCard(props: ProductCardProps) {
           </div>
 
           {/* Móvil (visible siempre) */}
-          <div className="sm:hidden absolute top-3 right-3">
+          <div className="hidden sm:hidden absolute top-10 right-3">
             <AnimatedHeartButton productId={props.id} variant="filled" />
           </div>
         </>
@@ -96,9 +96,9 @@ export default function ProductCard(props: ProductCardProps) {
       {!props.edit && (
         <button
           onClick={handleAddToCart}
-          className="sm:hidden absolute bottom-3 right-3 bg-gradient-to-br from-contrast-main to-contrast-secondary text-white p-2 rounded-xl hover:bg-gradient-to-br transition-all duration-300 active:scale-95"
+          className="sm:hidden absolute top-3 right-3 bg-gradient-to-br from-contrast-main to-contrast-secondary text-white p-2 rounded-xl hover:bg-gradient-to-br transition-all duration-300"
         >
-          <IconShoppingBag size={18} className="stroke-[2.5]" />
+          <IconShoppingBag size={20} className="stroke-[2.5]" />
         </button>
       )}
 
@@ -159,10 +159,10 @@ export default function ProductCard(props: ProductCardProps) {
               onClick={handleAddToCart}
             >
               <IconShoppingBag className="w-5 h-5" />
-              <ButtonComponent
-                style="w-full text-xs cursor-pointer"
-                text="Añadir al carrito"
-              />
+              <button className="w-full text-xs cursor-pointer">
+                Añadir al carrito"
+              </button>
+
             </div>
           </div>
         )}
