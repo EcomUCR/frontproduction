@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import axios from "axios";
-import { useAuth } from "./AuthContext"; // 👈 para obtener el token del usuario
+import { useAuth } from "./AuthContext";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
@@ -23,8 +23,9 @@ export interface CartItem {
     name: string;
     price: number;
     discount_price?: number | null;
-    image_1_url?: string;
+    image_1_url?: string | null;
     stock?: number;
+    status?: "ACTIVE" | "DRAFT" | "ARCHIVED";
     store?: {
       id: number;
       name: string;
@@ -41,6 +42,7 @@ export interface Cart {
 interface CartContextType {
   cart: Cart | null;
   loading: boolean;
+  itemCount: number;
   addToCart: (productId: number, quantity?: number) => Promise<void>;
   updateQuantity: (itemId: number, quantity: number) => Promise<void>;
   removeItem: (itemId: number) => Promise<void>;
@@ -57,10 +59,10 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const { token } = useAuth();
   const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // ============================
-  // 🔄 Cargar carrito al iniciar sesión o cambiar token
+  // 🔄 Obtener carrito al inicio o cambiar token
   // ============================
   useEffect(() => {
     if (token) refreshCart();
@@ -68,30 +70,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [token]);
 
   // ============================
-  // 🧠 Obtener carrito del backend
+  // 🔁 Cargar carrito desde backend
   // ============================
   const refreshCart = async () => {
     if (!token) return;
     try {
+      setLoading(true);
       const { data } = await axios.get("/cart/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // El backend devuelve el carrito directamente o dentro de data.cart
       setCart(data.cart ?? data);
     } catch (err) {
-      console.error("Error al cargar carrito:", err);
-      setCart(null);
+      console.error("Error al obtener carrito:", err);
+      setCart({ id: 0, items: [], total: 0 });
     } finally {
       setLoading(false);
     }
   };
 
   // ============================
-  // 🛒 Agregar producto al carrito
+  // 🛒 Agregar producto
   // ============================
   const addToCart = async (productId: number, quantity: number = 1) => {
     if (!token) {
-       console.log("Debes iniciar sesión para agregar productos al carrito. ¿Ir al login?");
+      console.warn("⚠️ Debes iniciar sesión para agregar al carrito.");
       return;
     }
 
@@ -101,19 +103,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
         { product_id: productId, quantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setCart(data.cart ?? data);
-
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
-      console.error("Error al añadir producto al carrito:", err);
-
+      console.error("Error al añadir producto:", err);
     }
   };
 
   // ============================
-  // 🔢 Actualizar cantidad de un producto
+  // 🔢 Actualizar cantidad
   // ============================
   const updateQuantity = async (itemId: number, quantity: number) => {
+    if (!token) return;
     try {
       const { data } = await axios.patch(
         `/cart/item/${itemId}`,
@@ -121,49 +122,56 @@ export function CartProvider({ children }: { children: ReactNode }) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCart(data.cart ?? data);
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error al actualizar cantidad:", err);
     }
   };
 
   // ============================
-  // 🗑️ Eliminar producto del carrito
+  // 🗑️ Eliminar producto
   // ============================
   const removeItem = async (itemId: number) => {
+    if (!token) return;
     try {
       const { data } = await axios.delete(`/cart/item/${itemId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart(data.cart ?? data);
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error al eliminar producto:", err);
     }
   };
 
   // ============================
-  // 🧹 Vaciar carrito completamente
+  // 🧹 Vaciar carrito
   // ============================
   const clearCart = async () => {
+    if (!token) return;
     try {
-      await axios.post("/cart/clear", {
+      await axios.post("/cart/clear", null, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart({ id: 0, items: [], total: 0 });
-      console.log("Carrito vaciado 🧹");
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error al vaciar carrito:", err);
-      console.log("No se pudo vaciar el carrito ❌");
     }
   };
 
   // ============================
-  // 🌎 Provider
+  // 🧮 Cantidad total de productos
   // ============================
+  const itemCount =
+    cart?.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+
   return (
     <CartContext.Provider
       value={{
         cart,
         loading,
+        itemCount,
         addToCart,
         updateQuantity,
         removeItem,

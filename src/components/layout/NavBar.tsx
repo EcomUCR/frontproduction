@@ -17,11 +17,12 @@ import { useEffect, useState } from "react";
 import CategoryDropdown from "../data-display/CategoryDropdown";
 import NotificationDropdown from "../data-display/NotificationDropDown";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { useCart } from "../../hooks/context/CartContext";
 type Category = { id: number; name: string };
 
 export default function NavBar() {
   const { user, logout } = useAuth();
+  const { itemCount, refreshCart } = useCart();
   const { getCategories } = useProducts();
   const navigate = useNavigate();
 
@@ -41,11 +42,16 @@ export default function NavBar() {
     };
     fetchCategories();
   }, []);
+  useEffect(() => {
+    const handleCartUpdate = () => refreshCart();
+    window.addEventListener("cartUpdated", handleCartUpdate);
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+  }, []);
 
   const displayName = user
     ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() ||
-    user.email ||
-    user.store?.name
+      user.email ||
+      user.store?.name
     : "";
 
   const handleSearch = () => {
@@ -185,20 +191,33 @@ export default function NavBar() {
           </Link>
 
           {/* Carrito */}
-          <Link to="/shoppingCart">
+          <Link to="/shoppingCart" className="relative">
             <IconShoppingBag className="h-6 w-6" />
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-semibold px-1.5 rounded-full shadow-sm">
+                {itemCount}
+              </span>
+            )}
           </Link>
         </div>
 
         {/* Íconos móviles y botón menú */}
         <div className="flex md:hidden items-center gap-3 text-white">
           {user && <NotificationDropdown />} {/* Notificaciones móviles */}
-          <Link to="/wishlist">
+          {/* Lista de deseos */}
+          <Link to="/wishlist" className="relative">
             <IconHeart className="h-6 w-6" />
           </Link>
-          <Link to="/shoppingCart">
+          {/* Carrito con contador móvil */}
+          <Link to="/shoppingCart" className="relative">
             <IconShoppingBag className="h-6 w-6" />
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-semibold px-1.5 rounded-full shadow-sm">
+                {itemCount}
+              </span>
+            )}
           </Link>
+          {/* Menú hamburguesa */}
           <button onClick={() => setMenuOpen((prev) => !prev)}>
             {menuOpen ? <IconX size={26} /> : <IconMenu2 size={26} />}
           </button>
@@ -241,7 +260,8 @@ export default function NavBar() {
           >
             Vender
           </li>
-          <li onClick={() => navigate("/search/stores")}
+          <li
+            onClick={() => navigate("/search/stores")}
             className="hover:-translate-y-1 transition-all cursor-pointer"
           >
             Conócenos
@@ -275,7 +295,6 @@ export default function NavBar() {
               />
             </div>
 
-
             {/* Enlaces */}
             <div className="flex flex-col gap-2 text-sm">
               {/* Categorías */}
@@ -285,7 +304,10 @@ export default function NavBar() {
               <Link to="/" onClick={() => setMenuOpen(false)}>
                 Inicio
               </Link>
-              <Link to="/search?mode=explore" onClick={() => setMenuOpen(false)}>
+              <Link
+                to="/search?mode=explore"
+                onClick={() => setMenuOpen(false)}
+              >
                 Explorar
               </Link>
               <Link to="/search?mode=offers" onClick={() => setMenuOpen(false)}>

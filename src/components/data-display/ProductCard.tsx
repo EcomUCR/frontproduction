@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { IconEdit, IconShoppingBag } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
-import axios from "axios";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useAlert } from "../../hooks/context/AlertContext";
 import AnimatedHeartButton from "./AnimatedHeartButton";
 import { useWishlist } from "../../modules/users/infrastructure/useWishList";
+import { useCart } from "../../hooks/context/CartContext"; // 👈 nuevo import
 
 interface ProductCardProps {
   id: number;
@@ -18,7 +18,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { token, setCart } = useAuth();
+  const { token } = useAuth();
+  const { addToCart } = useCart(); // 👈 usar lógica centralizada del carrito
   const { showAlert } = useAlert();
   const navigate = useNavigate();
   const { fetchWishlist } = useWishlist();
@@ -45,12 +46,7 @@ export default function ProductCard(props: ProductCardProps) {
     }
 
     try {
-      const { data } = await axios.post(
-        "/cart/add",
-        { product_id: props.id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCart(data.cart);
+      await addToCart(props.id, 1); // 👈 usa el CartContext
       showAlert({
         title: "Producto añadido",
         message: "El producto fue añadido al carrito correctamente",
@@ -67,9 +63,7 @@ export default function ProductCard(props: ProductCardProps) {
   };
 
   return (
-    <figure
-      className="relative flex flex-col w-44 sm:w-55 h-70 sm:h-90 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group transition-all duration-300"
-    >
+    <figure className="relative flex flex-col w-44 sm:w-55 h-70 sm:h-90 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group transition-all duration-300">
       {/* ✏️ Botón editar (modo admin/tienda) */}
       {props.edit && (
         <Link
