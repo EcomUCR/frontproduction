@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useCartTotals } from "./useCartTotals";
 import { useVisa } from "../../modules/payments/useVisa";
 import { useCheckout } from "../../modules/payments/useCheckout";
@@ -8,38 +9,93 @@ import paypal from "../../img/resources/logo_paypal.png";
 import american_express from "../../img/resources/american_express_logo.png";
 import { IconMapPin } from "@tabler/icons-react";
 import { Button } from "../ui/button";
+import { useAlert } from "../../hooks/context/AlertContext";
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripePaymentForm from "../../components/ui/StripePaymentForm";
 
-// ⚙️ Crea la instancia de Stripe una sola vez FUERA del componente
-// Sustituye tu clave de prueba aquí directamente
-const stripePromise = loadStripe("pk_test_51SJQBqLl2yLxOyLIFdLhdGoXjNKpBn2WFxWjMhInw72TUbRe7DVmYLa17tBOfswYlYqe0E3J3bqYWFyuJaEFYMLI00aJOZAoJY");
+// ⚙️ Stripe (solo una instancia)
+const stripePromise = loadStripe(
+  "pk_test_51SJQBqLl2yLxOyLIFdLhdGoXjNKpBn2WFxWjMhInw72TUbRe7DVmYLa17tBOfswYlYqe0E3J3bqYWFyuJaEFYMLI00aJOZAoJY"
+);
 
 interface FormShoppingProps {
   variant?: "checkout" | "product";
-  onAddToCart?: () => void; // solo se usa cuando variant === "product"
+  onAddToCart?: () => void;
 }
 
 export default function FormShopping({
   variant = "checkout",
   onAddToCart,
 }: FormShoppingProps) {
-  const { getForexRate, rate, /*loading: loadingVisa*/ error: errorVisa } = useVisa();
+  const {
+    getForexRate,
+    rate,
+    /*loading: loadingVisa*/ error: errorVisa,
+  } = useVisa();
   const { processCheckout } = useCheckout();
   const { totals, getTotals, loading, error } = useCartTotals();
+  const { showAlert } = useAlert();
+
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [addressText, setAddressText] = useState("");
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     getTotals();
   }, []);
 
+  // 🏠 Cargar direcciones
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const { data } = await axios.get("/user/addresses");
+        setAddresses(data.addresses || []);
+      } catch (err) {
+        console.error("❌ Error al obtener direcciones:", err);
+      }
+    };
+    fetchAddresses();
+  }, []);
+
   const format = (n: number) => (n ?? 0).toLocaleString("es-CR");
+
+  // ⚙️ Validación antes del pago
+  const handlePayment = async (paymentIntent: any) => {
+    if (!addressText.trim()) {
+      showAlert({
+        title: "Dirección requerida 🏠",
+        message: "Por favor escribe o selecciona una dirección antes de pagar.",
+        type: "warning",
+      });
+      return;
+    }
+
+    // Descomponer solo para enviar al backend
+    const parts = addressText.split(",");
+    const street = parts[0]?.trim() || "";
+    const city = parts[1]?.trim() || "";
+    const state = parts[2]?.trim() || "";
+    const country = parts[3]?.trim() || "Costa Rica";
+
+    await getForexRate("CRC", "USD");
+    await processCheckout(paymentIntent, totals, {
+      street,
+      city,
+      state,
+      country,
+    });
+  };
 
   return (
     <div className="font-quicksand">
-      <h2 className="text-xl font-bold mb-4">
-        {variant === "product" ? "Detalles del producto" : "Detalles de la compra"}
+      <h2 className="text-xl font-bold mb-4 text-[#5B21B6]">
+        {variant === "product"
+          ? "Detalles del producto"
+          : "Detalles de la compra"}
       </h2>
 
       {/* Totales */}
@@ -49,93 +105,139 @@ export default function FormShopping({
         <p className="text-red-500 mt-5">{error}</p>
       ) : (
         <div className="flex flex-col gap-6 pt-6">
-          {/* Subtotal */}
           <div className="border-t pt-5 flex justify-between">
             <p>Subtotal:</p>
-            <p className="text-main">₡{format(totals?.subtotal)}</p>
+            <p className="text-[#7E22CE] font-semibold">
+              ₡{format(totals?.subtotal)}
+            </p>
           </div>
 
-          {/* Impuestos */}
           <div className="border-t pt-5 flex justify-between">
             <p>Impuestos (13%):</p>
-            <p>₡{format(totals?.taxes)}</p>
+            <p className="text-[#7E22CE] font-semibold">
+              ₡{format(totals?.taxes)}
+            </p>
           </div>
 
-          {/* Envío */}
           {variant === "checkout" && (
             <div className="border-t pt-5 flex justify-between">
               <p>Envío:</p>
-              <p>₡{format(totals?.shipping)}</p>
+              <p className="text-[#7E22CE] font-semibold">
+                ₡{format(totals?.shipping)}
+              </p>
             </div>
           )}
 
-          {/* Total */}
           <div className="border-t pt-5 flex justify-between">
             <p className="font-bold">Total:</p>
-            <p className="font-bold text-main">₡{format(totals?.total)}</p>
+            <p className="font-bold text-[#5B21B6]">₡{format(totals?.total)}</p>
           </div>
         </div>
       )}
 
-      {/*  Checkout Mode */}
+      {/* Checkout */}
       {variant === "checkout" && (
         <>
-          {/* Dirección */}
-          <div className="pt-10 flex gap-2 text-contrast-main">
-            <IconMapPin />
-            <p>Enviar a Andrés</p>
+          {/* 🏠 Dirección */}
+          <div className="pt-10 flex flex-col gap-3 text-[#4C1D95]">
+            <label className="flex items-center gap-2 text-base font-semibold">
+              <IconMapPin className="text-[#6B21A8]" />
+              Dirección de envío
+            </label>
+
+            {/* Dropdown */}
+            <select
+              className="border border-[#C4B5FD] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] transition-all duration-200"
+              onChange={(e) => {
+                const selected = addresses.find(
+                  (a) => a.id === Number(e.target.value)
+                );
+                if (selected) {
+                  setSelectedAddressId(selected.id);
+                  setAddressText(
+                    `${selected.street}, ${selected.city}${
+                      selected.state ? `, ${selected.state}` : ""
+                    }, ${selected.country}`
+                  );
+                } else {
+                  setSelectedAddressId(null);
+                  setAddressText("");
+                }
+              }}
+              value={selectedAddressId ?? ""}
+            >
+              <option value="">Seleccionar dirección guardada...</option>
+              {addresses.map((addr) => (
+                <option key={addr.id} value={addr.id}>
+                  {addr.street} - {addr.city}
+                </option>
+              ))}
+            </select>
+
+            {/* Textarea */}
+            <textarea
+              className={`border rounded-lg px-3 py-2 text-sm focus:outline-none transition-all duration-200 ${
+                !addressText.trim()
+                  ? "border-red-300 focus:ring-2 focus:ring-red-400"
+                  : "border-[#C4B5FD] focus:ring-2 focus:ring-[#7C3AED]"
+              }`}
+              placeholder="Escribe la dirección de entrega..."
+              rows={3}
+              value={addressText}
+              onChange={(e) => setAddressText(e.target.value)}
+            />
           </div>
 
-          {/* Formulario con Stripe */}
+          {/* 💳 Stripe */}
           <div className="pt-10">
             <Elements stripe={stripePromise}>
               <StripePaymentForm
                 total={totals?.total || 0}
-                onPaymentSuccess={async (paymentIntent) => {
-                  console.log(" Pago exitoso:", paymentIntent);
-                  await getForexRate("CRC", "USD");
-                  await processCheckout(paymentIntent, totals); // ✅ registra orden + limpia carrito
-                }}
+                onPaymentSuccess={handlePayment}
               />
             </Elements>
           </div>
 
           {/* Métodos de pago */}
           <div className="pt-10">
-            <h3 className="font-semibold mb-3">Métodos de pago</h3>
+            <h3 className="font-semibold mb-3 text-[#4C1D95]">
+              Métodos de pago
+            </h3>
             <div className="flex gap-4">
               <img className="h-10" src={visa} alt="Visa" />
               <img className="h-10" src={mastercard} alt="Mastercard" />
               <img className="h-10" src={paypal} alt="PayPal" />
-              <img className="h-10" src={american_express} alt="American Express" />
+              <img
+                className="h-10"
+                src={american_express}
+                alt="American Express"
+              />
             </div>
           </div>
 
-          {/* Resultado del tipo de cambio */}
+          {/* Tipo de cambio */}
           {rate && (
-            <div className="mt-6 p-4 bg-green-50 border border-green-300 rounded-xl text-sm">
+            <div className="mt-6 p-4 bg-purple-50 border border-[#DDD6FE] rounded-xl text-sm text-[#4C1D95]">
               <p>
-                💰 <strong>Tipo de cambio:</strong>{" "}
-                {rate.sourceCurrencyCode} → {rate.destinationCurrencyCode} ={" "}
-                {rate.rate}
+                💰 <strong>Tipo de cambio:</strong> {rate.sourceCurrencyCode} →{" "}
+                {rate.destinationCurrencyCode} = {rate.rate}
               </p>
-              <p> Mock activo: {rate.mock ? "Sí" : "No"}</p>
+              <p>Mock activo: {rate.mock ? "Sí" : "No"}</p>
             </div>
           )}
 
-          {/* Error Visa */}
           {errorVisa && (
             <p className="text-red-500 text-sm mt-4">{errorVisa}</p>
           )}
         </>
       )}
 
-      {/*  Product Mode */}
+      {/* Product Mode */}
       {variant === "product" && (
         <div className="pt-10">
           <Button
             onClick={onAddToCart}
-            className="w-full bg-contrast-secondary hover:bg-main text-white"
+            className="w-full bg-[#7C3AED] hover:bg-[#6B21A8] text-white shadow-md rounded-full transition-all"
           >
             Añadir al carrito
           </Button>

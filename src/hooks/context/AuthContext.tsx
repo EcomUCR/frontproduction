@@ -34,6 +34,17 @@ type StoreType = {
   }[];
 };
 
+type AddressType = {
+  id: number;
+  street: string;
+  city: string;
+  state?: string | null;
+  zip_code?: string | null;
+  country: string;
+  phone_number?: string;
+  is_default?: boolean;
+};
+
 type UserType = {
   name: string;
   image: string;
@@ -45,6 +56,7 @@ type UserType = {
   phone_number?: string;
   role: "ADMIN" | "SELLER" | "CUSTOMER";
   store?: StoreType | null;
+  addresses?: AddressType[];
 };
 
 type AuthContextType = {
@@ -53,7 +65,7 @@ type AuthContextType = {
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  refreshUser?: () => Promise<void>; // opcional por si lo necesitas luego
+  refreshUser: () => Promise<void>; // 🔹 ahora requerido, no opcional
 };
 
 // ============================
@@ -62,7 +74,7 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// ✅ AuthContext limpio
+// ✅ Contexto corregido
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
   const [token, setToken] = useState<string | null>(
@@ -80,19 +92,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
+  // 🔹 Carga del usuario actual
   const loadUser = async () => {
     setLoading(true);
     try {
       const { data } = await axios.get("/me");
-      setUser(data.user ?? data);
-    } catch {
+      const userData = data.user ?? data;
+      setUser(userData);
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        console.warn("⚠️ Sesión expirada. Cerrando sesión automáticamente.");
+      } else {
+        console.error("❌ Error al cargar el usuario:", error);
+      }
+
       setUser(null);
       localStorage.removeItem("access_token");
+      delete axios.defaults.headers.common["Authorization"];
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔹 Alias para refrescar el usuario desde otros componentes
+  const refreshUser = async () => {
+    await loadUser();
+  };
+
+  // 🔹 Iniciar sesión
   const login = async (email: string, password: string) => {
     const { data } = await axios.post("/login", { email, password });
     const token = data.token;
@@ -103,18 +130,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
+  // 🔹 Cerrar sesión
   const logout = async () => {
     try {
       await axios.post("/logout");
-    } catch {}
+    } catch {
+      // no pasa nada si falla
+    }
     setUser(null);
     setToken(null);
     localStorage.removeItem("access_token");
     delete axios.defaults.headers.common["Authorization"];
   };
 
+  // ✅ Ahora se expone refreshUser
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, login, logout, refreshUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
