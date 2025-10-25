@@ -84,7 +84,7 @@ export default function UserEditModal({
     e.preventDefault();
     try {
       setUploading(true);
-      const updatedData = { ...formData };
+      const updatedData = { ...formData, id: user.id }; // ✅ asegurar ID
 
       if (profileFile && updatedData.store) {
         const uploadedImage = await uploadImage(profileFile);
@@ -96,6 +96,7 @@ export default function UserEditModal({
       }
 
       await onSave(updatedData);
+      console.log("🟢 Enviando datos a onSave:", updatedData);
       onClose();
     } catch (err) {
       console.error("❌ Error al guardar usuario:", err);
@@ -323,7 +324,7 @@ export default function UserEditModal({
             </div>
 
             {/* Columna derecha */}
-            {user.role === "CUSTOMER" && (
+            {formData.role === "CUSTOMER" && (
               <div className="bg-gray-50 rounded-2xl p-5 sm:p-6 shadow-inner flex flex-col justify-between text-sm sm:text-base">
                 <div className="space-y-3">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
@@ -331,11 +332,11 @@ export default function UserEditModal({
                   </h3>
                   <p className="text-gray-700">
                     <strong>Artículos comprados:</strong>{" "}
-                    {user.total_items ?? 0}
+                    {formData.total_items ?? 0}
                   </p>
                   <p className="text-gray-700">
                     <strong>Total gastado:</strong> ₡
-                    {user.total_spent?.toLocaleString("es-CR") ?? "0"}
+                    {formData.total_spent?.toLocaleString("es-CR") ?? "0"}
                   </p>
 
                   <ButtonComponent
@@ -346,12 +347,12 @@ export default function UserEditModal({
               </div>
             )}
 
-            {user.role === "SELLER" && (
+            {formData.role === "SELLER" && (
               <div className="bg-gray-50 rounded-2xl items-center justify-center flex p-5 sm:p-6 shadow-inner text-center">
                 <div className="flex flex-col gap-4">
                   <h2 className="text-base sm:text-lg">
                     Tienda de{" "}
-                    <span className="font-semibold">{user.username}</span>
+                    <span className="font-semibold">{formData.username}</span>
                   </h2>
                   <ButtonComponent
                     text="Modificar tienda"
@@ -375,7 +376,7 @@ export default function UserEditModal({
                 style="bg-gray-200 text-gray-700 px-4 sm:px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition text-sm"
               />
               <ButtonComponent
-                text={uploading ? 'Guardando...' : 'Guardar'}
+                text={uploading ? "Guardando..." : "Guardar"}
                 type="submit"
                 style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-4 sm:px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition text-sm"
               />

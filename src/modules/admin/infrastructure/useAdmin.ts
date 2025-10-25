@@ -102,7 +102,7 @@ export default function useAdmin() {
             });
 
             console.log(`✅ Usuario ${userId} actualizado correctamente`);
-            return res.data.user;
+            return res.data.user || res.data;
         } catch (e) {
             console.error("❌ Error al actualizar datos del usuario:", e);
             return null;

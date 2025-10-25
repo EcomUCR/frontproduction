@@ -79,6 +79,8 @@ export default function AdminUsersTable() {
   };
 
   const handleSaveUser = async (updatedData: any) => {
+    console.log("🟣 handleSaveUser recibió:", updatedData);
+
     const cleanedData = { ...updatedData };
     delete cleanedData.id;
     delete cleanedData.total_spent;
@@ -86,16 +88,32 @@ export default function AdminUsersTable() {
     delete cleanedData.last_connection;
     if (!cleanedData.password) delete cleanedData.password;
 
-    const updatedUser = await updateUserData(selectedUser.id, cleanedData);
-    if (updatedUser) {
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === selectedUser.id ? { ...u, ...updatedUser } : u
-        )
-      );
-      setShowModal(false);
+    console.log("🟣 handleSaveUser enviará a updateUserData:", cleanedData);
+
+    try {
+      const updatedUser = await updateUserData(updatedData.id, cleanedData);
+      console.log("🟣 Backend respondió:", updatedUser);
+
+      if (updatedUser) {
+        const userData = updatedUser.user || updatedUser;
+        setUsers((prev: any[]) =>
+          prev.map((u) =>
+            u.id === updatedData.id ? { ...u, ...userData } : u
+          )
+        );
+        setSelectedUser((prev: any | null) =>
+          prev?.id === updatedData.id ? { ...prev, ...userData } : prev
+        );
+        setShowModal(false);
+      }
+    } catch (error) {
+      console.error("❌ Error en handleSaveUser:", error);
     }
   };
+
+
+
+
 
   const handleEditStore = async (user: any) => {
     const storeData = await getStoreByUserId(user.id);
