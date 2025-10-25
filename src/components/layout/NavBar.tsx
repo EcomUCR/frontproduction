@@ -48,11 +48,7 @@ export default function NavBar() {
     return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, []);
 
-  const displayName = user
-    ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() ||
-      user.email ||
-      user.store?.name
-    : "";
+  const displayName = user?.username || "";
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -114,8 +110,24 @@ export default function NavBar() {
                 className="flex items-center gap-1 cursor-pointer"
                 onClick={() => setShowUserMenu((prev) => !prev)}
               >
+                {/* Icono de usuario */}
                 <IconUser className="h-5 w-5" />
-                <span>{displayName}</span>
+
+                {/* Nombre del usuario */}
+                <span className="text-sm sm:text-base">{displayName}</span>
+
+                {/* Imagen de perfil */}
+                {user?.image ? (
+                  <img
+                    src={user.image}
+                    alt="Perfil"
+                    className="w-8 h-8 rounded-full object-cover border border-white/20 shadow-sm"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                    <IconUser className="h-5 w-5 text-gray-500" />
+                  </div>
+                )}
 
                 <AnimatePresence>
                   {showUserMenu && (
@@ -194,8 +206,8 @@ export default function NavBar() {
           <Link to="/shoppingCart" className="relative">
             <IconShoppingBag className="h-6 w-6" />
             {itemCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-semibold px-1.5 rounded-full shadow-sm">
-                {itemCount}
+              <span className="absolute -top-1 -right-1 bg-contrast-secondary text-white text-[10px] font-bold rounded-full px-1.5">
+                {itemCount > 9 ? "9+" : itemCount}
               </span>
             )}
           </Link>
