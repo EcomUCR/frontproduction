@@ -118,11 +118,14 @@ export default function NavBar() {
                     className="w-8 h-8 rounded-full object-contain border border-white/20 shadow-sm"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <IconUser className="h-5 w-5 text-gray-500" />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-contrast-main to-contrast-secondary flex items-center justify-center">
+                    <p className="uppercase text-white font-semibold relative -top-0.5">
+                      {user.username[0]}
+                    </p>
                   </div>
+
                 )}
-                    {/* Nombre del usuario */}
+                {/* Nombre del usuario */}
                 <span className="text-sm sm:text-base">{displayName}</span>
 
                 <AnimatePresence>
