@@ -119,7 +119,7 @@ export default function NavBar() {
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-contrast-main to-contrast-secondary flex items-center justify-center">
-                    <p className="uppercase text-white font-semibold relative -top-0.5">
+                    <p className="uppercase text-white font-semibold relative -top-0.25">
                       {user.username[0]}
                     </p>
                   </div>
