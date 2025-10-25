@@ -142,7 +142,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
     setNewLogoFile(null);
     setSocialLinks([]);
     setAdding(false);
-    setCambiarPassword(false); // ✅ resetea también el checkbox
+    setCambiarPassword(false);
   };
 
   const addSocialLink = () => {
@@ -239,8 +239,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-10 px-4 sm:px-10"
           >
             {/* Logo */}
-            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-1/3 items-center">
-              <div className="flex items-center justify-between w-full sm:w-auto">
+            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-1/3">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <p className="text-sm sm:text-base font-semibold">
                   Logo de tienda
                 </p>
@@ -257,7 +257,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
               <img
                 src={
                   editableStore.image ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761412207/imagenNoSubida_dymbb7.png"
                 }
                 alt="Logo"
                 className="w-[60%] sm:w-2/3 max-w-[12rem] h-auto rounded-xl object-cover shadow-sm"
@@ -265,8 +265,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             </figure>
 
             {/* Banner */}
-            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-2/3 items-center">
-              <div className="flex items-center justify-between w-full sm:w-auto">
+            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-2/3">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <p className="text-sm sm:text-base font-semibold">
                   Banner de la tienda
                 </p>
@@ -283,10 +283,10 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
               <img
                 src={
                   editableStore.banner ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761410400/BannerNoSubido_avlp5v.png"
                 }
                 alt="Banner"
-                className="rounded-xl object-cover w-full sm:w-auto max-h-[12rem] sm:max-h-[18rem] shadow-sm"
+                className="rounded-xl object-cover w-full sm:w-auto max-h-[12rem] sm:max-h-[10rem] shadow-sm"
               />
             </figure>
           </form>
