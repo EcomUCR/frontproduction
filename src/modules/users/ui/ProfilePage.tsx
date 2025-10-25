@@ -14,6 +14,7 @@ import AdminCoupons from "../../admin/ui/components/AdminCoupons";
 import OrdersList from "./OrdersList";
 import { useNotificationContext } from "../../../hooks/context/NotificationContext";
 import { IconMenu2, IconX } from "@tabler/icons-react";
+import AdminMailBox from "../../admin/ui/components/AdminMailBox";
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
@@ -145,6 +146,9 @@ export default function UserPage() {
               )}
               {selected === "coupons" && user.role === "ADMIN" && (
                 <AdminCoupons />
+              )}
+              {selected === "mailbox" && user.role === "ADMIN" && (
+                <AdminMailBox />
               )}
               {selected === "banners" && user.role === "ADMIN" && (
                 <CrudBanners />
