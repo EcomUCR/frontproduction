@@ -135,7 +135,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
       }
 
       await updateStore(editableStore.id, updatedFields);
-      await refreshUser();
+      await refreshUser?.();
 
       setAlert({
         show: true,
