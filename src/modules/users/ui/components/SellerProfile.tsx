@@ -168,7 +168,6 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
       if (newLogoFile) {
         const logoUrl = await uploadImage(newLogoFile);
         updatedFields.image = logoUrl;
-        if (user) await axios.patch(`/users/${user.id}`, { image: logoUrl });
       }
 
       if (newBannerFile) {

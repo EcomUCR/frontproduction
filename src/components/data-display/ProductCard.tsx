@@ -4,7 +4,6 @@ import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useAlert } from "../../hooks/context/AlertContext";
 import AnimatedHeartButton from "./AnimatedHeartButton";
-import { useWishlist } from "../../modules/users/infrastructure/useWishList";
 import { useCart } from "../../hooks/context/CartContext"; // 👈 nuevo import
 
 interface ProductCardProps {
@@ -22,7 +21,6 @@ export default function ProductCard(props: ProductCardProps) {
   const { addToCart } = useCart(); // 👈 usar lógica centralizada del carrito
   const { showAlert } = useAlert();
   const navigate = useNavigate();
-  const { fetchWishlist } = useWishlist();
 
   const formatPrice = (value?: number) => {
     const num = Number(value) || 0;
