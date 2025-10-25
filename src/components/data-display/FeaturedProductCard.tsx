@@ -232,11 +232,90 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
       {/* 🔹 Barra inferior (mobile) */}
       {!props.edit && (
         <div className="flex sm:hidden justify-between items-center w-full mt-3 gap-3">
-          <ButtonComponent
-            style="bg-contrast-secondary w-full text-white cursor-pointer rounded-full text-sm sm:text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 px-6 shadow-md"
-            text="Añadir al carrito"
-            onClick={handleAddToCart}
-          />
+          <motion.button
+                onClick={handleAddToCart}
+                initial={false}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                animate={
+                  added
+                    ? {
+                      background: "linear-gradient(90deg, var(--color-contrast-secondary), var(--color-main))",
+                      scale: [1, 1.05, 1],
+                      boxShadow: "0 0 15px rgba(150, 80, 220, 0.6)",
+                    }
+                    : {
+                      background: "linear-gradient(90deg, var(--color-contrast-main), var(--color-contrast-secondary))",
+                      scale: 1,
+                      boxShadow: "0 0 0 rgba(0,0,0,0)",
+                    }
+                }
+                transition={{
+                  duration: 0.1,
+                  ease: "easeInOut",
+                }}
+                className="relative overflow-hidden cursor-pointer rounded-full text-sm sm:text-base transition-all duration-400 py-2 px-6 shadow-md w-full text-white"
+              >
+                {/* Contenedor del texto animado */}
+                <div className="relative h-5 sm:h-6 flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    {added ? (
+                      <motion.span
+                        key="added"
+                        initial={{ y: -25, opacity: 0, scale: 0.8 }}
+                        animate={{
+                          y: 0,
+                          opacity: 1,
+                          scale: 1,
+                          transition: {
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                          },
+                        }}
+                        exit={{
+                          y: 25,
+                          opacity: 0,
+                          scale: 0.9,
+                          transition: { duration: 0.2 },
+                        }}
+                        className="absolute inset-0 flex items-center justify-center font-semibold"
+                      >
+                        <motion.div
+                          initial={{ rotate: -120, scale: 0.8 }}
+                          animate={{ rotate: 0, scale: 1 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                          className="flex items-center"
+                        >
+                          <IconCheck className="mr-2 text-white" size={18} />
+                          <motion.span
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.05, duration: 0.3 }}
+                          >
+                            Añadido
+                          </motion.span>
+                        </motion.div>
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="add"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{
+                          y: 0,
+                          opacity: 1,
+                          transition: { type: "spring", stiffness: 300, damping: 18 },
+                        }}
+                        exit={{ y: 20, opacity: 0, transition: { duration: 0.2 } }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        Añadir al carrito
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.button>
+
           <AnimatedHeartButton productId={props.id} variant="filled" />
         </div>
       )}
