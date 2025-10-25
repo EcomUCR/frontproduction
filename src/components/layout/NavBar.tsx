@@ -115,7 +115,7 @@ export default function NavBar() {
                   <img
                     src={user.image}
                     alt="Perfil"
-                    className="w-8 h-8 rounded-full object-cover border border-white/20 shadow-sm"
+                    className="w-8 h-8 rounded-full object-contain border border-white/20 shadow-sm"
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
