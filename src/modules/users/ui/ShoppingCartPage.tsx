@@ -2,45 +2,26 @@ import Footer from "../../../components/layout/Footer";
 import FormShopping from "../../../components/forms/FormShopping";
 import NavBar from "../../../components/layout/NavBar";
 import ProductCardShopping from "../../../components/data-display/ProductCardShopping";
-import { useAuth } from "../../../hooks/context/AuthContext";
 import { IconBrandWhatsapp } from "@tabler/icons-react";
 import { useEffect } from "react";
-import axios from "axios";
 import BannerComponent from "../../../components/data-display/BannerComponent";
-import { useBanner } from "../../admin/infrastructure/useBanner"; // ✅ Import agregado
+import { useBanner } from "../../admin/infrastructure/useBanner";
+import { useCart } from "../../../hooks/context/CartContext"; // 👈 nuevo import
 
 export default function ShoppingCartPage() {
-  const { cart, loading, token, setCart } = useAuth();
+  const { cart, loading, refreshCart } = useCart(); // 👈 usar el contexto centralizado
 
   // ✅ Hook para banners
   const { banners, fetchBanners, loading: loadingBanners } = useBanner();
 
-  // ✅ Cargar carrito
-  const getCartItems = async () => {
-    try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/cart/me`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setCart(data);
-    } catch (error) {
-      console.error("Error al obtener carrito:", error);
-    }
-  };
-
-  // ✅ Cargar banners
+  // ✅ Cargar banners una vez
   useEffect(() => {
     fetchBanners();
   }, []);
 
-  // ✅ Escuchar actualizaciones del carrito
+  // ✅ Refrescar carrito al montar (solo si aún no está cargado)
   useEffect(() => {
-    getCartItems();
-    const reload = () => getCartItems();
-    window.addEventListener("cartUpdated", reload);
-    return () => window.removeEventListener("cartUpdated", reload);
+    refreshCart();
   }, []);
 
   if (loading) return <p className="text-center py-10">Cargando carrito...</p>;
@@ -56,6 +37,7 @@ export default function ShoppingCartPage() {
             Mi Carrito
           </h1>
         </div>
+
         {/* 🛍️ Contenido principal */}
         <section className="mx-4 sm:mx-10 flex flex-col sm:flex-row">
           {/* Lista de productos */}
@@ -111,7 +93,6 @@ export default function ShoppingCartPage() {
               );
 
               if (activeBanners.length === 1) {
-                // 🟡 Solo 1 → centrado
                 const b = activeBanners[0];
                 return (
                   <div className="flex justify-center items-center">
@@ -136,7 +117,7 @@ export default function ShoppingCartPage() {
                 );
               }
 
-              // 🟢 2 o más → grid centrado sin modificar el diseño original
+              // 🟢 2 o más banners
               return (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10 justify-center items-end">
                   {activeBanners.map((b) => (

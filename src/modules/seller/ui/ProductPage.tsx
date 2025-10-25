@@ -316,7 +316,7 @@ export default function ProductPage() {
                         </div>
 
                         <div className="relative">
-                          <ShareBubbles positionClass="absolute right-30 top-25" />
+                          <ShareBubbles positionClass="absolute right-30 top-25" shareUrl={""} />
                         </div>
                       </div>
                     </div>

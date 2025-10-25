@@ -32,6 +32,13 @@ interface Store {
   support_email?: string | null;
   registered_address?: string | null;
   is_verified?: boolean | string | null;
+
+  // 🔹 Agrega esto:
+  storeSocials?: {
+    id: number;
+    platform: "instagram" | "facebook" | "x" | "link" | string;
+    url: string;
+  }[];
 }
 
 interface SocialLink {
@@ -47,7 +54,7 @@ const iconMap = {
 };
 
 export default function SellerProfile({ setAlert }: SellerProfileProps) {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, token } = useAuth();
   const [editableStore, setEditableStore] = useState<Store | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [adding, setAdding] = useState(false);
@@ -56,21 +63,59 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
-  const [cambiarPassword, setCambiarPassword] = useState(false); // ✅ nuevo estado
+  const [cambiarPassword, setCambiarPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
 
   useEffect(() => {
     if (user?.store) {
       const storeData = {
         ...user.store,
         is_verified:
-          user.store.is_verified === true ||
-          user.store.is_verified === "true"
+          user.store.is_verified === true || user.store.is_verified === "true"
             ? true
             : false,
       };
       setEditableStore(storeData);
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchStoreDetails = async () => {
+      if (!user?.store?.id) return;
+
+      try {
+        // 🔹 Obtener tienda completa con relaciones
+        const { data } = await axios.get(`/stores/${user.store.id}`);
+
+        // 🔹 Actualizar estado editableStore (con imagen/banner actualizados)
+        setEditableStore({
+          ...data,
+          is_verified: data.is_verified === true || data.is_verified === "true",
+        });
+
+        // 🔹 Cargar redes sociales
+        const socials =
+          data.storeSocials?.map((s: any) => ({
+            type: s.platform,
+            text: s.url,
+          })) ||
+          data.store_socials?.map((s: any) => ({
+            type: s.platform,
+            text: s.url,
+          })) ||
+          [];
+
+        setSocialLinks(socials);
+      } catch (err) {
+        console.error("Error cargando detalles de la tienda:", err);
+      }
+    };
+
+    fetchStoreDetails();
+  }, [user?.store?.id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -101,7 +146,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
     setNewLogoFile(null);
     setSocialLinks([]);
     setAdding(false);
-    setCambiarPassword(false); // ✅ resetea también el checkbox
+    setCambiarPassword(false);
   };
 
   const addSocialLink = () => {
@@ -114,6 +159,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const handleSave = async () => {
     if (!editableStore) return;
     setSaving(true);
+
     try {
       const updatedFields: Record<string, any> = {
         name: editableStore.name ?? "",
@@ -121,12 +167,12 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
         registered_address: editableStore.registered_address ?? "",
         support_phone: editableStore.support_phone ?? "",
         support_email: editableStore.support_email ?? "",
+        social_links: socialLinks,
       };
 
       if (newLogoFile) {
         const logoUrl = await uploadImage(newLogoFile);
         updatedFields.image = logoUrl;
-        if (user) await axios.patch(`/users/${user.id}`, { image: logoUrl });
       }
 
       if (newBannerFile) {
@@ -135,25 +181,75 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
       }
 
       await updateStore(editableStore.id, updatedFields);
-      await refreshUser();
+      await refreshUser?.();
+
+      if (cambiarPassword) {
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          setAlert({
+            show: true,
+            title: "Campos incompletos",
+            message: "Debes llenar todos los campos de contraseña.",
+            type: "warning",
+          });
+          setSaving(false);
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          setAlert({
+            show: true,
+            title: "Error de confirmación",
+            message: "Las contraseñas no coinciden.",
+            type: "error",
+          });
+          setSaving(false);
+          return;
+        }
+
+        await axios.put(
+          "/change-password",
+          {
+            current_password: currentPassword,
+            new_password: newPassword,
+            new_password_confirmation: confirmPassword,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+      }
 
       setAlert({
         show: true,
         title: "Cambios guardados",
-        message: "La tienda se actualizó correctamente.",
+        message: cambiarPassword
+          ? "Tu contraseña y perfil de tienda se actualizaron correctamente."
+          : "La tienda se actualizó correctamente.",
         type: "success",
       });
-    } catch {
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setCambiarPassword(false);
+      setNewLogoFile(null);
+      setNewBannerFile(null);
+    } catch (err: any) {
       setAlert({
         show: true,
         title: "Error al guardar",
-        message: "Ocurrió un problema al actualizar los datos.",
+        message:
+          err.response?.data?.error ||
+          "Ocurrió un problema al actualizar los datos.",
         type: "error",
       });
     } finally {
       setSaving(false);
     }
   };
+
+
 
   if (!editableStore) return null;
 
@@ -173,8 +269,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             Tu tienda está en verificación
           </p>
           <p className="text-main-dark/70 max-w-md">
-            El equipo de TukiShop se pondrá en contacto contigo para verificar tu tienda.
-            Si tienes dudas, contacta con soporte.
+            El equipo de TukiShop se pondrá en contacto contigo para verificar
+            tu tienda. Si tienes dudas, contacta con soporte.
           </p>
           <a
             href="https://wa.me/50687355629"
@@ -197,8 +293,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-10 px-4 sm:px-10"
           >
             {/* Logo */}
-            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-1/3 items-center">
-              <div className="flex items-center justify-between w-full sm:w-auto">
+            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-1/3">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <p className="text-sm sm:text-base font-semibold">
                   Logo de tienda
                 </p>
@@ -215,7 +311,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
               <img
                 src={
                   editableStore.image ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761412207/imagenNoSubida_dymbb7.png"
                 }
                 alt="Logo"
                 className="w-[60%] sm:w-2/3 max-w-[12rem] h-auto rounded-xl object-cover shadow-sm"
@@ -223,8 +319,8 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             </figure>
 
             {/* Banner */}
-            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-2/3 items-center">
-              <div className="flex items-center justify-between w-full sm:w-auto">
+            <figure className="flex flex-col gap-4 sm:gap-10 w-full sm:w-2/3">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <p className="text-sm sm:text-base font-semibold">
                   Banner de la tienda
                 </p>
@@ -241,10 +337,10 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
               <img
                 src={
                   editableStore.banner ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761410400/BannerNoSubido_avlp5v.png"
                 }
                 alt="Banner"
-                className="rounded-xl object-cover w-full sm:w-auto max-h-[12rem] sm:max-h-[18rem] shadow-sm"
+                className="rounded-xl object-cover w-full sm:w-auto max-h-[12rem] sm:max-h-[10rem] shadow-sm"
               />
             </figure>
           </form>
@@ -311,17 +407,11 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     <div className="flex gap-2 items-center">
                       <h2>Links / Redes sociales</h2>
                       {!adding ? (
-                        <button
-                          type="button"
-                          onClick={() => setAdding(true)}
-                        >
+                        <button type="button" onClick={() => setAdding(true)}>
                           <IconSquareRoundedPlus className="text-contrast-secondary cursor-pointer" />
                         </button>
                       ) : (
-                        <button
-                          type="button"
-                          onClick={() => setAdding(false)}
-                        >
+                        <button type="button" onClick={() => setAdding(false)}>
                           <IconX className="text-contrast-secondary size-4" />
                         </button>
                       )}
@@ -411,22 +501,29 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     <input
                       type="password"
                       placeholder="Contraseña actual"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                       className="bg-main-dark/20 rounded-xl px-3 py-2 w-full sm:w-[50%] text-sm sm:text-base"
                     />
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
                       <input
                         type="password"
                         placeholder="Nueva contraseña"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
                         className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                       />
                       <input
                         type="password"
                         placeholder="Confirmar contraseña"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         className="bg-main-dark/20 rounded-xl px-3 py-2 w-full text-sm sm:text-base"
                       />
                     </div>
                   </div>
                 )}
+
               </section>
             </form>
 
@@ -438,7 +535,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                 style="w-full sm:w-[48%] p-3 rounded-full text-white bg-main cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
               />
               <ButtonComponent
-                text={saving ? 'Guardando...' : 'Guardar cambios'}
+                text={saving ? "Guardando..." : "Guardar cambios"}
                 onClick={handleSave}
                 style="w-full sm:w-[48%] p-3 rounded-full text-white bg-contrast-secondary cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300"
               />

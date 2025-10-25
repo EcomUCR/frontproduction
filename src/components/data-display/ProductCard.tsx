@@ -1,11 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { IconEdit, IconShoppingBag } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
-import axios from "axios";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useAlert } from "../../hooks/context/AlertContext";
 import AnimatedHeartButton from "./AnimatedHeartButton";
-import { useWishlist } from "../../modules/users/infrastructure/useWishList";
+import { useCart } from "../../hooks/context/CartContext"; // 👈 nuevo import
 
 interface ProductCardProps {
   id: number;
@@ -18,10 +17,10 @@ interface ProductCardProps {
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { token, setCart } = useAuth();
+  const { token } = useAuth();
+  const { addToCart } = useCart(); // 👈 usar lógica centralizada del carrito
   const { showAlert } = useAlert();
   const navigate = useNavigate();
-  const { fetchWishlist } = useWishlist();
 
   const formatPrice = (value?: number) => {
     const num = Number(value) || 0;
@@ -45,12 +44,7 @@ export default function ProductCard(props: ProductCardProps) {
     }
 
     try {
-      const { data } = await axios.post(
-        "/cart/add",
-        { product_id: props.id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCart(data.cart);
+      await addToCart(props.id, 1); // 👈 usa el CartContext
       showAlert({
         title: "Producto añadido",
         message: "El producto fue añadido al carrito correctamente",
@@ -67,9 +61,7 @@ export default function ProductCard(props: ProductCardProps) {
   };
 
   return (
-    <figure
-      className="relative flex flex-col w-44 sm:w-55 h-70 sm:h-90 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group transition-all duration-300"
-    >
+    <figure className="relative flex flex-col w-44 sm:w-55 h-70 sm:h-90 p-3 bg-light-gray rounded-2xl shadow-md font-quicksand group transition-all duration-300">
       {/* ✏️ Botón editar (modo admin/tienda) */}
       {props.edit && (
         <Link
@@ -94,7 +86,7 @@ export default function ProductCard(props: ProductCardProps) {
           </div>
 
           {/* Móvil (visible siempre) */}
-          <div className="sm:hidden absolute top-3 right-3">
+          <div className="hidden sm:hidden absolute top-10 right-3">
             <AnimatedHeartButton productId={props.id} variant="filled" />
           </div>
         </>
@@ -104,9 +96,9 @@ export default function ProductCard(props: ProductCardProps) {
       {!props.edit && (
         <button
           onClick={handleAddToCart}
-          className="sm:hidden absolute bottom-3 right-3 bg-gradient-to-br from-contrast-main to-contrast-secondary text-white p-2 rounded-xl hover:bg-gradient-to-br transition-all duration-300 active:scale-95"
+          className="sm:hidden absolute top-3 right-3 bg-gradient-to-br from-contrast-main to-contrast-secondary text-white p-2 rounded-xl hover:bg-gradient-to-br transition-all duration-300"
         >
-          <IconShoppingBag size={18} className="stroke-[2.5]" />
+          <IconShoppingBag size={20} className="stroke-[2.5]" />
         </button>
       )}
 
@@ -167,10 +159,10 @@ export default function ProductCard(props: ProductCardProps) {
               onClick={handleAddToCart}
             >
               <IconShoppingBag className="w-5 h-5" />
-              <ButtonComponent
-                style="w-full text-xs cursor-pointer"
-                text="Añadir al carrito"
-              />
+              <button className="w-full text-xs cursor-pointer">
+                Añadir al carrito"
+              </button>
+
             </div>
           </div>
         )}

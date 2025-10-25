@@ -13,15 +13,20 @@ import logo from "../../img/TukiLogo.png";
 import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useProducts } from "../../modules/seller/infrastructure/useProducts";
+import { useWishlist } from "../../modules/users/infrastructure/useWishList";
+
 import { useEffect, useState } from "react";
 import CategoryDropdown from "../data-display/CategoryDropdown";
 import NotificationDropdown from "../data-display/NotificationDropDown";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { useCart } from "../../hooks/context/CartContext";
 type Category = { id: number; name: string };
 
 export default function NavBar() {
   const { user, logout } = useAuth();
+  const { itemCount, refreshCart } = useCart();
+  const { wishlist, fetchWishlist } = useWishlist();
+
   const { getCategories } = useProducts();
   const navigate = useNavigate();
 
@@ -29,6 +34,9 @@ export default function NavBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (user) fetchWishlist();
+  }, [user]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -41,12 +49,13 @@ export default function NavBar() {
     };
     fetchCategories();
   }, []);
+  useEffect(() => {
+    const handleCartUpdate = () => refreshCart();
+    window.addEventListener("cartUpdated", handleCartUpdate);
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+  }, []);
 
-  const displayName = user
-    ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() ||
-    user.email ||
-    user.store?.name
-    : "";
+  const displayName = user?.username || "";
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -108,8 +117,22 @@ export default function NavBar() {
                 className="flex items-center gap-1 cursor-pointer"
                 onClick={() => setShowUserMenu((prev) => !prev)}
               >
-                <IconUser className="h-5 w-5" />
-                <span>{displayName}</span>
+                {/* Imagen de perfil */}
+                {user?.image ? (
+                  <img
+                    src={user.image}
+                    alt="Perfil"
+                    className="w-8 h-8 rounded-full object-contain border border-white/20 shadow-sm"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-contrast-main to-contrast-secondary flex items-center justify-center">
+                    <p className="uppercase text-white font-semibold relative -top-0.25">
+                      {user.username[0]}
+                    </p>
+                  </div>
+                )}
+                {/* Nombre del usuario */}
+                <span className="text-sm sm:text-base">{displayName}</span>
 
                 <AnimatePresence>
                   {showUserMenu && (
@@ -180,25 +203,43 @@ export default function NavBar() {
           {user && <NotificationDropdown />}
 
           {/* Lista de deseos */}
-          <Link to="/wishlist" className="pr-2">
+          <Link to="/wishlist" className="relative pr-2">
             <IconHeart className="h-6 w-6" />
+            {(wishlist?.items?.length ?? 0) > 0 && (
+              <span className="absolute -top-1 right-0.5 bg-contrast-secondary text-white text-[10px] font-semibold rounded-full shadow-sm flex items-center justify-center h-4 min-w-[1rem] px-1">
+                {wishlist!.items.length > 9 ? "9+" : wishlist!.items.length}
+              </span>
+            )}
           </Link>
 
           {/* Carrito */}
-          <Link to="/shoppingCart">
+          <Link to="/shoppingCart" className="relative">
             <IconShoppingBag className="h-6 w-6" />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-contrast-secondary text-white text-[10px] font-bold rounded-full px-1.5">
+                {itemCount > 9 ? "9+" : itemCount}
+              </span>
+            )}
           </Link>
         </div>
 
         {/* Íconos móviles y botón menú */}
         <div className="flex md:hidden items-center gap-3 text-white">
           {user && <NotificationDropdown />} {/* Notificaciones móviles */}
-          <Link to="/wishlist">
+          {/* Lista de deseos */}
+          <Link to="/wishlist" className="relative">
             <IconHeart className="h-6 w-6" />
           </Link>
-          <Link to="/shoppingCart">
+          {/* Carrito con contador móvil */}
+          <Link to="/shoppingCart" className="relative">
             <IconShoppingBag className="h-6 w-6" />
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-semibold px-1.5 rounded-full shadow-sm">
+                {itemCount}
+              </span>
+            )}
           </Link>
+          {/* Menú hamburguesa */}
           <button onClick={() => setMenuOpen((prev) => !prev)}>
             {menuOpen ? <IconX size={26} /> : <IconMenu2 size={26} />}
           </button>
@@ -236,12 +277,13 @@ export default function NavBar() {
             Tiendas
           </li>
           <li
-            onClick={() => navigate("/search/stores")}
+            onClick={() => navigate("/beSellerPage")}
             className="hover:-translate-y-1 transition-all cursor-pointer"
           >
             Vender
           </li>
-          <li onClick={() => navigate("/search/stores")}
+          <li
+            onClick={() => navigate("/about")}
             className="hover:-translate-y-1 transition-all cursor-pointer"
           >
             Conócenos
@@ -275,7 +317,6 @@ export default function NavBar() {
               />
             </div>
 
-
             {/* Enlaces */}
             <div className="flex flex-col gap-2 text-sm">
               {/* Categorías */}
@@ -285,7 +326,10 @@ export default function NavBar() {
               <Link to="/" onClick={() => setMenuOpen(false)}>
                 Inicio
               </Link>
-              <Link to="/search?mode=explore" onClick={() => setMenuOpen(false)}>
+              <Link
+                to="/search?mode=explore"
+                onClick={() => setMenuOpen(false)}
+              >
                 Explorar
               </Link>
               <Link to="/search?mode=offers" onClick={() => setMenuOpen(false)}>

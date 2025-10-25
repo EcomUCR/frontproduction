@@ -81,7 +81,7 @@ export default function NavBarSeller({
         {/* 🔹 Logo */}
         <div className="w-1/3 flex items-center sm:w-1/3">
           <img
-            src={store.image || ""}
+            src={store.image || "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761412207/imagenNoSubida_dymbb7.png"}
             alt={store.name}
             className="h-14 w-auto object-contain"
             onClick={() => handleViewChange("home")}

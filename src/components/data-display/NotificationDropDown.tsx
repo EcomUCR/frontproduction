@@ -45,8 +45,8 @@ export default function NotificationDropdown() {
       >
         <IconBell size={22} className="text-white" />
         {notifications.length > 0 && (
-          <span className="absolute -top-1 -right-1 bg-contrast-secondary text-white text-[10px] font-bold rounded-full px-1.5">
-            {notifications.length}
+          <span className="absolute top-0.5 right-0.5 bg-contrast-secondary text-white text-[10px] font-semibold rounded-full shadow-sm flex items-center justify-center h-4 min-w-[1rem] px-1">
+            {notifications.length > 9 ? "9+" : notifications.length}
           </span>
         )}
       </button>

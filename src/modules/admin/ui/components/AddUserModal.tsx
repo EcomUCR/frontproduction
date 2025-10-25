@@ -4,12 +4,24 @@ import ButtonComponent from "../../../../components/ui/ButtonComponent";
 
 interface AddUserModalProps {
     onClose: () => void;
+    onSave: (userData: any) => void;
 }
 
-export default function AddUserModal({ onClose }: AddUserModalProps) {
+export default function AddUserModal({ onClose, onSave }: AddUserModalProps) {
     const [role, setRole] = useState<"CUSTOMER" | "SELLER" | "ADMIN">("CUSTOMER");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const [form, setForm] = useState({
+        first_name: "",
+        last_name: "",
+        username: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        phone_number: "",
+        role: "CUSTOMER",
+    });
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
@@ -17,6 +29,30 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
             document.body.style.overflow = "auto";
         };
     }, []);
+
+    useEffect(() => {
+        setForm((prev) => ({ ...prev, role }));
+    }, [role]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = () => {
+        if (!form.username || !form.email || !form.password) {
+            alert("Por favor completa los campos obligatorios");
+            return;
+        }
+        if (form.password !== form.password_confirmation) {
+            alert("Las contraseñas no coinciden");
+            return;
+        }
+        onSave(form);
+    };
 
     return (
         <div
@@ -64,10 +100,16 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
                             {/* Nombre y Apellido */}
                             <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:w-[80%]">
                                 <input
+                                    name="first_name"
+                                    value={form.first_name}
+                                    onChange={handleChange}
                                     className="border-2 border-main text-main rounded-full px-4 py-3 sm:w-[45%] font-quicksand"
                                     placeholder="Nombre"
                                 />
                                 <input
+                                    name="last_name"
+                                    value={form.last_name}
+                                    onChange={handleChange}
                                     className="border-2 border-main text-main rounded-full px-4 py-3 sm:w-[45%] font-quicksand"
                                     placeholder="Apellido"
                                 />
@@ -76,10 +118,16 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
                             {/* Correo y Username */}
                             <div className="flex flex-col space-y-5 w-full sm:w-[75%]">
                                 <input
+                                    name="email"
+                                    value={form.email}
+                                    onChange={handleChange}
                                     className="border-2 border-main text-main rounded-full px-4 py-3 w-full font-quicksand"
                                     placeholder="Correo electrónico"
                                 />
                                 <input
+                                    name="username"
+                                    value={form.username}
+                                    onChange={handleChange}
                                     className="border-2 border-main text-main rounded-full px-4 py-3 w-full font-quicksand"
                                     placeholder="Nombre de usuario"
                                 />
@@ -89,6 +137,9 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
                             <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:w-[80%]">
                                 <div className="relative w-full sm:w-[45%]">
                                     <input
+                                        name="password"
+                                        value={form.password}
+                                        onChange={handleChange}
                                         className="border-2 border-main text-main rounded-full px-4 py-3 w-full pr-10 font-quicksand"
                                         placeholder="Contraseña"
                                         type={showPassword ? "text" : "password"}
@@ -104,6 +155,9 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
 
                                 <div className="relative w-full sm:w-[45%]">
                                     <input
+                                        name="password_confirmation"
+                                        value={form.password_confirmation}
+                                        onChange={handleChange}
                                         className="border-2 border-main text-main rounded-full px-4 py-3 w-full pr-10 font-quicksand"
                                         placeholder="Confirmar contraseña"
                                         type={showConfirmPassword ? "text" : "password"}
@@ -127,10 +181,16 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
                             {/* SELLER */}
                             <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:w-[93%]">
                                 <input
+                                    name="username"
+                                    value={form.username}
+                                    onChange={handleChange}
                                     className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[50%] font-quicksand"
                                     placeholder="Nombre de usuario o tienda"
                                 />
                                 <input
+                                    name="phone_number"
+                                    value={form.phone_number}
+                                    onChange={handleChange}
                                     className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[50%] font-quicksand"
                                     placeholder="Teléfono"
                                     type="tel"
@@ -138,6 +198,9 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
                             </div>
 
                             <input
+                                name="email"
+                                value={form.email}
+                                onChange={handleChange}
                                 className="border-2 border-main text-main rounded-full px-4 py-3 w-full sm:w-[93%] font-quicksand"
                                 placeholder="Correo electrónico"
                             />
@@ -145,6 +208,9 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
                             <div className="flex flex-col sm:flex-row justify-center gap-5 w-full sm:w-[93%]">
                                 <div className="relative w-full sm:w-[50%]">
                                     <input
+                                        name="password"
+                                        value={form.password}
+                                        onChange={handleChange}
                                         className="border-2 border-main text-main rounded-full px-4 py-3 w-full pr-10 font-quicksand"
                                         placeholder="Contraseña"
                                         type={showPassword ? "text" : "password"}
@@ -160,15 +226,16 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
 
                                 <div className="relative w-full sm:w-[50%]">
                                     <input
+                                        name="password_confirmation"
+                                        value={form.password_confirmation}
+                                        onChange={handleChange}
                                         className="border-2 border-main text-main rounded-full px-4 py-3 w-full pr-10 font-quicksand"
                                         placeholder="Confirmar contraseña"
                                         type={showConfirmPassword ? "text" : "password"}
                                     />
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            setShowConfirmPassword(!showConfirmPassword)
-                                        }
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                         className="absolute right-4 top-4 text-main"
                                     >
                                         {showConfirmPassword ? (
@@ -191,6 +258,7 @@ export default function AddUserModal({ onClose }: AddUserModalProps) {
                         />
                         <ButtonComponent
                             text="Guardar usuario"
+                            onClick={handleSubmit}
                             style="bg-gradient-to-br from-main via-contrast-secondary to-contrast-main text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg transition text-sm"
                         />
                     </div>

@@ -26,6 +26,23 @@ type StoreType = {
   is_verified?: boolean | string | null;
   verification_date?: string | null;
   status?: "ACTIVE" | "SUSPENDED" | "CLOSED" | null | string;
+  storeSocials?: {
+    id: number;
+    store_id: number;
+    platform: "instagram" | "facebook" | "x" | "link" | string;
+    url: string;
+  }[];
+};
+
+type AddressType = {
+  id: number;
+  street: string;
+  city: string;
+  state?: string | null;
+  zip_code?: string | null;
+  country: string;
+  phone_number?: string;
+  is_default?: boolean;
 };
 
 type UserType = {
@@ -39,44 +56,16 @@ type UserType = {
   phone_number?: string;
   role: "ADMIN" | "SELLER" | "CUSTOMER";
   store?: StoreType | null;
-};
-
-export type CartItemType = {
-  id: number;
-  product_id: number;
-  quantity: number;
-  product: {
-    id: number;
-    name: string;
-    image_1_url: string;
-    rating: number;
-    price: number;
-    discount_price?: number | null;
-    stock: number;
-    store: {
-      id: number;
-      name: string;
-    };
-  };
-};
-
-
-type CartType = {
-  id: number;
-  user_id: number;
-  total?: number;
-  items: CartItemType[];
+  addresses?: AddressType[];
 };
 
 type AuthContextType = {
   user: UserType | null;
   token: string | null;
   loading: boolean;
-  cart: CartType | null;
-  setCart: React.Dispatch<React.SetStateAction<CartType | null>>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
+  refreshUser: () => Promise<void>; // 🔹 ahora requerido, no opcional
 };
 
 // ============================
@@ -85,119 +74,79 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// ✅ Contexto corregido
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
-  const [token, setToken] = useState<string | null>(() =>
+  const [token, setToken] = useState<string | null>(
     localStorage.getItem("access_token")
   );
   const [loading, setLoading] = useState<boolean>(false);
-  const [cart, setCart] = useState<CartType | null>(null);
 
-  // ============================
-  // 🔄 Cargar usuario y carrito
-  // ============================
   useEffect(() => {
-    if (!token) {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      loadUser();
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
       setUser(null);
-      setCart(null);
-      return;
     }
-
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-    setLoading(true);
-    axios
-      .get("/me")
-      .then(async (res) => {
-        const data = res.data.user ?? res.data;
-        setUser(data);
-
-        // Cargar carrito asociado al usuario
-        try {
-          const cartRes = await axios.get("/cart/me");
-          setCart(cartRes.data);
-        } catch {
-          setCart(null);
-        }
-      })
-      .catch(() => {
-        setUser(null);
-        setCart(null);
-      })
-      .finally(() => setLoading(false));
   }, [token]);
 
-  const refreshUser = async () => {
-  if (!token) return;
-  try {
-    const res = await axios.get("/me");
-    const data = res.data.user ?? res.data;
-    setUser(data);
-  } catch (error) {
-    console.error("Error al refrescar usuario:", error);
-  }
-};
-
-
-  // ============================
-  // 🔐 Login
-  // ============================
-  const login = async (email: string, password: string) => {
+  // 🔹 Carga del usuario actual
+  const loadUser = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.post("/login", { email, password });
-      const accessToken = data.token;
-      if (!accessToken) throw new Error("Token no recibido");
-
-      // Guardar token
-      setToken(accessToken);
-      localStorage.setItem("access_token", accessToken);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
-      // Guardar usuario
-      setUser(data.user);
-
-      // Cargar carrito (si el backend no lo devuelve, lo crea)
-      try {
-        const cartRes = await axios.get("/cart/me");
-        setCart(cartRes.data);
-      } catch {
-        setCart(null);
+      const { data } = await axios.get("/me");
+      const userData = data.user ?? data;
+      setUser(userData);
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        console.warn("⚠️ Sesión expirada. Cerrando sesión automáticamente.");
+      } else {
+        console.error("❌ Error al cargar el usuario:", error);
       }
 
-      setLoading(false);
-      return true;
-    } catch {
       setUser(null);
-      setCart(null);
-      setToken(null);
       localStorage.removeItem("access_token");
       delete axios.defaults.headers.common["Authorization"];
+    } finally {
       setLoading(false);
-      return false;
     }
   };
 
-  // ============================
-  // 🚪 Logout
-  // ============================
+  // 🔹 Alias para refrescar el usuario desde otros componentes
+  const refreshUser = async () => {
+    await loadUser();
+  };
+
+  // 🔹 Iniciar sesión
+  const login = async (email: string, password: string) => {
+    const { data } = await axios.post("/login", { email, password });
+    const token = data.token;
+    localStorage.setItem("access_token", token);
+    setToken(token);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    await loadUser();
+    return true;
+  };
+
+  // 🔹 Cerrar sesión
   const logout = async () => {
     try {
       await axios.post("/logout");
-    } catch {}
+    } catch {
+      // no pasa nada si falla
+    }
     setUser(null);
-    setCart(null);
     setToken(null);
     localStorage.removeItem("access_token");
     delete axios.defaults.headers.common["Authorization"];
   };
 
-  // ============================
-  // 🌎 Provider
-  // ============================
+  // ✅ Ahora se expone refreshUser
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, cart, setCart, login, logout, refreshUser }}
+      value={{ user, token, loading, login, logout, refreshUser }}
     >
       {children}
     </AuthContext.Provider>
