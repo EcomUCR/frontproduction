@@ -9,6 +9,18 @@ interface OrderModalProps {
     id: number;
     status: string;
     created_at?: string;
+    items?: {
+      id: number;
+      quantity: number;
+      unit_price: number;
+      product: {
+        id: number;
+        name: string;
+        image_1_url?: string | null;
+        price?: number;
+        discount_price?: number | null;
+      };
+    }[];
   } | null;
   onClose: () => void;
 }
@@ -24,25 +36,16 @@ export default function OrderModal({ order, onClose }: OrderModalProps) {
     };
   }, []);
 
-  // 🧪 Productos temporales (mock)
-  const products = [
-    {
-      id: 1,
-      name: "Camiseta Oversize Negra",
-      image:
-        "https://images.unsplash.com/photo-1520975916090-3105956dac38?w=600&q=80",
-      price: 15000,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: "Gorra deportiva azul",
-      image:
-        "https://images.unsplash.com/photo-1621381070502-661b2d3c1a11?w=600&q=80",
-      price: 9500,
-      quantity: 2,
-    },
-  ];
+  // Obtener productos reales del pedido
+  const products =
+  order.items?.map((item) => ({
+    id: item.product.id,
+    name: item.product.name,
+    image_url:item.product.image_1_url, 
+    price: item.product.discount_price ?? item.unit_price ?? 0,
+    quantity: item.quantity,
+  })) || [];
+
 
   return (
     <AnimatePresence>
@@ -58,7 +61,7 @@ export default function OrderModal({ order, onClose }: OrderModalProps) {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
           onClick={(e) => e.stopPropagation()} // Evita cerrar al hacer click dentro
         >
           {/* Header */}
@@ -77,9 +80,15 @@ export default function OrderModal({ order, onClose }: OrderModalProps) {
 
           {/* Lista de productos */}
           <div className="flex-1 p-4 sm:p-6 space-y-4 overflow-y-auto">
-            {products.map((item) => (
-              <ProductOrderItem key={item.id} item={item} />
-            ))}
+            {products.length > 0 ? (
+              products.map((item) => (
+                <ProductOrderItem key={item.id} item={item} />
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm text-center py-10">
+                Este pedido no tiene productos asociados 🛍️
+              </p>
+            )}
           </div>
 
           {/* Footer */}
