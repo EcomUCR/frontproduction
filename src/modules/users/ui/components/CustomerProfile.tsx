@@ -89,6 +89,7 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
             return;
           }
 
+          // Verificar que las contraseñas coincidan
           if (newPassword !== confirmPassword) {
             setAlert({
               show: true,
@@ -100,17 +101,35 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
             return;
           }
 
-          await axios.put(
-            "/change-password",
-            {
+          try {
+            // Enviar solicitud para cambiar la contraseña
+            await axios.put("/change-password", {
               current_password: currentPassword,
               new_password: newPassword,
               new_password_confirmation: confirmPassword,
-            },
-            {
-              headers: { Authorization: `Bearer ${token}` },
+            }, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+          } catch (err: unknown) {
+            // Verificar si `err` es un error de Axios con la propiedad `response`
+            if (axios.isAxiosError(err) && err.response) {
+              console.error("Error al actualizar la contraseña:", err.response);
+              setAlert({
+                show: true,
+                title: "Error al guardar",
+                message: err.response?.data?.error || "Error desconocido.",
+                type: "error",
+              });
+            } else {
+              console.error("Error inesperado:", err);
+              setAlert({
+                show: true,
+                title: "Error al guardar",
+                message: "Ocurrió un problema desconocido.",
+                type: "error",
+              });
             }
-          );
+          }
         }
 
         setAlert({
@@ -143,6 +162,7 @@ export default function CustomerProfile({ setAlert }: CustomerProfileProps) {
       setSaving(false);
     }
   };
+
 
   const handleAddAddress = async () => {
     try {
