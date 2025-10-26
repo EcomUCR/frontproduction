@@ -89,7 +89,7 @@ export default function FormShopping({
 
   return (
     <div className="font-quicksand">
-      <h2 className="text-xl font-bold mb-4 text-[#5B21B6]">
+      <h2 className="text-xl font-bold mb-4 text-main">
         {variant === "product"
           ? "Detalles del producto"
           : "Detalles de la compra"}
@@ -262,7 +262,7 @@ export default function FormShopping({
         <div className="pt-10">
           <Button
             onClick={onAddToCart}
-            className="w-full bg-[#7C3AED] hover:bg-[#6B21A8] text-white shadow-md rounded-full transition-all"
+            className="w-full bg-contrast-secondary hover:bg-main text-white shadow-md rounded-full transition-all"
           >
             Añadir al carrito
           </Button>
