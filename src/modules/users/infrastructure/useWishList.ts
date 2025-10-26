@@ -24,10 +24,14 @@ export interface WishlistItem {
 export interface Wishlist {
   id: number;
   user_id: number;
+  user?: {
+    username: string;
+  };
   slug: string;
   is_public: boolean;
   items: WishlistItem[];
 }
+
 
 export function useWishlist() {
   const { token } = useAuth();
