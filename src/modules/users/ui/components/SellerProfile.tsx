@@ -147,15 +147,6 @@ export default function SellerProfile() {
     setCambiarPassword(false);
   };
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Agrega um novo link social a lista de links sociais.
- * Se o valor de newText for vazio, n o faz nada.
- * Adiciona um novo objeto com as propriedades type e text a lista de links sociais.
- * Limpa o valor de newText para uma string vazia.
- * Set Adding para false para indicar que n o est  mais adicionando links sociais.
- */
-/*******  1c4c7b35-d833-422c-897d-3f115af1a8e5  *******/
   const addSocialLink = () => {
     if (newText.trim() === "") return;
     setSocialLinks((prev) => [...prev, { type: newType, text: newText }]);
