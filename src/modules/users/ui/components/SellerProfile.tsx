@@ -17,11 +17,6 @@ import { uploadImage } from "../../infrastructure/imageService";
 import { updateStore } from "../../../seller/infrastructure/storeService";
 import { useAuth } from "../../../../hooks/context/AuthContext";
 
-interface SellerProfileProps {
-  alert: any;
-  setAlert: React.Dispatch<React.SetStateAction<any>>;
-}
-
 interface Store {
   id: number;
   name: string;
@@ -53,6 +48,16 @@ const iconMap = {
   link: <IconLink />,
 };
 
+interface SellerProfileProps {
+  alert: any;
+  setAlert: React.Dispatch<React.SetStateAction<{
+    show: boolean;
+    title: string;
+    message: string;
+    type: "warning" | "info" | "success" | "error";
+  }>>;
+}
+
 export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const { user, refreshUser, token } = useAuth();
   const [editableStore, setEditableStore] = useState<Store | null>(null);
@@ -67,7 +72,6 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
 
   useEffect(() => {
     if (user?.store) {
@@ -217,7 +221,6 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
       }
 
       setAlert({
@@ -229,6 +232,7 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
         type: "success",
       });
 
+      // Reset del estado
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -248,8 +252,6 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
       setSaving(false);
     }
   };
-
-
 
   if (!editableStore) return null;
 
@@ -523,7 +525,6 @@ export default function SellerProfile({ setAlert }: SellerProfileProps) {
                     </div>
                   </div>
                 )}
-
               </section>
             </form>
 

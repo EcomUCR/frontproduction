@@ -1,12 +1,13 @@
-// FeaturedProductCard.tsx
-import { IconEdit } from "@tabler/icons-react";
+import { useState } from "react";
+import { IconCheck, IconEdit } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import RaitingComponent from "../ui/StarRatingComponent";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useAlert } from "../../hooks/context/AlertContext";
 import AnimatedHeartButton from "./AnimatedHeartButton";
-import { useCart } from "../../hooks/context/CartContext"; // 👈 nuevo import
+import { useCart } from "../../hooks/context/CartContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface FeaturedProductCardProps {
   id: number;
@@ -21,13 +22,13 @@ interface FeaturedProductCardProps {
 
 export default function FeaturedProductCard(props: FeaturedProductCardProps) {
   const { token } = useAuth();
-  const { addToCart } = useCart(); // 👈 usamos el contexto del carrito
+  const { addToCart } = useCart();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
+  const [added, setAdded] = useState(false);
 
   const hasDiscount = !!props.discountPrice && props.discountPrice !== "0";
 
-  // 🛒 Añadir producto al carrito
   const handleAddToCart = async () => {
     if (!token) {
       showAlert({
@@ -44,12 +45,15 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
     }
 
     try {
-      await addToCart(props.id, 1); // 👈 uso del CartContext
-      showAlert({
-        title: "Producto añadido",
-        message: "El producto fue añadido al carrito correctamente",
-        type: "success",
-      });
+      await addToCart(props.id, 1);
+      setAdded(true);
+      /* showAlert({
+         title: "Producto añadido",
+         message: "El producto fue añadido al carrito correctamente",
+         type: "success",
+       });*/
+
+      setTimeout(() => setAdded(false), 2000);
     } catch (error) {
       console.error(error);
       showAlert({
@@ -63,9 +67,8 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
   return (
     <figure
       className={`relative w-[95%] max-w-lg h-[15rem] sm:h-full p-4 bg-light-gray rounded-2xl shadow-md overflow-hidden
-      flex flex-col sm:flex-row font-quicksand transition-all duration-300 ${
-        props.edit ? "" : "hover:scale-105"
-      }`}
+      flex flex-col sm:flex-row font-quicksand transition-all duration-300
+        }`}
     >
       {/* ✏️ Botón de edición */}
       {props.edit && (
@@ -80,9 +83,8 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
         </Link>
       )}
 
-      {/* 🖼️ Contenedor principal: IMG + INFO */}
+      {/* 🖼️ Contenedor principal */}
       <div className="flex flex-row sm:flex-row w-full">
-        {/* Imagen */}
         <Link
           to={`/product/${props.id}`}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -136,11 +138,91 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
           {/* 🔹 Botones desktop */}
           {!props.edit && (
             <div className="hidden sm:flex gap-2 w-full text-white mt-2">
-              <ButtonComponent
-                style="bg-contrast-secondary cursor-pointer rounded-full text-sm sm:text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 px-6 shadow-md"
-                text="Añadir al carrito"
+              <motion.button
                 onClick={handleAddToCart}
-              />
+                initial={false}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                animate={
+                  added
+                    ? {
+                      background: "linear-gradient(90deg, var(--color-contrast-secondary), var(--color-main))",
+                      scale: [1, 1.05, 1],
+                      boxShadow: "0 0 15px rgba(150, 80, 220, 0.6)",
+                    }
+                    : {
+                      background: "linear-gradient(90deg, var(--color-contrast-main), var(--color-contrast-secondary))",
+                      scale: 1,
+                      boxShadow: "0 0 0 rgba(0,0,0,0)",
+                    }
+                }
+                transition={{
+                  duration: 0.1,
+                  ease: "easeInOut",
+                }}
+                className="relative overflow-hidden cursor-pointer rounded-full text-sm sm:text-base transition-all duration-400 py-2 px-6 shadow-md w-full text-white"
+              >
+                {/* Contenedor del texto animado */}
+                <div className="relative h-5 sm:h-6 flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    {added ? (
+                      <motion.span
+                        key="added"
+                        initial={{ y: -25, opacity: 0, scale: 0.8 }}
+                        animate={{
+                          y: 0,
+                          opacity: 1,
+                          scale: 1,
+                          transition: {
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                          },
+                        }}
+                        exit={{
+                          y: 25,
+                          opacity: 0,
+                          scale: 0.9,
+                          transition: { duration: 0.2 },
+                        }}
+                        className="absolute inset-0 flex items-center justify-center font-semibold"
+                      >
+                        <motion.div
+                          initial={{ rotate: -120, scale: 0.8 }}
+                          animate={{ rotate: 0, scale: 1 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                          className="flex items-center"
+                        >
+                          <IconCheck className="mr-2 text-white" size={18} />
+                          <motion.span
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.05, duration: 0.3 }}
+                          >
+                            Añadido
+                          </motion.span>
+                        </motion.div>
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="add"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{
+                          y: 0,
+                          opacity: 1,
+                          transition: { type: "spring", stiffness: 300, damping: 18 },
+                        }}
+                        exit={{ y: 20, opacity: 0, transition: { duration: 0.2 } }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        Añadir al carrito
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.button>
+
+
               <AnimatedHeartButton productId={props.id} variant="filled" />
             </div>
           )}
@@ -150,11 +232,90 @@ export default function FeaturedProductCard(props: FeaturedProductCardProps) {
       {/* 🔹 Barra inferior (mobile) */}
       {!props.edit && (
         <div className="flex sm:hidden justify-between items-center w-full mt-3 gap-3">
-          <ButtonComponent
-            style="bg-contrast-secondary w-full text-white cursor-pointer rounded-full text-sm sm:text-base hover:bg-gradient-to-br from-contrast-main via-contrast-secondary to-main transition-all duration-400 py-2 px-6 shadow-md"
-            text="Añadir al carrito"
-            onClick={handleAddToCart}
-          />
+          <motion.button
+                onClick={handleAddToCart}
+                initial={false}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                animate={
+                  added
+                    ? {
+                      background: "linear-gradient(90deg, var(--color-contrast-secondary), var(--color-main))",
+                      scale: [1, 1.05, 1],
+                      boxShadow: "0 0 15px rgba(150, 80, 220, 0.6)",
+                    }
+                    : {
+                      background: "linear-gradient(90deg, var(--color-contrast-main), var(--color-contrast-secondary))",
+                      scale: 1,
+                      boxShadow: "0 0 0 rgba(0,0,0,0)",
+                    }
+                }
+                transition={{
+                  duration: 0.1,
+                  ease: "easeInOut",
+                }}
+                className="relative overflow-hidden cursor-pointer rounded-full text-sm sm:text-base transition-all duration-400 py-2 px-6 shadow-md w-full text-white"
+              >
+                {/* Contenedor del texto animado */}
+                <div className="relative h-5 sm:h-6 flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    {added ? (
+                      <motion.span
+                        key="added"
+                        initial={{ y: -25, opacity: 0, scale: 0.8 }}
+                        animate={{
+                          y: 0,
+                          opacity: 1,
+                          scale: 1,
+                          transition: {
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                          },
+                        }}
+                        exit={{
+                          y: 25,
+                          opacity: 0,
+                          scale: 0.9,
+                          transition: { duration: 0.2 },
+                        }}
+                        className="absolute inset-0 flex items-center justify-center font-semibold"
+                      >
+                        <motion.div
+                          initial={{ rotate: -120, scale: 0.8 }}
+                          animate={{ rotate: 0, scale: 1 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                          className="flex items-center"
+                        >
+                          <IconCheck className="mr-2 text-white" size={18} />
+                          <motion.span
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.05, duration: 0.3 }}
+                          >
+                            Añadido
+                          </motion.span>
+                        </motion.div>
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="add"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{
+                          y: 0,
+                          opacity: 1,
+                          transition: { type: "spring", stiffness: 300, damping: 18 },
+                        }}
+                        exit={{ y: 20, opacity: 0, transition: { duration: 0.2 } }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        Añadir al carrito
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.button>
+
           <AnimatedHeartButton productId={props.id} variant="filled" />
         </div>
       )}

@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { IconEdit, IconShoppingBag } from "@tabler/icons-react";
+import { IconEdit, IconShoppingBag, IconCheck } from "@tabler/icons-react";
 import ButtonComponent from "../ui/ButtonComponent";
 import { useAuth } from "../../hooks/context/AuthContext";
 import { useAlert } from "../../hooks/context/AlertContext";
 import AnimatedHeartButton from "./AnimatedHeartButton";
-import { useCart } from "../../hooks/context/CartContext"; // 👈 nuevo import
+import { useCart } from "../../hooks/context/CartContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 interface ProductCardProps {
   id: number;
@@ -18,13 +20,20 @@ interface ProductCardProps {
 
 export default function ProductCard(props: ProductCardProps) {
   const { token } = useAuth();
-  const { addToCart } = useCart(); // 👈 usar lógica centralizada del carrito
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
   const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   const formatPrice = (value?: number) => {
     const num = Number(value) || 0;
     return num.toLocaleString("es-CR").replace(/\s/g, ".");
+  };
+
+  const handleAnimatedAdd = async () => {
+    await handleAddToCart(); // tu función original
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   // 🛒 Añadir producto al carrito
@@ -45,11 +54,11 @@ export default function ProductCard(props: ProductCardProps) {
 
     try {
       await addToCart(props.id, 1); // 👈 usa el CartContext
-      showAlert({
-        title: "Producto añadido",
-        message: "El producto fue añadido al carrito correctamente",
-        type: "success",
-      });
+      /*  showAlert({
+          title: "Producto añadido",
+          message: "El producto fue añadido al carrito correctamente",
+          type: "success",
+        });*/
     } catch (error) {
       console.error(error);
       showAlert({
@@ -86,7 +95,7 @@ export default function ProductCard(props: ProductCardProps) {
           </div>
 
           {/* Móvil (visible siempre) */}
-          <div className="sm:hidden absolute top-3 right-3">
+          <div className="hidden sm:hidden absolute top-10 right-3">
             <AnimatedHeartButton productId={props.id} variant="filled" />
           </div>
         </>
@@ -94,13 +103,12 @@ export default function ProductCard(props: ProductCardProps) {
 
       {/* 🛍️ Botón carrito (solo visible en mobile) */}
       {!props.edit && (
-        <button
-          onClick={handleAddToCart}
-          className="sm:hidden absolute bottom-3 right-3 bg-gradient-to-br from-contrast-main to-contrast-secondary text-white p-2 rounded-xl hover:bg-gradient-to-br transition-all duration-300 active:scale-95"
-        >
-          <IconShoppingBag size={18} className="stroke-[2.5]" />
+        <button onClick={handleAddToCart}
+          className="sm:hidden absolute top-3 right-3 bg-gradient-to-br from-contrast-main to-contrast-secondary text-white p-2 rounded-xl hover:bg-gradient-to-br transition-all duration-300" >
+          <IconShoppingBag size={20} className="stroke-[2.5]" />
         </button>
       )}
+
 
       {/* 🖼️ Imagen del producto */}
       <Link
@@ -155,15 +163,77 @@ export default function ProductCard(props: ProductCardProps) {
 
             {/* Hover botón añadir carrito (solo escritorio) */}
             <div
-              className="hidden sm:flex absolute flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 bg-contrast-main text-white font-semibold p-2 rounded-xl hover:bg-gradient-to-br from-contrast-main to-contrast-secondary items-center transition-all duration-300 cursor-pointer"
-              onClick={handleAddToCart}
+              className="hidden sm:flex absolute flex-col h-17 justify-between transform translate-x-23 opacity-0 group-hover:opacity-100 text-white font-semibold p-2 rounded-xl items-center transition-all duration-300 cursor-pointer"
+              onClick={handleAnimatedAdd}
+              style={{
+                background:
+                  added
+                    ? "linear-gradient(90deg, var(--color-contrast-secondary), var(--color-main))" // Cambia el fondo al añadir
+                    : "linear-gradient(90deg, var(--color-contrast-main), var(--color-contrast-secondary))", // Fondo fijo antes
+              }}
             >
-              <IconShoppingBag className="w-5 h-5" />
-              <ButtonComponent
-                style="w-full text-xs cursor-pointer"
-                text="Añadir al carrito"
-              />
+              <div className="relative flex flex-col items-center justify-center w-full h-full">
+                <AnimatePresence mode="wait">
+                  {added ? (
+                    <motion.div
+                      key="added"
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="flex flex-col items-center w-[6rem]"
+                    >
+                      {/* ✅ Check con rotación suave */}
+                      <motion.div
+                        initial={{ rotate: -90, scale: 0.6, opacity: 0 }}
+                        animate={{
+                          rotate: 0,
+                          scale: 1,
+                          opacity: 1,
+                          transition: { type: "spring", stiffness: 500, damping: 18 },
+                        }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                      >
+                        <IconCheck className="w-5 h-5 text-white mb-1" />
+                      </motion.div>
+
+                      <span className="text-xs text-center whitespace-nowrap">
+                        Añadido
+                      </span>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="add"
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="flex flex-col items-center w-[6rem]"
+                    >
+                      {/* 🛍️ Bolsa con efecto “pop” */}
+                      <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{
+                          scale: [1.2, 1],
+                          opacity: 1,
+                          transition: { type: "spring", stiffness: 400, damping: 16 },
+                        }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                      >
+                        <IconShoppingBag className="w-5 h-5 text-white mb-1" />
+                      </motion.div>
+
+                      <span className="text-xs text-center whitespace-nowrap">
+                        Añadir al carrito
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
+
+
+
           </div>
         )}
 
@@ -190,6 +260,6 @@ export default function ProductCard(props: ProductCardProps) {
           </div>
         )}
       </div>
-    </figure>
+    </figure >
   );
 }

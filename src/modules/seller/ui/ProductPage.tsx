@@ -6,7 +6,7 @@ import FormShopping from "../../../components/forms/FormShopping";
 import StarRatingComponent from "../../../components/ui/StarRatingComponent";
 import ButtonComponent from "../../../components/ui/ButtonComponent";
 import FeaturedProductsSlider from "../../../components/data-display/FeaturedProductsSlider";
-import {IconArrowBackUp,IconChevronRight,} from "@tabler/icons-react";
+import { IconArrowBackUp, IconChevronRight, } from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import type { Product } from "../infrastructure/useProducts";
 import { useProducts } from "../infrastructure/useProducts";
@@ -18,12 +18,12 @@ import {
 } from "../../../components/ui/AllSkeletons";
 import ProductCard from "../../../components/data-display/ProductCard";
 import { useAuth } from "../../../hooks/context/AuthContext";
-import axios from "axios";
 import { useAlert } from "../../../hooks/context/AlertContext";
 import { useNavigate } from "react-router-dom";
 import AnimatedHeartButton from "../../../components/data-display/AnimatedHeartButton";
 import { AnimatePresence, motion } from "framer-motion";
 import ShareBubbles from "../../../components/data-display/ShareBubbles";
+import { useCart } from "../../../hooks/context/CartContext";
 
 type BorderColors = {
   description: string;
@@ -35,13 +35,14 @@ export default function ProductPage() {
   const { id } = useParams();
   const { getProductById, getProductsByCategory, getProductsByStore } = useProducts();
 
+  const { addToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [prodStore, setProdStore] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<keyof BorderColors>("description");
 
-  const { token, setCart } = useAuth();
+  const { token } = useAuth();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
 
@@ -108,12 +109,8 @@ export default function ProductPage() {
     }
 
     try {
-      const { data } = await axios.post(
-        "/cart/add",
-        { product_id: productId, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCart(data.cart);
+      // Usamos la función addToCart del CartContext
+      await addToCart(productId, 1); // Añadimos 1 unidad del producto al carrito
       showAlert({
         title: "Producto añadido",
         message: "El producto fue añadido al carrito correctamente ",
@@ -129,6 +126,7 @@ export default function ProductPage() {
       });
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -363,7 +361,7 @@ export default function ProductPage() {
                           </div>
 
                           <div className="relative">
-                            <ShareBubbles positionClass="absolute right-30 top-25" />
+                            <ShareBubbles positionClass="absolute right-30 top-25" shareUrl={""} />
                           </div>
                         </div>
                       </div>

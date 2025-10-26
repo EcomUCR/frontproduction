@@ -17,7 +17,7 @@ export default function StoreInfoCard({ store }: StoreProps) {
       <section
         className="hidden sm:flex relative w-full h-35 md:h-72 lg:h-80 rounded-2xl overflow-hidden items-center justify-center transition-all duration-500"
         style={{
-          backgroundImage: `url(${store.banner || "https://via.placeholder.com/800x300"})`,
+          backgroundImage: `url(${store.banner || "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761410400/BannerNoSubido_avlp5v.png"})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -33,7 +33,7 @@ export default function StoreInfoCard({ store }: StoreProps) {
               <img
                 src={
                   store.image ||
-                  "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg"
+                  "https://res.cloudinary.com/dpbghs8ep/image/upload/v1761412207/imagenNoSubida_dymbb7.png"
                 }
                 alt={store.name}
                 className="h-15 w-15 sm:h-20 sm:w-20 object-contain rounded-full border-2 border-white/80 shadow-lg mb-3 sm:mb-0 sm:group-hover/store:translate-x-[-7rem] transition-transform duration-500"

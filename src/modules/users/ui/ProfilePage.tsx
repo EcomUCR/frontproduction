@@ -15,6 +15,7 @@ import OrdersList from "./OrdersList";
 import { useNotificationContext } from "../../../hooks/context/NotificationContext";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import AdminMailBox from "../../admin/ui/components/AdminMailBox";
+import SellerOrderStatus from "../../seller/ui/components/SellerOrderStatus"; // ✅ Import agregado
 
 export default function UserPage() {
   const [selected, setSelected] = useState("profile");
@@ -51,12 +52,10 @@ export default function UserPage() {
     <div className="relative">
       <NavBar />
 
-      {/* 🔹 Mobile header con botón hamburguesa */}
+      {/* Mobile header con botón hamburguesa */}
       <div className="sm:hidden flex items-center justify-between px-6 py-4 border-b border-main/10">
         <h2 className="text-lg font-semibold font-quicksand text-main">
-          {user.role === "ADMIN"
-            ? "Panel de Administración"
-            : "Mi Cuenta"}
+          {user.role === "ADMIN" ? "Panel de Administración" : "Mi Cuenta"}
         </h2>
         <button
           onClick={() => setSidebarOpen(true)}
@@ -68,12 +67,12 @@ export default function UserPage() {
       </div>
 
       <section className="flex flex-col sm:flex-row px-4 sm:px-10 py-6 sm:py-10 mx-auto max-w-[80rem] relative">
-        {/* 🧭 Sidebar fijo en escritorio */}
+        {/* Sidebar fijo en escritorio */}
         <div className="hidden sm:block w-[25%]">
           <SideBar type={user.role} onSelect={setSelected} selected={selected} />
         </div>
 
-        {/* 📱 Sidebar móvil animado */}
+        {/* Sidebar móvil animado */}
         <AnimatePresence>
           {sidebarOpen && (
             <>
@@ -122,7 +121,7 @@ export default function UserPage() {
           )}
         </AnimatePresence>
 
-        {/* 🔹 Contenido dinámico */}
+        {/* Contenido dinámico */}
         <div className="w-full sm:w-[75%]">
           <AnimatePresence mode="wait">
             <motion.div
@@ -134,7 +133,15 @@ export default function UserPage() {
             >
               {selected === "profile" && <UserProfile type={user.role} />}
               {selected === "transactions" && <TransactionHistory />}
-              {selected === "orders" && <OrdersList />}
+
+              {/* pedidos según rol */}
+              {selected === "orders" &&
+                (user.role === "SELLER" ? (
+                  <SellerOrderStatus />
+                ) : (
+                  <OrdersList />
+                ))}
+
               {selected === "products" && user.role === "SELLER" && (
                 <SellerProductsList />
               )}
