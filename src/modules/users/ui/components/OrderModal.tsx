@@ -45,9 +45,9 @@ export default function OrderModal({ order, onClose }: OrderModalProps) {
     if (!order.items) return [];
 
     // Si es un vendedor, filtrar solo productos de su tienda
-    if (user?.role === "SELLER" && user?.store?.id) {
+    if (user?.role === "SELLER" && user?.store && user.store.id) {
       return order.items
-        .filter((item) => item.store_id === user.store.id)
+        .filter((item) => item.store_id === user.store!.id)
         .map((item) => ({
           id: item.product.id,
           name: item.product.name,
