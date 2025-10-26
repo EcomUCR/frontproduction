@@ -16,18 +16,23 @@ export default function AdminMailBox() {
         : "CONTACT_MESSAGE";
 
     return {
-      id: n.id,
+      id: n.id,                 // <- id de la notificación
       type,
       title: n.title,
       message: n.message,
       created_at: n.created_at,
-      is_read: n.is_read, // ✅ pasa el valor del backend
+      is_read: n.is_read,
+      // 👇 Enviamos también el ID REAL del contacto
       data: {
         store_id: n.data?.store_id ?? n.related_id ?? null,
         name: n.data?.name,
         subject: n.data?.subject,
         email: n.data?.email,
         message: n.data?.message,
+        // ✅ Prioriza data.contact_id; si no viene, usa related_id cuando es contact_message
+        contact_id:
+          n?.data?.contact_id ??
+          (n.related_type === "contact_message" ? n.related_id : null),
       },
     };
   });
@@ -56,8 +61,8 @@ export default function AdminMailBox() {
               {...n}
               onViewStore={() => {
                 if (n.data?.store_id) {
-                  setStoreToOpen(n.data.store_id); // ✅ guarda el ID en el contexto
-                  navigate("/profile"); // ✅ redirige al perfil del admin
+                  setStoreToOpen(n.data.store_id);
+                  navigate("/profile");
                   window.scrollTo(0, 0);
                 }
               }}

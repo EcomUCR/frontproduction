@@ -12,6 +12,7 @@ import { useNotificationContext } from "../../../../hooks/context/NotificationCo
 import { useNavigate } from "react-router-dom";
 import AlertComponent from "../../../../components/data-display/AlertComponent";
 import { useNotifications } from "../../../../hooks/useNotifications";
+import axios from "axios";
 
 interface MailboxCardProps {
   id: number;
@@ -25,6 +26,7 @@ interface MailboxCardProps {
     subject?: string;
     email?: string;
     message?: string;
+    contact_id?: number; // ✅ agregado para capturar el ID del mensaje real
   };
   is_read?: boolean;
   onViewStore?: () => void;
@@ -55,7 +57,7 @@ export default function MailboxCard({
     onConfirm: () => void;
   } | null>(null);
 
-  // 🔹 Alerta reutilizable
+  // 🔹 Reutilizable: abrir y cerrar alertas
   const openAlert = (title: string, message: string, onConfirm: () => void) => {
     setAlertConfig({ title, message, onConfirm });
     setAlertVisible(true);
@@ -66,7 +68,7 @@ export default function MailboxCard({
     setAlertConfig(null);
   };
 
-  // 🔹 Simula envío de respuesta
+  // 🔹 Enviar respuesta
   const handleSendReply = async () => {
     if (!replyText.trim()) {
       openAlert(
@@ -77,14 +79,20 @@ export default function MailboxCard({
       return;
     }
 
+    const token = localStorage.getItem("access_token");
+    const contactId = data?.contact_id ?? id; // ✅ usa el ID real del mensaje
+
     setSending(true);
     try {
-      await new Promise((res) => setTimeout(res, 1200));
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/contact-messages/${contactId}/reply`,
+        { reply_message: replyText },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
       openAlert(
         "Respuesta enviada",
-        `La respuesta fue enviada correctamente a ${
-          data?.email || "el remitente"
-        }.`,
+        `La respuesta fue enviada correctamente a ${data?.email || "el remitente"}.`,
         () => {
           closeAlert();
           setReplyText("");
@@ -92,7 +100,8 @@ export default function MailboxCard({
           setReviewed(true);
         }
       );
-    } catch {
+    } catch (err) {
+      console.error("Error al enviar respuesta:", err);
       openAlert("Error", "No se pudo enviar la respuesta.", closeAlert);
     } finally {
       setSending(false);
@@ -106,7 +115,7 @@ export default function MailboxCard({
       "¿Marcar esta notificación como revisada?",
       async () => {
         try {
-          await markAsRead(id); // ✅ PATCH al backend
+          await markAsRead(id);
           setReviewed(true);
         } catch (err) {
           console.error("Error al marcar notificación como leída:", err);
@@ -242,6 +251,10 @@ export default function MailboxCard({
                     rows={3}
                     className="w-full p-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-main/40 resize-none"
                   />
+                  <p className="text-[11px] text-gray-500">
+                    ✉️ La respuesta será enviada a{" "}
+                    <strong>{data?.email ?? "el remitente"}</strong>
+                  </p>
                   <div className="flex gap-3">
                     <button
                       onClick={handleSendReply}
