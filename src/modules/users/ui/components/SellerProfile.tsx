@@ -16,8 +16,6 @@ import {
 import { uploadImage } from "../../infrastructure/imageService";
 import { updateStore } from "../../../seller/infrastructure/storeService";
 import { useAuth } from "../../../../hooks/context/AuthContext";
-import { useAlert } from "../../../../hooks/context/AlertContext";
-
 
 interface Store {
   id: number;
@@ -50,7 +48,17 @@ const iconMap = {
   link: <IconLink />,
 };
 
-export default function SellerProfile() {
+interface SellerProfileProps {
+  alert: any;
+  setAlert: React.Dispatch<React.SetStateAction<{
+    show: boolean;
+    title: string;
+    message: string;
+    type: "warning" | "info" | "success" | "error";
+  }>>;
+}
+
+export default function SellerProfile({ setAlert }: SellerProfileProps) {
   const { user, refreshUser, token } = useAuth();
   const [editableStore, setEditableStore] = useState<Store | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
@@ -64,8 +72,6 @@ export default function SellerProfile() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-    const { showAlert } = useAlert();
-
 
   useEffect(() => {
     if (user?.store) {
@@ -155,96 +161,97 @@ export default function SellerProfile() {
   };
 
   const handleSave = async () => {
-  if (!editableStore) return;
-  setSaving(true);
+    if (!editableStore) return;
+    setSaving(true);
 
-  try {
-    const updatedFields: Record<string, any> = {
-      name: editableStore.name ?? "",
-      description: editableStore.description ?? "",
-      registered_address: editableStore.registered_address ?? "",
-      support_phone: editableStore.support_phone ?? "",
-      support_email: editableStore.support_email ?? "",
-      social_links: socialLinks,
-    };
+    try {
+      const updatedFields: Record<string, any> = {
+        name: editableStore.name ?? "",
+        description: editableStore.description ?? "",
+        registered_address: editableStore.registered_address ?? "",
+        support_phone: editableStore.support_phone ?? "",
+        support_email: editableStore.support_email ?? "",
+        social_links: socialLinks,
+      };
 
-    if (newLogoFile) {
-      const logoUrl = await uploadImage(newLogoFile);
-      updatedFields.image = logoUrl;
-    }
-
-    if (newBannerFile) {
-      const bannerUrl = await uploadImage(newBannerFile);
-      updatedFields.banner = bannerUrl;
-    }
-
-    await updateStore(editableStore.id, updatedFields);
-    await refreshUser?.();
-
-    if (cambiarPassword) {
-      if (!currentPassword || !newPassword || !confirmPassword) {
-        showAlert({
-          title: "Campos incompletos",
-          message: "Debes llenar todos los campos de contraseña.",
-          type: "warning",
-        });
-        setSaving(false);
-        return;
+      if (newLogoFile) {
+        const logoUrl = await uploadImage(newLogoFile);
+        updatedFields.image = logoUrl;
       }
 
-      if (newPassword !== confirmPassword) {
-        showAlert({
-          title: "Error de confirmación",
-          message: "Las contraseñas no coinciden.",
-          type: "error",
-        });
-        setSaving(false);
-        return;
+      if (newBannerFile) {
+        const bannerUrl = await uploadImage(newBannerFile);
+        updatedFields.banner = bannerUrl;
       }
 
-      await axios.put(
-        "/change-password",
-        {
-          current_password: currentPassword,
-          new_password: newPassword,
-          new_password_confirmation: confirmPassword,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+      await updateStore(editableStore.id, updatedFields);
+      await refreshUser?.();
+
+      if (cambiarPassword) {
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          setAlert({
+            show: true,
+            title: "Campos incompletos",
+            message: "Debes llenar todos los campos de contraseña.",
+            type: "warning",
+          });
+          setSaving(false);
+          return;
         }
-      );
+
+        if (newPassword !== confirmPassword) {
+          setAlert({
+            show: true,
+            title: "Error de confirmación",
+            message: "Las contraseñas no coinciden.",
+            type: "error",
+          });
+          setSaving(false);
+          return;
+        }
+
+        await axios.put(
+          "/change-password",
+          {
+            current_password: currentPassword,
+            new_password: newPassword,
+            new_password_confirmation: confirmPassword,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
+
+      setAlert({
+        show: true,
+        title: "Cambios guardados",
+        message: cambiarPassword
+          ? "Tu contraseña y perfil de tienda se actualizaron correctamente."
+          : "La tienda se actualizó correctamente.",
+        type: "success",
+      });
+
+      // Reset del estado
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setCambiarPassword(false);
+      setNewLogoFile(null);
+      setNewBannerFile(null);
+    } catch (err: any) {
+      setAlert({
+        show: true,
+        title: "Error al guardar",
+        message:
+          err.response?.data?.error ||
+          "Ocurrió un problema al actualizar los datos.",
+        type: "error",
+      });
+    } finally {
+      setSaving(false);
     }
-
-    showAlert({
-      title: "Cambios guardados",
-      message: cambiarPassword
-        ? "Tu contraseña y perfil de tienda se actualizaron correctamente."
-        : "La tienda se actualizó correctamente.",
-      type: "success",
-    });
-
-    // Reset del estado
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setCambiarPassword(false);
-    setNewLogoFile(null);
-    setNewBannerFile(null);
-  } catch (err: any) {
-    showAlert({
-      title: "Error al guardar",
-      message:
-        err.response?.data?.error ||
-        "Ocurrió un problema al actualizar los datos.",
-      type: "error",
-    });
-  } finally {
-    setSaving(false);
-  }
-};
-
-
-
+  };
 
   if (!editableStore) return null;
 
@@ -518,7 +525,6 @@ export default function SellerProfile() {
                     </div>
                   </div>
                 )}
-
               </section>
             </form>
 

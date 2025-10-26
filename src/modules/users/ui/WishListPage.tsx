@@ -4,13 +4,10 @@ import Footer from "../../../components/layout/Footer";
 import NavBar from "../../../components/layout/NavBar";
 import ProductCardWishList from "../../../components/data-display/ProductCardWishList";
 import ShareBubbles from "../../../components/data-display/ShareBubbles";
-import BannerComponent from "../../../components/data-display/BannerComponent";
-import { useBanner } from "../../admin/infrastructure/useBanner";
 import { useWishlist } from "../infrastructure/useWishList";
 
 export default function WishListPage() {
   const { slug } = useParams(); // Si viene slug => modo público
-  const { banners, fetchBanners, loading: loadingBanners } = useBanner();
   const {
     wishlist,
     fetchWishlist,
@@ -23,7 +20,6 @@ export default function WishListPage() {
   const isPublicMode = Boolean(slug);
 
   useEffect(() => {
-    fetchBanners();
     if (isPublicMode && slug) {
       getPublicWishlist(slug);
     } else {
@@ -116,44 +112,6 @@ export default function WishListPage() {
             </div>
           </section>
         )}
-
-        {/* Banners dinámicos */}
-        <section className="mx-4 sm:mx-10 sm:my-10 my-6 pt-5">
-          {loadingBanners ? (
-            <p className="text-main-dark/50 text-center">
-              Cargando banners...
-            </p>
-          ) : banners.length > 0 ? (
-            (() => {
-              const activeBanners = banners.filter(
-                (b) => b.type === "SHORT" && b.is_active
-              );
-
-              if (activeBanners.length === 1) {
-                const b = activeBanners[0];
-                return (
-                  <div className="flex justify-center items-center">
-                    <BannerComponent {...b} />
-                  </div>
-                );
-              }
-
-              return (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10 justify-center items-end">
-                  {activeBanners.map((b) => (
-                    <div key={b.id} className="flex justify-center">
-                      <BannerComponent {...b} />
-                    </div>
-                  ))}
-                </div>
-              );
-            })()
-          ) : (
-            <p className="text-main-dark/50 text-center">
-              No hay banners activos
-            </p>
-          )}
-        </section>
       </div>
       <Footer />
     </div>
