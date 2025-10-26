@@ -1,8 +1,9 @@
 import { IconX, IconPackage } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ButtonComponent from "../../../../components/ui/ButtonComponent";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import ProductOrderItem from "./ProductOrderItem";
+import { useAuth } from "../../../../hooks/context/AuthContext";
 
 interface OrderModalProps {
   order: {
@@ -13,12 +14,14 @@ interface OrderModalProps {
       id: number;
       quantity: number;
       unit_price: number;
+      store_id?: number;
       product: {
         id: number;
         name: string;
         image_1_url?: string | null;
         price?: number;
         discount_price?: number | null;
+        store_id?: number;
       };
     }[];
   } | null;
@@ -26,9 +29,10 @@ interface OrderModalProps {
 }
 
 export default function OrderModal({ order, onClose }: OrderModalProps) {
+  const { user } = useAuth();
   if (!order) return null;
 
-  // 🧩 Bloquea scroll del fondo mientras el modal está abierto
+  // Bloquear scroll del fondo mientras el modal está abierto
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -36,16 +40,36 @@ export default function OrderModal({ order, onClose }: OrderModalProps) {
     };
   }, []);
 
-  // Obtener productos reales del pedido
-  const products =
-  order.items?.map((item) => ({
-    id: item.product.id,
-    name: item.product.name,
-    image_url:item.product.image_1_url, 
-    price: item.product.discount_price ?? item.unit_price ?? 0,
-    quantity: item.quantity,
-  })) || [];
+  // Productos filtrados según el rol
+  const products = useMemo(() => {
+    if (!order.items) return [];
 
+    // Si es un vendedor, filtrar solo productos de su tienda
+    if (user?.role === "SELLER" && user?.store?.id) {
+      return order.items
+        .filter((item) => item.store_id === user.store.id)
+        .map((item) => ({
+          id: item.product.id,
+          name: item.product.name,
+          image_url:
+            item.product.image_1_url ||
+            "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg",
+          price: item.product.discount_price ?? item.unit_price ?? 0,
+          quantity: item.quantity,
+        }));
+    }
+
+    // Si es cliente, mostrar todos los productos
+    return order.items.map((item) => ({
+      id: item.product.id,
+      name: item.product.name,
+      image_url:
+        item.product.image_1_url ||
+        "https://electrogenpro.com/wp-content/themes/estore/images/placeholder-shop.jpg",
+      price: item.product.discount_price ?? item.unit_price ?? 0,
+      quantity: item.quantity,
+    }));
+  }, [order, user]);
 
   return (
     <AnimatePresence>
@@ -86,7 +110,7 @@ export default function OrderModal({ order, onClose }: OrderModalProps) {
               ))
             ) : (
               <p className="text-gray-500 text-sm text-center py-10">
-                Este pedido no tiene productos asociados 🛍️
+                Este pedido no contiene productos de tu tienda
               </p>
             )}
           </div>
