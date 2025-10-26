@@ -26,9 +26,12 @@ export function useCheckout() {
       street?: string;
       city?: string;
       state?: string;
+      zip_code?: string; // 👈 agregado
       country?: string;
+      phone_number?: string; // opcional también
     }
   ) => {
+
     if (!token || !user) {
       showAlert({
         title: "Inicia sesión",
@@ -71,10 +74,12 @@ export function useCheckout() {
           city: addressData?.city,
           state: addressData?.state,
           country: addressData?.country || "Costa Rica",
-          zip_code: null, // 👈 explícitamente null
+          zip_code: addressData?.zip_code || null, // ✅ ahora se manda real
+          phone_number: addressData?.phone_number || null, // opcional
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
 
       const orderId = initRes.data?.order?.id;
       console.log("🧾 Orden inicial creada:", orderId);

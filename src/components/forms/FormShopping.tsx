@@ -73,20 +73,17 @@ export default function FormShopping({
       });
       return;
     }
-
-    // Descomponer solo para enviar al backend
-    const parts = addressText.split(",");
-    const street = parts[0]?.trim() || "";
-    const city = parts[1]?.trim() || "";
-    const state = parts[2]?.trim() || "";
-    const country = parts[3]?.trim() || "Costa Rica";
+  
 
     await getForexRate("CRC", "USD");
+    const selected = addresses.find((a) => a.id === selectedAddressId);
     await processCheckout(paymentIntent, totals, {
-      street,
-      city,
-      state,
-      country,
+      street: selected?.street,
+      city: selected?.city,
+      state: selected?.state,
+      zip_code: selected?.zip_code, // ✅ agregado
+      country: selected?.country,
+      phone_number: selected?.phone_number,
     });
   };
 
@@ -138,7 +135,6 @@ export default function FormShopping({
       {/* Checkout */}
       {variant === "checkout" && (
         <>
-          {/* 🏠 Dirección */}
           <div className="pt-10 flex flex-col gap-3 text-[#4C1D95]">
             <label className="flex items-center gap-2 text-base font-semibold">
               <IconMapPin className="text-[#6B21A8]" />
@@ -155,9 +151,9 @@ export default function FormShopping({
                 if (selected) {
                   setSelectedAddressId(selected.id);
                   setAddressText(
-                    `${selected.street}, ${selected.city}${
-                      selected.state ? `, ${selected.state}` : ""
-                    }, ${selected.country}`
+                    `${selected.street}, ${selected.city}, ${
+                      selected.state || ""
+                    }, ${selected.country}, ${selected.zip_code || ""}`
                   );
                 } else {
                   setSelectedAddressId(null);
@@ -169,25 +165,57 @@ export default function FormShopping({
               <option value="">Seleccionar dirección guardada...</option>
               {addresses.map((addr) => (
                 <option key={addr.id} value={addr.id}>
-                  {addr.street} - {addr.city}
+                  {addr.street} - {addr.city}{" "}
+                  {addr.zip_code ? `(${addr.zip_code})` : ""}
                 </option>
               ))}
             </select>
 
-            {/* Textarea */}
+            {/* Mostrar resumen de dirección seleccionada */}
+            {selectedAddressId && (
+              <div className="mt-3 p-3 bg-purple-50 border border-[#DDD6FE] rounded-lg text-sm text-[#4C1D95]">
+                {(() => {
+                  const a = addresses.find((a) => a.id === selectedAddressId);
+                  if (!a) return null;
+                  return (
+                    <>
+                      <p>
+                        <strong>Calle:</strong> {a.street}
+                      </p>
+                      <p>
+                        <strong>Ciudad:</strong> {a.city}
+                      </p>
+                      <p>
+                        <strong>Provincia:</strong> {a.state}
+                      </p>
+                      <p>
+                        <strong>Código postal:</strong> {a.zip_code || "—"}
+                      </p>
+                      <p>
+                        <strong>País:</strong> {a.country}
+                      </p>
+                      <p>
+                        <strong>Teléfono:</strong> {a.phone_number || "—"}
+                      </p>
+                    </>
+                  );
+                })()}
+              </div>
+            )}
+
+            {/* Textarea opcional */}
             <textarea
               className={`border rounded-lg px-3 py-2 text-sm focus:outline-none transition-all duration-200 ${
                 !addressText.trim()
                   ? "border-red-300 focus:ring-2 focus:ring-red-400"
                   : "border-[#C4B5FD] focus:ring-2 focus:ring-[#7C3AED]"
               }`}
-              placeholder="Escribe la dirección de entrega..."
+              placeholder="Escribe o ajusta la dirección de entrega..."
               rows={3}
               value={addressText}
               onChange={(e) => setAddressText(e.target.value)}
             />
           </div>
-
           {/* 💳 Stripe */}
           <div className="pt-10">
             <Elements stripe={stripePromise}>
@@ -197,7 +225,6 @@ export default function FormShopping({
               />
             </Elements>
           </div>
-
           {/* Métodos de pago */}
           <div className="pt-10">
             <h3 className="font-semibold mb-3 text-[#4C1D95]">
@@ -214,7 +241,6 @@ export default function FormShopping({
               />
             </div>
           </div>
-
           {/* Tipo de cambio */}
           {rate && (
             <div className="mt-6 p-4 bg-purple-50 border border-[#DDD6FE] rounded-xl text-sm text-[#4C1D95]">
@@ -225,7 +251,6 @@ export default function FormShopping({
               <p>Mock activo: {rate.mock ? "Sí" : "No"}</p>
             </div>
           )}
-
           {errorVisa && (
             <p className="text-red-500 text-sm mt-4">{errorVisa}</p>
           )}
