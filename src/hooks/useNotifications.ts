@@ -23,6 +23,7 @@ export type Notification = {
   updated_at?: string;
 };
 
+// useNotifications.ts
 export function useNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,6 @@ export function useNotifications() {
 
   const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-  // 📦 Cargar notificaciones del usuario autenticado
   const fetchNotifications = async () => {
     setLoading(true);
     setError(null);
@@ -48,13 +48,29 @@ export function useNotifications() {
     }
   };
 
+  // ✅ Marcar notificación como leída
+  const markAsRead = async (id: number) => {
+    try {
+      const token = localStorage.getItem("access_token");
+      await axios.patch(`${BASE_URL}/notifications/${id}/read`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // 🔄 Actualiza el estado local
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      );
+    } catch (err) {
+      console.error("Error marcando como leída:", err);
+    }
+  };
+
   useEffect(() => {
     fetchNotifications();
-
-    // 🔁 refrescar cada 30 segundos
     const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  return { notifications, loading, error, fetchNotifications };
+  return { notifications, loading, error, fetchNotifications, markAsRead };
 }
+
